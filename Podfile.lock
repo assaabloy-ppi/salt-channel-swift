@@ -1,0 +1,24 @@
+PODS:
+  - Binson (1.0.5)
+  - Sodium (0.4)
+
+DEPENDENCIES:
+  - Binson (from `https://github.com/assaabloy-ppi/binson-swift.git`)
+  - Sodium (~> 0.4)
+
+EXTERNAL SOURCES:
+  Binson:
+    :git: https://github.com/assaabloy-ppi/binson-swift.git
+
+CHECKOUT OPTIONS:
+  Binson:
+    :commit: 0dd2113bc79cd4bfd67f03c1730c00efafe629e3
+    :git: https://github.com/assaabloy-ppi/binson-swift.git
+
+SPEC CHECKSUMS:
+  Binson: e7c3106a290e9ecf7a801d6c9a2ec06472eb1a13
+  Sodium: 5dcea3c68241df72134e7f5ff41c2b6f09393d2a
+
+PODFILE CHECKSUM: b576bc84ca8ea9ee4dcc36cb79eb92a06d89dc5e
+
+COCOAPODS: 1.4.0.beta.1

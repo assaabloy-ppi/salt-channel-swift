@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "libsodium",
+        "repositoryURL": "https://github.com/nixberg/Clibsodium",
+        "state": {
+          "branch": null,
+          "revision": "d2e942a7a9e2920fe144fce194381243aa1018a7",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "swift-sodium",
+        "repositoryURL": "https://github.com/nixberg/swift-sodium",
+        "state": {
+          "branch": null,
+          "revision": "f873fedbde40b829c0014b9038bdd9521a857247",
+          "version": "0.5.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

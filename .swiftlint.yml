@@ -1,0 +1,59 @@
+disabled_rules:
+
+included:
+  - Sources
+  - Tests
+
+excluded:
+  - Carthage
+  - Pods
+
+large_tuple:
+  warning: 3
+  error: 5
+
+cyclomatic_complexity:
+  ignores_case_statements: true
+
+function_body_length:
+  warning: 60
+
+trailing_whitespace:
+  ignores_empty_lines: true
+
+force_cast: warning # implicitly
+force_try:
+  severity: warning # explicitly
+
+line_length: 110
+
+type_body_length:
+  - 300 # warning
+  - 400 # error
+
+file_length:
+  warning: 500
+  error: 1200
+
+type_name:
+  min_length: 3 # only warning
+  max_length: # warning and error
+    warning: 20
+    error: 30
+  excluded: iPhone # excluded via string
+
+identifier_name:
+  min_length:
+    warning: 3
+  max_length:
+      warning: 20
+      error: 30
+  excluded: # excluded via string array
+    - n
+    - i
+    - by
+    - key
+    - hex
+    - id
+    - URL
+reporter: "xcode" # reporter type (xcode, json, csv, checkstyle, junit, html, emoji)

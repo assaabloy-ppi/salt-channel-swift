@@ -12,7 +12,7 @@ enum PacketType: Int {
 
 protocol Protocol {
     func m1(time: Double, myEncPub: Data) throws -> Data
-    func m2() throws -> (time: Double, remoteEncPub: Data, hash: Data)
+    func m2(data: Data) throws -> (time: Double, remoteEncPub: Data, hash: Data)
     func m3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: Double, remoteSignPub: Data)
     func m4(time: Double, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data
 }
@@ -30,9 +30,8 @@ extension SaltChannel: Protocol {
         return sodium.genericHash.hashSha512(data: m1)
     }
     
-    func m2() throws -> (time: Double, remoteEncPub: Data, hash: Data) {
+    func m2(data: Data) throws -> (time: Double, remoteEncPub: Data, hash: Data) {
         DDLogInfo("read called from m2 salt handshake")
-        let data = try channel.read()
         let hash = sodium.genericHash.hashSha512(data: data)
         let header = data.subdata(in: 0 ..< 2)
         guard readHeader(header: header) == PacketType.m2 else {

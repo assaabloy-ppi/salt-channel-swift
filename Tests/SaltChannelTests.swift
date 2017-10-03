@@ -14,7 +14,8 @@ import CocoaLumberjack
 let sodium = Sodium()
 
 class SaltChannelHostMock : ByteChannel {
-    
+
+    var callback: [(Data) -> ()] = []
     var didReceiveMsg = false
     var readData: Data = Data()
     var writeData: [Data] = []
@@ -40,12 +41,11 @@ class SaltChannelHostMock : ByteChannel {
             self.didReceiveMsg = false
         }
         sleep(4)
-        readData = m2
-        delegate?.didReceiveMessage()
+        
+        callback.first!(m2)
         
         sleep(4)
-        readData = m3
-        delegate?.didReceiveMessage()
+        callback.first!(m3)
         
         if WaitUntil.waitUntil(10, self.didReceiveMsg == true) {
             XCTAssertEqual(writeData[0], m4)
@@ -58,30 +58,32 @@ class SaltChannelHostMock : ByteChannel {
         }
         
         sleep(4)
-        readData = d2
-        delegate?.didReceiveMessage()
+        callback.first!(d2)
     }
     
-    override func write(_ data: [Data]) throws {
+    func write(_ data: [Data]) throws {
         print("write is called")
         writeData = data
         didReceiveMsg = true
     }
     
-    override func read() throws -> Data {
-        print("read is called")
-        return readData
+    func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+        print("register is called")
+        self.callback.append(callback)
     }
 }
 
 class SaltChannelTests: XCTestCase {
     let sodium = Sodium()
-
-    func testHandshake() {
+    
+    override func setUp() {
+        super.setUp()
         
         DDLog.add(DDTTYLogger.sharedInstance) // TTY = Xcode console
         DDTTYLogger.sharedInstance.colorsEnabled = true
-
+    }
+    
+    func testHandshake() {
         let clientSignSec = sodium.utils.hex2bin("55f4d1d198093c84de9ee9a6299e0f6891c2e1d0b369efb592a9e3f169fb0f795529ce8ccf68c0b8ac19d437ab0f5b32723782608e93c6264f184ba152c2357b")!
         let clientSignPub = sodium.utils.hex2bin("5529ce8ccf68c0b8ac19d437ab0f5b32723782608e93c6264f184ba152c2357b")!
         let clientEncSec = sodium.utils.hex2bin("77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a")!
@@ -93,7 +95,7 @@ class SaltChannelTests: XCTestCase {
         
         let mock = SaltChannelHostMock()
         mock.start()
-        let channel = SaltChannel(channel: mock, clientSignSec: clientSignSec, clientSignPub: clientSignPub)
+        let channel = SaltChannel(channel: mock, sec: clientSignSec, pub: clientSignPub)
         
         XCTAssertThrowsError(try channel.getRemoteSignPub()) { error in
             XCTAssertEqual(error as? ChannelError, ChannelError.setupNotDone)
@@ -104,14 +106,15 @@ class SaltChannelTests: XCTestCase {
         
             XCTAssertEqual(try channel.getRemoteSignPub(), serverSignPub)
         
-            try channel.write([r1])
-            
-            channel.didReceiveMsg = false
-            if WaitUntil.waitUntil(10, channel.didReceiveMsg == true) {
-                let data = try! channel.read()
+            channel.register(callback: { (_ data: Data) in
+                print("Master Kennix")
                 XCTAssertEqual(data, r2)
-            }
+            }, errorhandler: { (_ error: Error) in
+                // Nothing
+            })
             
+            try channel.write([r1])
+            sleep(8)
 
         } catch {
             print(error)

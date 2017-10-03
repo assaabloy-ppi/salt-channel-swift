@@ -12,9 +12,8 @@ protocol Crypto {
 
 extension SaltChannel: Crypto {
 
-    func receiveAndDecryptMessage(sessionKey: Data) throws -> Data {
+    public func receiveAndDecryptMessage(message: Data, sessionKey: Data) throws -> Data {
         DDLogInfo("read called from receiveAndDecryptMessage salt handshake")
-        let message = try channel.read()
         let header = message.subdata(in: 0 ..< 2)
         guard readHeader(header: header) == PacketType.encrypted else {
             throw ChannelError.gotWrongMessage
@@ -29,24 +28,24 @@ extension SaltChannel: Crypto {
         return decryptedData
     }
     
-    func encryptMessage(sessionKey: Data, message: Data) -> Data {
+    public func encryptMessage(sessionKey: Data, message: Data) -> Data {
         // Added for byte channel multicall, TODO: Review
         let encryptedMessage = createHeader(packageType: PacketType.encrypted) + sodium.box.seal(message: message, beforenm: sessionKey, nonce: sendNonce.getNextNonce())!
         return encryptedMessage
     }
     
-    func encryptAndSendMessage(sessionKey: Data, message: Data) throws {
+    public func encryptAndSendMessage(sessionKey: Data, message: Data) throws {
         let header = createHeader(packageType: PacketType.encrypted)
         let cipherData = sodium.box.seal(message: message, beforenm: sessionKey, nonce: sendNonce.getNextNonce())!
         try self.channel.write([header + cipherData])
     }
     
-    func packAppPacket(time: Double, message: Data) -> Data {
+    public func packAppPacket(time: Double, message: Data) -> Data {
         let header = createHeader(packageType: PacketType.appPacket)
         return header + packBytes(UInt64(time), parts: 4) + message
     }
     
-    func unpackAppPacket(data: Data) throws -> (time: Double, message: Data) {
+    public func unpackAppPacket(data: Data) throws -> (time: Double, message: Data) {
         let header = data.subdata(in: 0 ..< 2)
         guard readHeader(header: header) == PacketType.appPacket else {
             throw ChannelError.gotWrongMessage
@@ -56,7 +55,7 @@ extension SaltChannel: Crypto {
         return (Double(time), message)
     }
     
-    func validateSignature(sign: Data, signPub: Data, signedData: Data) -> Bool {
+    public func validateSignature(sign: Data, signPub: Data, signedData: Data) -> Bool {
         let message = sodium.sign.open(signedMessage: sign + signedData, publicKey: signPub)
         if message != nil {
             return true
@@ -65,8 +64,16 @@ extension SaltChannel: Crypto {
         }
     }
     
-    func createSignature(message: Data, signSec: Data) -> Data? {
+    public func createSignature(message: Data, signSec: Data) -> Data? {
         let rawSignature = sodium.sign.sign(message: message, secretKey: signSec)!
         return rawSignature.subdata(in: 0 ..< 64)
+    }
+    
+    public func getRemoteSignPub() throws -> Data {
+        guard let sign = self.remoteSignPub else {
+            throw ChannelError.setupNotDone
+        }
+        
+        return sign
     }
 }

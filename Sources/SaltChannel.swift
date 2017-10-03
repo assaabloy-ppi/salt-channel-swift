@@ -7,36 +7,33 @@ import Foundation
 import Sodium
 import Binson
 
-public class SaltChannel: ByteChannel, ChannelDelegate {
-    let channel: Channel!
+public class SaltChannel: ByteChannel {
+    var callback: [(Data) -> ()] = []
+    var errorhandler: [(Error) -> ()] = []
+
+    let channel: ByteChannel!
     let clientSignSec: Data!
     let clientSignPub: Data!
-    let sodium: Sodium!
+    
+    let sodium = Sodium()
+    
     var sendNonce = Nonce(startValue: 1)
     var receiveNonce = Nonce(startValue: 2)
     var sessionKey: Data?
     var remoteSignPub: Data?
     var bufferedM4: Data?
-    var waitUntil = WaitUntil()
     var didReceiveMsg = false
+    var lastMessage: Data?
+    var handshakeDone = false
     
-    init (channel: Channel, clientSignSec: Data, clientSignPub: Data) {
+    public init (channel: ByteChannel, sec: Data, pub: Data) {
         self.channel = channel
-        self.clientSignSec = clientSignSec
-        self.clientSignPub = clientSignPub
-        self.sodium = Sodium.init()
-        super.init()
-        self.channel.register(delegate: self)
-    }
-    
-    // Mark: ChannelDelegate
-    func didReceiveMessage() {
-        self.delegate?.didReceiveMessage()
-        self.didReceiveMsg = true
+        self.clientSignSec = sec
+        self.clientSignPub = pub
     }
     
     // Mark: Channel
-    public override func write(_ data: [Data]) throws {
+    public func write(_ data: [Data]) throws {
         guard let key = self.sessionKey else {
             throw ChannelError.setupNotDone
         }
@@ -57,16 +54,29 @@ public class SaltChannel: ByteChannel, ChannelDelegate {
         try self.channel.write(packages)
     }
     
-    /// Read and decrypt message data using a session key
-    ///
-    /// - returns: A Data object with read bytes
-    public override func read() throws -> Data {
-        guard let key = self.sessionKey else {
-            throw ChannelError.setupNotDone
+    public func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+        self.errorhandler.append(errorhandler)
+        self.callback.append(callback)
+    }
+    
+    // --- Callbacks -------
+    
+    func error(_ error: Error) {
+    }
+    
+    func read(_ data: Data) {
+        if !self.handshakeDone {
+            gotHandshakeMessage(message: data)
+            return
         }
-        
-        let data = try receiveAndDecryptMessage(sessionKey: key)
-        let (_, message) = try unpackAppPacket(data: data)
-        return message
+        else {
+            if let key = self.sessionKey,
+                let raw = try? receiveAndDecryptMessage(message: data, sessionKey: key),
+                let (_, message) = try? unpackAppPacket(data: raw) {
+                self.callback.first!(message)
+            } else {
+                self.errorhandler.first!(ChannelError.setupNotDone)
+            }
+        }
     }
 }

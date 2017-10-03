@@ -2,7 +2,6 @@
 //  SaltChannel
 //
 //  Created by Håkan Olsson on 2017-06-09.
-//  Copyright © 2017 Håkan Olsson. All rights reserved.
 
 import Foundation
 import libsodium

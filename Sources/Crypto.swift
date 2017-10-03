@@ -1,9 +1,7 @@
-//
 //  Crypto.swift
 //  SaltChannel
 //
 //  Created by Kenneth Pernyer on 2017-10-03.
-//
 
 import Foundation
 import CocoaLumberjack

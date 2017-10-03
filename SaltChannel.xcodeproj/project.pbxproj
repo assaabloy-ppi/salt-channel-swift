@@ -68,6 +68,7 @@
 		5B55414F1F82DAB000730B41 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
 		5BE382CF1F8391B700E40069 /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		5BE382D11F8394BC00E40069 /* WaitUntil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
+		5BE382D41F83A8AE00E40069 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF90645B5C1040BA9D7096A3 /* Pods-SaltChannel-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -152,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
+				5BE382D41F83A8AE00E40069 /* Info.plist */,
 				OBJ_7 /* Sources */,
 				OBJ_12 /* Tests */,
 				OBJ_16 /* Products */,
@@ -503,6 +505,7 @@
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -592,6 +595,7 @@
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;

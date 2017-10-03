@@ -6,6 +6,7 @@
 import Foundation
 
 public enum ChannelError: Error {
+    case readTimeout
     case notImplemented
     case setupNotDone
     case gotWrongMessage

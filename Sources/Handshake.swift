@@ -8,6 +8,7 @@
 import Foundation
 
 extension SaltChannel {
+    
     func handshake(holdUntilFirstWrite: Bool = false) throws {
         let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
         try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey, holdUntilFirstWrite: holdUntilFirstWrite)
@@ -21,7 +22,7 @@ extension SaltChannel {
             let (_, serverEncPub, m2Hash) = try m2()
             
             guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
-                throw SaltChannelError.couldNotCalculateSessionKey
+                throw ChannelError.couldNotCalculateSessionKey
             }
             self.sessionKey = key
             
@@ -39,10 +40,10 @@ extension SaltChannel {
                     try encryptAndSendMessage(sessionKey: self.sessionKey!, message: m4Data)
                 }
             } else {
-                throw PoTError.ReadTimeout
+                throw ChannelError.readTimeout
             }
         } else {
-            throw PoTError.ReadTimeout
+            throw ChannelError.readTimeout
         }
     }
 }

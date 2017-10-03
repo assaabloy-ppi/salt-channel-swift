@@ -27,13 +27,14 @@
 		5B55414C1F82D6BB00730B41 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414B1F82D6BB00730B41 /* Channel.swift */; };
 		5B55414E1F82D87000730B41 /* Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* Handshake.swift */; };
 		5B5541501F82DAB000730B41 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* Protocol.swift */; };
+		5BE382D01F8391B700E40069 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382CF1F8391B700E40069 /* Crypto.swift */; };
+		5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D11F8394BC00E40069 /* WaitUntil.swift */; };
 		5DEEB4C106EA28AB099E3667 /* Pods_SaltChannel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */; };
 		A9E995203B5A83B1AB11990E /* Pods_SaltChannel_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */; };
 		OBJ_24 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_30 /* SaltChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SaltChannelTests.swift */; };
 		OBJ_31 /* SodiumExtensionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* SodiumExtensionTest.swift */; };
 		OBJ_33 /* SaltChannel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "SaltChannel::SaltChannel::Product" /* SaltChannel.framework */; };
-		OBJ_40 /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* Misc.swift */; };
 		OBJ_41 /* Nonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* Nonce.swift */; };
 		OBJ_42 /* SaltChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* SaltChannel.swift */; };
 		OBJ_43 /* Sodium+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* Sodium+Extension.swift */; };
@@ -65,6 +66,8 @@
 		5B55414B1F82D6BB00730B41 /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		5B55414D1F82D87000730B41 /* Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handshake.swift; sourceTree = "<group>"; };
 		5B55414F1F82DAB000730B41 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
+		5BE382CF1F8391B700E40069 /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		5BE382D11F8394BC00E40069 /* WaitUntil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF90645B5C1040BA9D7096A3 /* Pods-SaltChannel-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -74,9 +77,8 @@
 		OBJ_13 /* SaltChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltChannelTests.swift; sourceTree = "<group>"; };
 		OBJ_14 /* SodiumExtensionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SodiumExtensionTest.swift; sourceTree = "<group>"; };
 		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
-		OBJ_8 /* Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
 		OBJ_9 /* Nonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nonce.swift; sourceTree = "<group>"; };
-		"SaltChannel::SaltChannel-Tests::Product" /* SaltChannel_Tests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; name = SaltChannel_Tests.xctest; path = "SaltChannel-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		"SaltChannel::SaltChannel-Tests::Product" /* SaltChannel-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = "SaltChannel-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		"SaltChannel::SaltChannel::Product" /* SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -140,13 +142,13 @@
 		OBJ_16 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				"SaltChannel::SaltChannel-Tests::Product" /* SaltChannel_Tests.xctest */,
+				"SaltChannel::SaltChannel-Tests::Product" /* SaltChannel-Tests.xctest */,
 				"SaltChannel::SaltChannel::Product" /* SaltChannel.framework */,
 			);
 			name = Products;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		OBJ_5 /*  */ = {
+		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
 				OBJ_6 /* Package.swift */,
@@ -156,13 +158,12 @@
 				0C70D714D0797D822D150686 /* Pods */,
 				9246E29B1A85CBF5BD9714A6 /* Frameworks */,
 			);
-			name = "";
 			sourceTree = "<group>";
 		};
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				OBJ_8 /* Misc.swift */,
+				5BE382D11F8394BC00E40069 /* WaitUntil.swift */,
 				OBJ_9 /* Nonce.swift */,
 				OBJ_10 /* SaltChannel.swift */,
 				OBJ_11 /* Sodium+Extension.swift */,
@@ -172,6 +173,7 @@
 				5B55414B1F82D6BB00730B41 /* Channel.swift */,
 				5B55414D1F82D87000730B41 /* Handshake.swift */,
 				5B55414F1F82DAB000730B41 /* Protocol.swift */,
+				5BE382CF1F8391B700E40069 /* Crypto.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -214,7 +216,7 @@
 			);
 			name = "SaltChannel-Tests";
 			productName = SaltChannel_Tests;
-			productReference = "SaltChannel::SaltChannel-Tests::Product" /* SaltChannel_Tests.xctest */;
+			productReference = "SaltChannel::SaltChannel-Tests::Product" /* SaltChannel-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		"SaltChannel::SwiftPMPackageDescription" /* SaltChannelPackageDescription */ = {
@@ -238,7 +240,7 @@
 		OBJ_1 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 9999;
+				LastUpgradeCheck = 0900;
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "SaltChannel" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -247,7 +249,7 @@
 			knownRegions = (
 				en,
 			);
-			mainGroup = OBJ_5 /*  */;
+			mainGroup = OBJ_5;
 			productRefGroup = OBJ_16 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -284,11 +286,13 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Binson/Binson.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${BUILT_PRODUCTS_DIR}/Sodium/Sodium.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Binson.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sodium.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -371,14 +375,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				OBJ_40 /* Misc.swift in Sources */,
 				5B55414C1F82D6BB00730B41 /* Channel.swift in Sources */,
 				OBJ_41 /* Nonce.swift in Sources */,
+				5BE382D01F8391B700E40069 /* Crypto.swift in Sources */,
 				OBJ_42 /* SaltChannel.swift in Sources */,
 				5B5541481F82D4EA00730B41 /* ByteChannel.swift in Sources */,
 				5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */,
 				5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */,
 				OBJ_43 /* Sodium+Extension.swift in Sources */,
+				5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */,
 				5B55414E1F82D87000730B41 /* Handshake.swift in Sources */,
 				5B5541501F82DAB000730B41 /* Protocol.swift in Sources */,
 			);
@@ -422,7 +427,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -441,7 +446,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF90645B5C1040BA9D7096A3 /* Pods-SaltChannel-Tests.release.xcconfig */;
 			buildSettings = {
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -460,12 +465,36 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-DXcode";
@@ -528,11 +557,34 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_SWIFT_FLAGS = "-DXcode";
 				PRODUCT_NAME = "$(TARGET_NAME)";

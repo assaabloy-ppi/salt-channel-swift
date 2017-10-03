@@ -6,16 +6,20 @@
 
 import XCTest
 import Sodium
+import Binson
 import CocoaLumberjack
 
 @testable import SaltChannel
 
+let sodium = Sodium()
+
 class SaltChannelHostMock : ByteChannel {
+    
     var didReceiveMsg = false
     var readData: Data = Data()
     var writeData: [Data] = []
     
-    let m1 = sodium.utils.hex2bin("534376320100000000008520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a")!
+    let m1 = sodium.utils.hex2bin("534376320100000000008520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a")
     let m2 = sodium.utils.hex2bin("020000000000de9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f")!
     
     let m3 = sodium.utils.hex2bin("0600669544da0d2ec8a03766f53e0580bc3cc6cddb69b86e299a47a9b1f1c18666e5cf8b000742bad609bfd9bf2ef2798743ee092b07eb329899ab741476448b5f34e6513e1d3cec7469fbf03112a098acd397ab933c61a2319eb6e0b4561ed9ce010d998f5bc10d6d17f88cebf961d1377faccc8a781c2c")!
@@ -92,7 +96,7 @@ class SaltChannelTests: XCTestCase {
         let channel = SaltChannel(channel: mock, clientSignSec: clientSignSec, clientSignPub: clientSignPub)
         
         XCTAssertThrowsError(try channel.getRemoteSignPub()) { error in
-            XCTAssertEqual(error as? SaltChannel.SaltChannelError, SaltChannel.SaltChannelError.setupNotDone)
+            XCTAssertEqual(error as? ChannelError, ChannelError.setupNotDone)
         }
         
         do {

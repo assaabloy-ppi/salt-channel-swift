@@ -84,11 +84,15 @@ class SaltChannelTests: XCTestCase {
     }
     
     func testHandshake() {
-        let clientSignSec = sodium.utils.hex2bin("55f4d1d198093c84de9ee9a6299e0f6891c2e1d0b369efb592a9e3f169fb0f795529ce8ccf68c0b8ac19d437ab0f5b32723782608e93c6264f184ba152c2357b")!
-        let clientSignPub = sodium.utils.hex2bin("5529ce8ccf68c0b8ac19d437ab0f5b32723782608e93c6264f184ba152c2357b")!
-        let clientEncSec = sodium.utils.hex2bin("77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a")!
-        let clientEncPub = sodium.utils.hex2bin("8520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a")!
-        let serverSignPub = sodium.utils.hex2bin("07e28d4ee32bfdc4b07d41c92193c0c25ee6b3094c6296f373413b373d36168b")!
+        let keypit = TestKeyGenerator.godKeys()
+        // let keypit = TestKeyGenerator.sodiumGeneratedKeys()
+        XCTAssertNotNil(keypit)
+
+        let clientSignSec = Data(keypit.keypair(for: .clientsign)!.sec)
+        let clientSignPub = Data(keypit.keypair(for: .clientsign)!.pub)
+        let clientEncSec =  Data(keypit.keypair(for: .clientencrypt)!.sec)
+        let clientEncPub =  Data(keypit.keypair(for: .clientencrypt)!.pub)
+        let serverSignPub = Data(keypit.pubkey(for: .serversign)!.pub)
         
         let r1 = sodium.utils.hex2bin("010505050505")!
         let r2 = sodium.utils.hex2bin("010505050505")!
@@ -106,11 +110,14 @@ class SaltChannelTests: XCTestCase {
         
             XCTAssertEqual(try channel.getRemoteSignPub(), serverSignPub)
         
-            channel.register(callback: { (_ data: Data) in
-                print("Master Kennix")
-                XCTAssertEqual(data, r2)
-            }, errorhandler: { (_ error: Error) in
-                // Nothing
+            channel.register(callback:
+                { data in
+                    DDLogInfo("Received Callback R2 for R1")
+                    XCTAssertEqual(data, r2)
+                }, errorhandler:
+                { error in
+                    DDLogError("Received error instead of R2 for R1: /(error)")
+                    XCTAssert(false)
             })
             
             try channel.write([r1])

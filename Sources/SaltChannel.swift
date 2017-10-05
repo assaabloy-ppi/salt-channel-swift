@@ -7,6 +7,9 @@ import Foundation
 import Sodium
 import Binson
 
+/**
+ **SaltChannel** is a ByteChannel with encryption and authorization.
+ */
 public class SaltChannel: ByteChannel {
     var callback: [(Data) -> ()] = []
     var errorhandler: [(Error) -> ()] = []
@@ -26,6 +29,8 @@ public class SaltChannel: ByteChannel {
     var lastMessage: Data?
     var handshakeDone = false
     
+    /// Create a SaltChannel with channel to wrap plus the clients signing
+    /// keypair.
     public init (channel: ByteChannel, sec: Data, pub: Data) {
         self.channel = channel
         self.clientSignSec = sec

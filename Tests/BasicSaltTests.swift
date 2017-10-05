@@ -36,8 +36,6 @@ class MyChannel : ByteChannel {
 
 class BasicSaltTests: XCTestCase {
     let sodium = Sodium()
-    let signSec = toData(testdata["clientsec"]!)
-    let signPub = toData(testdata["clientpub"]!)
     
     override func setUp() {
         super.setUp()
@@ -46,16 +44,8 @@ class BasicSaltTests: XCTestCase {
     }
 
     func testExample() {
-        let bytechannel = MyChannel()
-        _ = SaltChannel(channel: bytechannel, sec: signSec, pub: signPub)
+        _ = MyChannel()
+        // _ = SaltChannel(channel: bytechannel, sec: signSec, pub: signPub)
 
-    }
-    
-    static func toData(_ hex: String) -> Data {
-        if let bytes = [Byte](hex: hex) {
-            return Data(bytes: bytes)
-        }
-        
-        return Data()
     }
 }

@@ -50,6 +50,9 @@ class SaltChannelTests: XCTestCase {
         let r1 = testDataSet.get(.msg1)
         let r2 = testDataSet.get(.msg2)
         
+        var status = "Starting"
+        defer { print("When leaving scope status is /(status)") }
+        
         mock.start()
         let channel = SaltChannel(channel: mock, sec: css, pub: csp)
         
@@ -66,10 +69,12 @@ class SaltChannelTests: XCTestCase {
             channel.register(callback:
                 { data in
                     DDLogInfo("Received Callback R2 for R1")
+                    status = "Received Callback"
                     XCTAssertEqual(data, r2)
                 }, errorhandler:
                 { error in
                     DDLogError("Received error instead of R2 for R1: /(error)")
+                    status = "Error"
                     XCTAssert(false)
             })
             

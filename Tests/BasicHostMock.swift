@@ -53,13 +53,13 @@ class BasicHostMock : ByteChannel, MockRunner {
     }
     
     func write(_ data: [Data]) throws {
-        print("Write is called")
+        print("Write is called in Mock")
         writeData = data
         didReceiveMsg = true
     }
     
     func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
-        print("Register is called")
+        print("Register is called in Mock")
         self.callback.append(callback)
     }
 }

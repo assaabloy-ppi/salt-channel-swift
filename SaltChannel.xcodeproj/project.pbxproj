@@ -21,17 +21,19 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */; };
+		5B49F0501F87AF4D00C15D30 /* EchoMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04F1F87AF4D00C15D30 /* EchoMock.swift */; };
+		5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */; };
+		5B49F0541F87B13F00C15D30 /* MockRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0531F87B13F00C15D30 /* MockRunner.swift */; };
+		5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0551F87D1A300C15D30 /* Protocol.swift */; };
 		5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541451F82D2EF00730B41 /* ChannelError.swift */; };
 		5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541491F82D63A00730B41 /* ByteUtils.swift */; };
 		5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414B1F82D6BB00730B41 /* ByteChannel.swift */; };
-		5B55414E1F82D87000730B41 /* Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* Handshake.swift */; };
-		5B5541501F82DAB000730B41 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* Protocol.swift */; };
-		5BE382D01F8391B700E40069 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382CF1F8391B700E40069 /* Crypto.swift */; };
+		5B55414E1F82D87000730B41 /* SaltChannel+Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */; };
+		5B5541501F82DAB000730B41 /* SaltChannel+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */; };
+		5BE382D01F8391B700E40069 /* SaltChannel+Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */; };
 		5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D11F8394BC00E40069 /* WaitUntil.swift */; };
 		5BE382D61F83C88500E40069 /* BasicSaltTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D51F83C88500E40069 /* BasicSaltTests.swift */; };
-		5BE382D81F84F0DA00E40069 /* Keys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D71F84F0DA00E40069 /* Keys.swift */; };
-		5BE382DA1F84F7E100E40069 /* KeysTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D91F84F7E100E40069 /* KeysTests.swift */; };
-		5BE382DC1F8528F000E40069 /* TestKeyGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382DB1F8528F000E40069 /* TestKeyGenerator.swift */; };
 		5DEEB4C106EA28AB099E3667 /* Pods_SaltChannel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */; };
 		A9E995203B5A83B1AB11990E /* Pods_SaltChannel_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */; };
 		OBJ_24 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
@@ -63,18 +65,20 @@
 /* Begin PBXFileReference section */
 		2773C5788EF12ADE39406372 /* Pods-SaltChannel.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel/Pods-SaltChannel.debug.xcconfig"; sourceTree = "<group>"; };
 		2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
+		5B49F04F1F87AF4D00C15D30 /* EchoMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoMock.swift; sourceTree = "<group>"; };
+		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
+		5B49F0531F87B13F00C15D30 /* MockRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRunner.swift; sourceTree = "<group>"; };
+		5B49F0551F87D1A300C15D30 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
 		5B5541451F82D2EF00730B41 /* ChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelError.swift; sourceTree = "<group>"; };
 		5B5541491F82D63A00730B41 /* ByteUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteUtils.swift; sourceTree = "<group>"; };
 		5B55414B1F82D6BB00730B41 /* ByteChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteChannel.swift; sourceTree = "<group>"; };
-		5B55414D1F82D87000730B41 /* Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handshake.swift; sourceTree = "<group>"; };
-		5B55414F1F82DAB000730B41 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
-		5BE382CF1F8391B700E40069 /* Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client.swift"; sourceTree = "<group>"; };
+		5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Protocol.swift"; sourceTree = "<group>"; };
+		5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Crypto.swift"; sourceTree = "<group>"; };
 		5BE382D11F8394BC00E40069 /* WaitUntil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		5BE382D41F83A8AE00E40069 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5BE382D51F83C88500E40069 /* BasicSaltTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicSaltTests.swift; sourceTree = "<group>"; };
-		5BE382D71F84F0DA00E40069 /* Keys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keys.swift; sourceTree = "<group>"; };
-		5BE382D91F84F7E100E40069 /* KeysTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysTests.swift; sourceTree = "<group>"; };
-		5BE382DB1F8528F000E40069 /* TestKeyGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestKeyGenerator.swift; sourceTree = "<group>"; };
 		6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF90645B5C1040BA9D7096A3 /* Pods-SaltChannel-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel-Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel-Tests/Pods-SaltChannel-Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -143,8 +147,10 @@
 				OBJ_13 /* SaltChannelTests.swift */,
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				5BE382D51F83C88500E40069 /* BasicSaltTests.swift */,
-				5BE382D91F84F7E100E40069 /* KeysTests.swift */,
-				5BE382DB1F8528F000E40069 /* TestKeyGenerator.swift */,
+				5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */,
+				5B49F04F1F87AF4D00C15D30 /* EchoMock.swift */,
+				5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */,
+				5B49F0531F87B13F00C15D30 /* MockRunner.swift */,
 			);
 			path = Tests;
 			sourceTree = SOURCE_ROOT;
@@ -181,10 +187,10 @@
 				5B5541451F82D2EF00730B41 /* ChannelError.swift */,
 				5B5541491F82D63A00730B41 /* ByteUtils.swift */,
 				5B55414B1F82D6BB00730B41 /* ByteChannel.swift */,
-				5B55414D1F82D87000730B41 /* Handshake.swift */,
-				5B55414F1F82DAB000730B41 /* Protocol.swift */,
-				5BE382CF1F8391B700E40069 /* Crypto.swift */,
-				5BE382D71F84F0DA00E40069 /* Keys.swift */,
+				5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */,
+				5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */,
+				5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */,
+				5B49F0551F87D1A300C15D30 /* Protocol.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -377,11 +383,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				5BE382DC1F8528F000E40069 /* TestKeyGenerator.swift in Sources */,
+				5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */,
 				5BE382D61F83C88500E40069 /* BasicSaltTests.swift in Sources */,
-				5BE382DA1F84F7E100E40069 /* KeysTests.swift in Sources */,
+				5B49F0501F87AF4D00C15D30 /* EchoMock.swift in Sources */,
+				5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */,
 				OBJ_30 /* SaltChannelTests.swift in Sources */,
 				OBJ_31 /* SodiumExtensionTest.swift in Sources */,
+				5B49F0541F87B13F00C15D30 /* MockRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,15 +399,15 @@
 			files = (
 				5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */,
 				OBJ_41 /* Nonce.swift in Sources */,
-				5BE382D01F8391B700E40069 /* Crypto.swift in Sources */,
+				5BE382D01F8391B700E40069 /* SaltChannel+Crypto.swift in Sources */,
 				OBJ_42 /* SaltChannel.swift in Sources */,
-				5BE382D81F84F0DA00E40069 /* Keys.swift in Sources */,
 				5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */,
 				5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */,
 				OBJ_43 /* Sodium+Extension.swift in Sources */,
 				5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */,
-				5B55414E1F82D87000730B41 /* Handshake.swift in Sources */,
-				5B5541501F82DAB000730B41 /* Protocol.swift in Sources */,
+				5B55414E1F82D87000730B41 /* SaltChannel+Client.swift in Sources */,
+				5B5541501F82DAB000730B41 /* SaltChannel+Protocol.swift in Sources */,
+				5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

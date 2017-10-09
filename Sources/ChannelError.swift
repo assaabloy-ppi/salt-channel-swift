@@ -9,10 +9,11 @@ public enum ChannelError: Error {
     case readTimeout
     case notImplemented
     case setupNotDone
-    case gotWrongMessage
+    case badMessageType(reason: String)
+    // case gotWrongMessage
     case signatureDidNotMatch
     case couldNotCreateSignature
     case couldNotDecrypt
     case couldNotCalculateSessionKey
-    case errorInMessage
+    case errorInMessage(reason: String)
 }

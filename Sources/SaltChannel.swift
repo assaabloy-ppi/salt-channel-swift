@@ -6,6 +6,7 @@
 import Foundation
 import Sodium
 import Binson
+import CocoaLumberjack
 
 /**
  **SaltChannel** is a ByteChannel with encryption and authorization.
@@ -52,8 +53,8 @@ public class SaltChannel: ByteChannel {
         
         // Create an array of encrypted packages
         for package in data {
-            let appPackage = packAppPacket(time: 0, message: package)
-            packages.append(encryptMessage(sessionKey: key, message: appPackage))
+            let msg = a1(time: 0, message: package)
+            packages.append(encryptMessage(sessionKey: key, message: msg))
         }
         
         try self.channel.write(packages)
@@ -67,6 +68,7 @@ public class SaltChannel: ByteChannel {
     // --- Callbacks -------
     
     func error(_ error: Error) {
+        DDLogError("Got error: /(error)")
     }
     
     func read(_ data: Data) {
@@ -77,7 +79,7 @@ public class SaltChannel: ByteChannel {
         else {
             if let key = self.sessionKey,
                 let raw = try? receiveAndDecryptMessage(message: data, sessionKey: key),
-                let (_, message) = try? unpackAppPacket(data: raw) {
+                let (_, message) = try? a2(data: raw) {
                 self.callback.first!(message)
             } else {
                 self.errorhandler.first!(ChannelError.setupNotDone)

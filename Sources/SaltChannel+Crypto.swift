@@ -12,31 +12,32 @@ protocol Crypto {
 
 extension SaltChannel: Crypto {
 
-    public func receiveAndDecryptMessage(message: Data, sessionKey: Data) throws -> Data {
+    public func receiveAndDecryptMessage(message: Data, session: Session) throws -> Data {
         DDLogInfo("read called from receiveAndDecryptMessage salt handshake")
         let header = message[..<2]
-        guard readHeader(header: header) == PacketType.Encrypted else {
+        guard read(header: header) == PacketType.Encrypted else {
             throw ChannelError.badMessageType(reason: "Expected Encrypted PacketType Header")
         }
         
         let encryptedData = message.subdata(in: 2 ..< message.endIndex)
         
-        guard let decryptedData = sodium.box.open(authenticatedCipherText: encryptedData, beforenm: sessionKey, nonce: receiveNonce.getNextNonce()) else {
+        guard let decryptedData = sodium.box.open(authenticatedCipherText: encryptedData, beforenm: session.key, nonce: receiveNonce.getNextNonce()) else {
             throw ChannelError.couldNotDecrypt
         }
         
         return decryptedData
     }
     
-    public func encryptMessage(sessionKey: Data, message: Data) -> Data {
+    public func encryptMessage(session: Session, message: Data) -> Data {
         // Added for byte channel multicall, TODO: Review
-        let encryptedMessage = createHeader(packageType: PacketType.Encrypted) + sodium.box.seal(message: message, beforenm: sessionKey, nonce: sendNonce.getNextNonce())!
+        let header = create(from: PacketType.Encrypted)
+        let encryptedMessage =  header + sodium.box.seal(message: message, beforenm: session.key, nonce: sendNonce.getNextNonce())!
         return encryptedMessage
     }
     
-    public func encryptAndSendMessage(sessionKey: Data, message: Data) throws {
-        let header = createHeader(packageType: PacketType.Encrypted)
-        let cipherData = sodium.box.seal(message: message, beforenm: sessionKey, nonce: sendNonce.getNextNonce())!
+    public func encryptAndSendMessage(session: Session, message: Data) throws {
+        let header = create(from: PacketType.Encrypted)
+        let cipherData = sodium.box.seal(message: message, beforenm: session.key, nonce: sendNonce.getNextNonce())!
         try self.channel.write([header + cipherData])
     }
     
@@ -60,25 +61,5 @@ extension SaltChannel: Crypto {
         }
         
         return sign
-    }
-}
-
-extension SaltChannel {
-    func createHeader(packageType: PacketType) -> Data {
-        let type = packBytes(UInt64(packageType.rawValue), parts: 1)
-        let dummy = packBytes(0, parts: 1)
-        return type + dummy
-    }
-    
-    func readHeader(header: Data) -> PacketType {
-        guard let byte = header.first else {
-            return .Unknown
-        }
-        
-        if let type = PacketType(rawValue: byte) {
-            return type
-        } else {
-            return .Unknown
-        }
     }
 }

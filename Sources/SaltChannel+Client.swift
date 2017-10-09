@@ -4,6 +4,7 @@
 //  Created by Kenneth Pernyer on 2017-10-02.
 
 import Foundation
+import CocoaLumberjack
 
 extension SaltChannel {
     
@@ -27,14 +28,23 @@ extension SaltChannel {
             guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
                 throw ChannelError.couldNotCalculateSessionKey
             }
-            self.sessionKey = key
+            
+            // Create a session
+            self.session = Session(key: key)
+            guard let session = self.session else {
+                throw ChannelError.couldNotCalculateSessionKey
+            }
             
             if WaitUntil.waitUntil(60, self.lastMessage != nil) {
                 let m3Raw = self.lastMessage!
                 self.lastMessage = nil
-                let data: Data = try receiveAndDecryptMessage(message: m3Raw, sessionKey: self.sessionKey!)
                 
-                let (_, remoteSignPub) = try m3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+                let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
+                
+                let (m3time, remoteSignPub) = try m3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+                
+                DDLogInfo("M3 received time = " + String(m3time))
+
                 self.remoteSignPub = remoteSignPub
                 
                 let m4Data: Data = try m4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
@@ -42,9 +52,9 @@ extension SaltChannel {
                 self.handshakeDone = true
                 
                 if holdUntilFirstWrite {
-                    bufferedM4 = encryptMessage(sessionKey: self.sessionKey!, message: m4Data)
+                    bufferedM4 = encryptMessage(session: session, message: m4Data)
                 } else {
-                    try encryptAndSendMessage(sessionKey: self.sessionKey!, message: m4Data)
+                    try encryptAndSendMessage(session: session, message: m4Data)
                 }
             } else {
                 throw ChannelError.readTimeout

@@ -22,23 +22,20 @@ class SaltChannelTests: XCTestCase {
         DDTTYLogger.sharedInstance.colorsEnabled = true
     }
     
-    func testM1() {
-        let mock = EchoMock(mockdata: testDataSet)
-        
+    func testDataValidity() {
         let css = testDataSet.get(.client_sk_sec)
         let csp = testDataSet.get(.client_sk_pub)
         let cep = testDataSet.get(.client_ek_pub)
         let ces = testDataSet.get(.client_ek_sec)
         let ssp = testDataSet.get(.host_sk_pub)
         
-        let m1 = testDataSet.get(.m1)
-
-        let channel = SaltChannel(channel: mock, sec: css, pub: csp)
-        let m1Hash = try? channel.m1(time: 0, myEncPub: cep)
-
+        let r1 = testDataSet.get(.msg1)
+        let r2 = testDataSet.get(.msg2)
+        
+        
     }
     
-    func testHandshake() {
+    func testClientHandshake() {
         let mock = BasicHostMock(mockdata: testDataSet)
         
         let css = testDataSet.get(.client_sk_sec)
@@ -85,5 +82,22 @@ class SaltChannelTests: XCTestCase {
             print(error)
             XCTAssertTrue(false)
         }
+    }
+    
+    func testEcho() {
+        /*
+        let mock = EchoMock(mockdata: testDataSet)
+        
+        let css = testDataSet.get(.client_sk_sec)
+        let csp = testDataSet.get(.client_sk_pub)
+        let cep = testDataSet.get(.client_ek_pub)
+        let ces = testDataSet.get(.client_ek_sec)
+        let ssp = testDataSet.get(.host_sk_pub)
+        
+        let m1 = testDataSet.get(.m1)
+        
+        let channel = SaltChannel(channel: mock, sec: css, pub: csp)
+        let m1Hash = try? channel.m1(time: 0, myEncPub: cep)
+        */
     }
 }

@@ -18,13 +18,14 @@ public class SaltChannel: ByteChannel {
     let channel: ByteChannel!
     let clientSignSec: Data!
     let clientSignPub: Data!
-    
+    var remoteSignPub: Data?
+
     let sodium = Sodium()
-    
+    var session: Session?
+
     var sendNonce = Nonce(startValue: 1)
     var receiveNonce = Nonce(startValue: 2)
-    var sessionKey: Data?
-    var remoteSignPub: Data?
+    
     var bufferedM4: Data?
     var didReceiveMsg = false
     var lastMessage: Data?
@@ -40,7 +41,7 @@ public class SaltChannel: ByteChannel {
     
     // Mark: Channel
     public func write(_ data: [Data]) throws {
-        guard let key = self.sessionKey else {
+        guard let session = self.session else {
             throw ChannelError.setupNotDone
         }
         
@@ -53,8 +54,8 @@ public class SaltChannel: ByteChannel {
         
         // Create an array of encrypted packages
         for package in data {
-            let msg = a1(time: 0, message: package)
-            packages.append(encryptMessage(sessionKey: key, message: msg))
+            let msg = a1(time: session.time, message: package)
+            packages.append(encryptMessage(session: session, message: msg))
         }
         
         try self.channel.write(packages)
@@ -77,8 +78,8 @@ public class SaltChannel: ByteChannel {
             return
         }
         else {
-            if let key = self.sessionKey,
-                let raw = try? receiveAndDecryptMessage(message: data, sessionKey: key),
+            if let session = self.session,
+                let raw = try? receiveAndDecryptMessage(message: data, session: session),
                 let (_, message) = try? a2(data: raw) {
                 self.callback.first!(message)
             } else {

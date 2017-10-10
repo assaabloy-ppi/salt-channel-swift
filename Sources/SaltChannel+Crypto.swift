@@ -15,7 +15,8 @@ extension SaltChannel: Crypto {
     public func receiveAndDecryptMessage(message: Data, session: Session) throws -> Data {
         DDLogInfo("read called from receiveAndDecryptMessage salt handshake")
         let header = message[..<2]
-        guard read(header: header) == PacketType.Encrypted else {
+        let (type, first, last) = readHeader(from: header)
+        guard type == PacketType.Encrypted else {
             throw ChannelError.badMessageType(reason: "Expected Encrypted PacketType Header")
         }
         
@@ -30,13 +31,13 @@ extension SaltChannel: Crypto {
     
     public func encryptMessage(session: Session, message: Data) -> Data {
         // Added for byte channel multicall, TODO: Review
-        let header = create(from: PacketType.Encrypted)
+        let header = createHeader(from: PacketType.Encrypted)
         let encryptedMessage =  header + sodium.box.seal(message: message, beforenm: session.key, nonce: sendNonce.getNextNonce())!
         return encryptedMessage
     }
     
     public func encryptAndSendMessage(session: Session, message: Data) throws {
-        let header = create(from: PacketType.Encrypted)
+        let header = createHeader(from: PacketType.Encrypted)
         let cipherData = sodium.box.seal(message: message, beforenm: session.key, nonce: sendNonce.getNextNonce())!
         try self.channel.write([header + cipherData])
     }

@@ -7,11 +7,13 @@ import Foundation
 import CocoaLumberjack
 
 extension SaltChannel: Protocol {
+    ///- Client --
+
     /**
      ##M1## is sent to the server in plain
      */
-    public func m1(time: TimeInterval, myEncPub: Data) throws -> Data {
-        let header = create(from: PacketType.M1)
+    public func writeM1(time: TimeInterval, myEncPub: Data) throws -> Data {
+        let header = createHeader(from: PacketType.M1)
         
         // TODO: better toBytes for Double
         let m1 = Constants.protocolId + header + packBytes(UInt64(time), parts: 4) + myEncPub
@@ -22,40 +24,15 @@ extension SaltChannel: Protocol {
     }
     
     /**
-     ##M1## is sent to the server in plain
-     */
-    public func unpackmM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
-        DDLogInfo("Host: unpack M1")
-        let hash = sodium.genericHash.hashSha512(data: data)
-        let protocolId = data[..<4]
-        guard protocolId ==  Constants.protocolId else {
-            throw ChannelError.badMessageType(reason: "Expected M1 Header")
-        }
-        
-        let header = data[4..<6]
-        guard read(header: header) == PacketType.M1 else {
-            throw ChannelError.badMessageType(reason: "Expected M1 Header")
-        }
-        // TODO: better unpack for Integer and convert to Double
-        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
-        let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
-        guard remoteEncPub.count == 32 else {
-            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. /(time)")
-        }
-        
-        let realtime = TimeInterval(time)
-        DDLogInfo("M2 returning. Time= /(realtime)")
-        return (realtime, remoteEncPub, hash)
-    }
-    
-    /**
      ##M2## sent from the server in plain
      */
-    public func m2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+    public func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
         DDLogInfo("Client: Read called from M2 salt handshake.")
         let hash = sodium.genericHash.hashSha512(data: data)
         let header = data[..<2]
-        guard read(header: header) == PacketType.M2 else {
+        
+        let (type, first, last) = self.readHeader(from: header)
+        guard type == PacketType.M2 else {
             print(header.hex)
             throw ChannelError.badMessageType(reason: "Expected M2 Header")
         }
@@ -63,11 +40,11 @@ extension SaltChannel: Protocol {
         let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
         let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
         guard remoteEncPub.count == 32 else {
-            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. /(time)")
+            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. \(time)")
         }
         
         let realtime = TimeInterval(time)
-        DDLogInfo("M2 returning. Time= /(realtime)")
+        DDLogInfo("M2 returning. Time= \(realtime)")
         return (realtime, remoteEncPub, hash)
     }
     
@@ -75,13 +52,14 @@ extension SaltChannel: Protocol {
      ##M3## sent from the server encrypted for me. Decrypted before this call using
      receiveAndDecryptMessage()
      */
-    public func m3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
+    public func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
         let header = data[..<2]
         
         print(header.hex)
         print(data.hex)
         
-        guard read(header: header) == PacketType.M3 else {
+        let (type, first, last) = readHeader(from: header)
+        guard type == PacketType.M3 else {
             throw ChannelError.badMessageType(reason: "Expected M3 Header")
         }
         
@@ -98,15 +76,15 @@ extension SaltChannel: Protocol {
         }
         
         let realtime = TimeInterval(time)
-        DDLogInfo("M3 returning. Time= /(realtime)")
+        DDLogInfo("M3 returning. Time= \(realtime)")
         return (realtime, remoteSignPub)
     }
     
     /**
      ##M4## is sent to the server encrypted
      */
-    public func m4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data {
-        let header = create(from: PacketType.M4)
+    public func writeM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data {
+        let header = createHeader(from: PacketType.M4)
         let signedMessage = Constants.clientprefix + m1Hash + m2Hash
         guard let signature = createSignature(message: signedMessage, signSec: clientSignSec) else {
             throw ChannelError.couldNotCreateSignature
@@ -119,19 +97,40 @@ extension SaltChannel: Protocol {
     /**
      ##A1## is sent to the server in the open
      */
-    public func a1(time: TimeInterval, message: Data) -> Data {
-        let header = create(from: PacketType.App)
+    public func writeA1(time: TimeInterval, message: Data) -> Data {
+        // TODO
+        return Data()
+    }
+    
+    /**
+     */
+    public func readA2(data: Data) throws -> (time: TimeInterval, message: Data) {
+        let header = data[..<2]
+        let (type, first, last) = readHeader(from: header)
+        guard type == PacketType.A2 else {
+            throw ChannelError.badMessageType(reason: "Expected A2 message header")
+        }
+        
+        // TODO
+        return (0, Data())
+    }
+    
+    /**
+     */
+    func writeApp(time: TimeInterval, message: Data) -> Data {
+        let header = createHeader(from: PacketType.App)
         return header + packBytes(UInt64(time), parts: 4) + message
     }
     
     /**
      */
-    public func a2(data: Data) throws -> (time: TimeInterval, message: Data) {
+    public func readApp(data: Data) throws -> (time: TimeInterval, message: Data) {
         let header = data[..<2]
         print(header.hex)
         print(data.hex)
-        guard read(header: header) == PacketType.App else {
-            throw ChannelError.badMessageType(reason: "Expected A2 message header")
+        let (type, first, last) = readHeader(from: header)
+        guard  type == PacketType.App else {
+            throw ChannelError.badMessageType(reason: "Expected App message header")
         }
         
         // TODO: better unpack for Time
@@ -141,16 +140,41 @@ extension SaltChannel: Protocol {
     }
     
     /**
-     */
-    func app(time: TimeInterval, message: Data) -> Data {
-        return Data()
-    }
-    
-    /**
      ##MultiApp## is multiple messages batched together in the application layer protocol
      */
-    func multiApp(data: Data) throws -> (time: TimeInterval, message: Data) {
+    func writeMultiApp(data: Data) throws -> (time: TimeInterval, message: Data) {
         return (0, Data())
+    }
+    
+    ///- Host --
+    
+    /**
+     ##M1## is sent to the server in plain
+     */
+    public func readM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+        DDLogInfo("Host: unpack M1")
+        let hash = sodium.genericHash.hashSha512(data: data)
+        let protocolId = data[..<4]
+        guard protocolId ==  Constants.protocolId else {
+            throw ChannelError.badMessageType(reason: "Expected M1 Header")
+        }
+        
+        let header = data[4..<6]
+        let (type, first, last) = readHeader(from: header)
+        guard type == PacketType.M1 else {
+            throw ChannelError.badMessageType(reason: "Expected M1 Header")
+        }
+        
+        // TODO: better unpack for Integer and convert to Double
+        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
+        let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
+        guard remoteEncPub.count == 32 else {
+            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. \(time)")
+        }
+        
+        let realtime = TimeInterval(time)
+        DDLogInfo("M2 returning. Time= \(realtime)")
+        return (realtime, remoteEncPub, hash)
     }
 }
 

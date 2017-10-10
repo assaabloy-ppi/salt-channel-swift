@@ -81,6 +81,8 @@
 		5B8201191F8BAC1800EA7D2D /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Header.swift"; sourceTree = "<group>"; };
 		5B82011D1F8BB0F600EA7D2D /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		5B8201201F8CCB6600EA7D2D /* test_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = test_data.h; path = "Tests/New Group/test_data.h"; sourceTree = SOURCE_ROOT; };
+		5B8201211F8CCB6600EA7D2D /* test_data.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = test_data.c; path = "Tests/New Group/test_data.c"; sourceTree = SOURCE_ROOT; };
 		5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Crypto.swift"; sourceTree = "<group>"; };
 		5BE382D11F8394BC00E40069 /* WaitUntil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitUntil.swift; sourceTree = "<group>"; };
 		5BE382D41F83A8AE00E40069 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +140,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		5B82011F1F8CCAF200EA7D2D /* data */ = {
+			isa = PBXGroup;
+			children = (
+				5B8201201F8CCB6600EA7D2D /* test_data.h */,
+				5B8201211F8CCB6600EA7D2D /* test_data.c */,
+			);
+			path = data;
+			sourceTree = SOURCE_ROOT;
+		};
 		9246E29B1A85CBF5BD9714A6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,6 +161,7 @@
 		OBJ_12 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5B82011F1F8CCAF200EA7D2D /* data */,
 				OBJ_13 /* SaltChannelTests.swift */,
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				5BE382D51F83C88500E40069 /* BasicSaltTests.swift */,
@@ -267,6 +279,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0900;
+				TargetAttributes = {
+					"SaltChannel::SaltChannel-Tests" = {
+						LastSwiftMigration = 0900;
+					};
+				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "SaltChannel" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -462,6 +479,7 @@
 			baseConfigurationReference = EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -471,6 +489,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGET_NAME = "SaltChannel-Tests";
 			};
@@ -481,6 +500,7 @@
 			baseConfigurationReference = CF90645B5C1040BA9D7096A3 /* Pods-SaltChannel-Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",

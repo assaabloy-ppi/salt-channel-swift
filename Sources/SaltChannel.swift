@@ -54,7 +54,7 @@ public class SaltChannel: ByteChannel {
         
         // Create an array of encrypted packages
         for package in data {
-            let msg = a1(time: session.time, message: package)
+            let msg = writeApp(time: session.time, message: package)
             packages.append(encryptMessage(session: session, message: msg))
         }
         
@@ -80,7 +80,7 @@ public class SaltChannel: ByteChannel {
         else {
             if let session = self.session,
                 let raw = try? receiveAndDecryptMessage(message: data, session: session),
-                let (_, message) = try? a2(data: raw) {
+                let (_, message) = try? readApp(data: raw) {
                 self.callback.first!(message)
             } else {
                 self.errorhandler.first!(ChannelError.setupNotDone)

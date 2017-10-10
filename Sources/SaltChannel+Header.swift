@@ -33,26 +33,37 @@ enum PacketType: Byte {
 }
 
 protocol Header {
-    func create(from packageType: PacketType) -> Data
-    func read(header: Data) -> PacketType
+    func createHeader(from packageType: PacketType, first: Bool, last: Bool) -> Data
+    func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool)
 }
 
 extension SaltChannel: Header {
-    func create(from packageType: PacketType) -> Data {
+    func createHeader(from packageType: PacketType, first: Bool = false, last: Bool = false) -> Data {
         let type = packBytes(UInt64(packageType.rawValue), parts: 1)
+        
+        // TODO: set noSuch bit and/or Last if required
         let dummy = packBytes(0, parts: 1)
+        
         return type + dummy
     }
     
-    func read(header: Data) -> PacketType {
-        guard let byte = header.first else {
-            return .Unknown
+    func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool) {
+        var first = false
+        var last = false
+        var unknown = (type: PacketType.Unknown, firstBit: first, lastBit: last)
+        
+        guard data.count == 2,
+            let byte1 = data.first,
+            let byte2 = data.last else {
+            return unknown
         }
         
-        if let type = PacketType(rawValue: byte) {
-            return type
+        // TODO: read noSuch bit and/or Last if required
+        
+        if let type = PacketType(rawValue: byte1) {
+            return (type, first, last)
         } else {
-            return .Unknown
+            return unknown
         }
     }
 }

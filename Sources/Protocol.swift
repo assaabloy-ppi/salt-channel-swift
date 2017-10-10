@@ -11,15 +11,28 @@ enum Constants {
     static let clientprefix = Data("SC-SIG02".utf8)
 }
 
-protocol Protocol {
-    func m1(time: TimeInterval, myEncPub: Data) throws -> Data
-    func m2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)
-    func m3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data)
-    func m4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data
+// typealias Protocol = Client & Host
+typealias Protocol = Client
+
+protocol Client {
+    func writeM1(time: TimeInterval, myEncPub: Data) throws -> Data
+    func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)
+    func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data)
+    func writeM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data
     
-    func a1(time: TimeInterval, message: Data) -> Data
-    func a2(data: Data) throws -> (time: TimeInterval, message: Data)
+    func writeA1(time: TimeInterval, message: Data) -> Data
+    func readA2(data: Data) throws -> (time: TimeInterval, message: Data)
     
-    func app(time: TimeInterval, message: Data) -> Data
-    func multiApp(data: Data) throws -> (time: TimeInterval, message: Data)
+    func writeApp(time: TimeInterval, message: Data) -> Data
+    func writeMultiApp(data: Data) throws -> (time: TimeInterval, message: Data)
+}
+
+protocol Host {
+    func readM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)
+    func writeM2(time: TimeInterval, myEncPub: Data) throws -> Data
+    func writeM3(time: TimeInterval, myEncPub: Data) throws -> Data
+    func readM4(data: Data) throws -> (time: TimeInterval, message: Data)
+    
+    func writeA2(time: TimeInterval, message: Data) -> Data
+    func readA1(data: Data) throws -> (time: TimeInterval, message: Data)
 }

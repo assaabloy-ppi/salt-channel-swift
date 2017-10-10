@@ -26,18 +26,22 @@ class SaltChannelTests: XCTestCase {
     let m3 = testDataSet.get(.m3)
     let m4 = testDataSet.get(.m4)
 
-    // let a1 = testDataSet.get(.a1)
-    // let a2 = testDataSet.get(.a2)
+    let a1 = testDataSet.get(.a1)
+    let a2 = testDataSet.get(.a2)
 
     let msg1 = testDataSet.get(.msg1)
     let msg2 = testDataSet.get(.msg2)
-    
+    let msg3 = testDataSet.get(.msg3)
+    let msg4 = testDataSet.get(.msg4)
+
     let plain1 = testDataSet.get(.plain1)
     let plain2 = testDataSet.get(.plain2)
-    
+    let plain3 = testDataSet.get(.plain3)
+    let plain4 = testDataSet.get(.plain4)
+
     override func setUp() {
         super.setUp()
-        DDLog.add(DDTTYLogger.sharedInstance) // TTY = Xcode console
+        DDLog.add(DDTTYLogger.sharedInstance)
         DDTTYLogger.sharedInstance.colorsEnabled = true
     }
     
@@ -50,7 +54,7 @@ class SaltChannelTests: XCTestCase {
         let mock = BasicHostMock(mockdata: testDataSet)
         
         var status = "Starting"
-        defer { print("When leaving scope status is /(status)") }
+        defer { print("When leaving scope status is \(status)") }
         
         mock.start()
         let channel = SaltChannel(channel: mock, sec: css, pub: csp)

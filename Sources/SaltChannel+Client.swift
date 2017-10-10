@@ -34,7 +34,7 @@ extension SaltChannel {
         guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
             throw ChannelError.couldNotCalculateSessionKey
         }
-        self.session = Session(key: key)
+        self.session = Session(key: key, timeKeeper: NullTimeKeeper())
         guard let session = self.session else {
             throw ChannelError.couldNotCalculateSessionKey
         }

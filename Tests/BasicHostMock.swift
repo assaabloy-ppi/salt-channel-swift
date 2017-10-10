@@ -39,7 +39,6 @@ class BasicHostMock : ByteChannel, MockRunner {
     }
     
     func send(_ data: Data){
-        sleep(1)
         for callback in callbacks{
             print("Send data")
             callback(data)

@@ -12,8 +12,9 @@ import CocoaLumberjack
  **SaltChannel** is a ByteChannel with encryption and authorization.
  */
 public class SaltChannel: ByteChannel {
-    var callback: [(Data) -> ()] = []
-    var errorhandler: [(Error) -> ()] = []
+    var callbacks: [(Data) -> ()] = []
+    var errorHandlers: [(Error) -> ()] = []
+    var receiveData: [Data] = []
 
     let channel: ByteChannel!
     let clientSignSec: Data!
@@ -27,8 +28,6 @@ public class SaltChannel: ByteChannel {
     var receiveNonce = Nonce(startValue: 2)
     
     var bufferedM4: Data?
-    var didReceiveMsg = false
-    var lastMessage: Data?
     var handshakeDone = false
     
     /// Create a SaltChannel with channel to wrap plus the clients signing
@@ -62,28 +61,31 @@ public class SaltChannel: ByteChannel {
     }
     
     public func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
-        self.errorhandler.append(errorhandler)
-        self.callback.append(callback)
+        self.errorHandlers.append(errorhandler)
+        self.callbacks.append(callback)
     }
     
     // --- Callbacks -------
     
     func error(_ error: Error) {
-        DDLogError("Got error: /(error)")
+        for errorHandler in errorHandlers{
+            errorHandler(error)
+        }
     }
     
     func read(_ data: Data) {
         if !self.handshakeDone {
-            gotHandshakeMessage(message: data)
-            return
+            receiveData.append(data)
         }
         else {
             if let session = self.session,
                 let raw = try? receiveAndDecryptMessage(message: data, session: session),
                 let (_, message) = try? a2(data: raw) {
-                self.callback.first!(message)
+                for callback in callbacks{
+                    callback(message)
+                }
             } else {
-                self.errorhandler.first!(ChannelError.setupNotDone)
+                error(ChannelError.setupNotDone)
             }
         }
     }

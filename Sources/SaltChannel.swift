@@ -81,7 +81,9 @@ public class SaltChannel: ByteChannel {
             if let session = self.session,
                 let raw = try? receiveAndDecryptMessage(message: data, session: session),
                 let (_, message) = try? readApp(data: raw) {
-                self.callback.first!(message)
+                for callback in callbacks {
+                    callback(message)
+                }
             } else {
                 error(ChannelError.setupNotDone)
             }

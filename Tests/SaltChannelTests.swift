@@ -39,9 +39,12 @@ class SaltChannelTests: XCTestCase {
     let plain3 = testDataSet.get(.plain3)
     let plain4 = testDataSet.get(.plain4)
 
+    
+    var receivedData: [Data] = []
+    
     override func setUp() {
         super.setUp()
-        DDLog.add(DDTTYLogger.sharedInstance)
+        DDLog.add(DDTTYLogger.sharedInstance) // TTY = Xcode console
         DDTTYLogger.sharedInstance.colorsEnabled = true
     }
     
@@ -62,10 +65,6 @@ class SaltChannelTests: XCTestCase {
     
     func testClientHandshake() throws{
         let mock = BasicHostMock(mockdata: testDataSet)
-        
-        var status = "Starting"
-        defer { print("When leaving scope status is \(status)") }
-        
         mock.start()
         let channel = SaltChannel(channel: mock, sec: css, pub: csp)
         channel.register(callback: receiver, errorhandler: errorhandler)

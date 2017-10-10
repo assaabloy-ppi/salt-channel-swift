@@ -15,62 +15,40 @@ extension SaltChannel {
     
     func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false) throws {
         
-        if self.handshakeDone{
+        if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
         }
         
         self.channel.register(callback: read, errorhandler: error)
-            
+        
+        // *** Send M1 ***
         let m1Hash = try writeM1(time: 0, myEncPub: clientEncPub)
         
-        if WaitUntil.waitUntil(60, self.lastMessage != nil) {
-            let m2Raw = self.lastMessage!
-            self.lastMessage = nil
-            let (_, serverEncPub, m2Hash) = try readM2(data: m2Raw)
-            
-            guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
-                throw ChannelError.couldNotCalculateSessionKey
-            }
-            
-            // Create a session
-            self.session = Session(key: key)
-            guard let session = self.session else {
-                throw ChannelError.couldNotCalculateSessionKey
-            }
-            
-            if WaitUntil.waitUntil(60, self.lastMessage != nil) {
-                let m3Raw = self.lastMessage!
-                self.lastMessage = nil
-                
-                let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
-                
-                let (m3time, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
-                
-                DDLogInfo("M3 received time = " + String(m3time))
-
-                self.remoteSignPub = remoteSignPub
-                
-                let m4Data: Data = try writeM4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
-                
-                self.handshakeDone = true
-                
-                if holdUntilFirstWrite {
-                    bufferedM4 = encryptMessage(session: session, message: m4Data)
-                } else {
-                    try encryptAndSendMessage(session: session, message: m4Data)
-                }
-            } else {
-                throw ChannelError.readTimeout
-            }
-        } else {
+        // *** Receive M2 ***
+        guard let m2Raw = waitForData() else {
+            throw ChannelError.readTimeout
+        }
+        let (_, serverEncPub, m2Hash) = try readM2(data: m2Raw)
+        
+        // *** Create a session ***
+        guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
+            throw ChannelError.couldNotCalculateSessionKey
+        }
+        self.session = Session(key: key)
+        guard let session = self.session else {
+            throw ChannelError.couldNotCalculateSessionKey
+        }
+        
+        // *** Receive M3 ***
+        guard let m3Raw = waitForData() else {
             throw ChannelError.readTimeout
         }
         let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
-        let (m3time, remoteSignPub) = try m3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+        let (m3time, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         self.remoteSignPub = remoteSignPub
         
         // *** Send M4 ***
-        let m4Data: Data = try m4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
+        let m4Data: Data = try writeM4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
         
         if holdUntilFirstWrite {
             bufferedM4 = encryptMessage(session: session, message: m4Data)

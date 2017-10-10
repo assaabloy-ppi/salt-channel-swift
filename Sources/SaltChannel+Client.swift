@@ -13,9 +13,12 @@ extension SaltChannel {
         try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey, holdUntilFirstWrite: holdUntilFirstWrite)
     }
     
-    func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false)
-        throws {
-            
+    func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false) throws {
+        
+        if self.handshakeDone{
+            throw ChannelError.handshakeAlreadyDone
+        }
+        
         self.channel.register(callback: read, errorhandler: error)
             
         let m1Hash = try writeM1(time: 0, myEncPub: clientEncPub)
@@ -62,9 +65,28 @@ extension SaltChannel {
         } else {
             throw ChannelError.readTimeout
         }
+        let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
+        let (m3time, remoteSignPub) = try m3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+        self.remoteSignPub = remoteSignPub
+        
+        // *** Send M4 ***
+        let m4Data: Data = try m4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
+        
+        if holdUntilFirstWrite {
+            bufferedM4 = encryptMessage(session: session, message: m4Data)
+        } else {
+            try encryptAndSendMessage(session: session, message: m4Data)
+        }
+        
+        self.handshakeDone = true
     }
     
-    public func gotHandshakeMessage(message: Data){
-        self.lastMessage = message
+    func waitForData() -> Data?{
+        if WaitUntil.waitUntil(10, receiveData.isEmpty == false) {
+            let temporery = receiveData.first
+            receiveData.remove(at: 0)
+            return temporery
+        }
+        return nil
     }
 }

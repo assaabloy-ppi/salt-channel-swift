@@ -13,7 +13,6 @@ public struct Session {
     var time: TimeInterval = 0
     
     var key: Data
-    var lastMessage: Data?
     var handshakeDone = false
     
     init(key: Data) {

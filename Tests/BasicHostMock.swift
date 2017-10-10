@@ -1,70 +1,61 @@
 //  BasicHostMock.swift
 //  SaltChannel-Tests
 //
-//  Created by Håkan Ohlsson on 2017-10-05.
+//  Created by Håkan Olsson on 2017-10-05.
 
 import XCTest
 
 @testable import SaltChannel
 
 class BasicHostMock : ByteChannel, MockRunner {
-    var callback: [(Data) -> ()] = []
-    var didReceiveMsg = false
-    var readData: Data = Data()
+    var callbacks: [(Data) -> ()] = []
     var writeData: [Data] = []
-    
-    let m1, m2, m3, m4, msg1, msg2: Data
+    let mockdata: SaltTestData
     
     public init(mockdata: SaltTestData) {
-        m1 = mockdata.get(.m1)
-        m2 = mockdata.get(.m2)
-        m3 = mockdata.get(.m3)
-        m4 = mockdata.get(.m4)
-        msg1 = mockdata.get(.msg1)
-        msg2 = mockdata.get(.msg2)
+        self.mockdata = mockdata
     }
     
     public func start() {
-        DispatchQueue.global().async { self.handShake() }
+        DispatchQueue.global().async { self.handshake() }
     }
     
-    func handShake() {
-        if WaitUntil.waitUntil(10, self.didReceiveMsg == true) {
-            XCTAssertEqual(writeData[0], m1)
-            self.didReceiveMsg = false
-        }
-        sleep(4)
-        callback.first!(m2)
-        sleep(4)
-        callback.first!(m3)
-        
-        if WaitUntil.waitUntil(10, self.didReceiveMsg == true) {
-            XCTAssertEqual(writeData[0], m4)
-            self.didReceiveMsg = false
-        }
-        
-        if WaitUntil.waitUntil(10, self.didReceiveMsg == true) {
-            print(msg1.hex)
-            print(writeData[0].hex)
-            XCTAssertEqual(writeData[0], msg1)
-            self.didReceiveMsg = false
-        }
-        
-        sleep(4)
-        callback.first!(msg2)
+    func handshake() {
+        waitForData(mockdata.get(.m1))
+        send(mockdata.get(.m2))
+        send(mockdata.get(.m3))
+        waitForData(mockdata.get(.m4))
+        waitForData(mockdata.get(.msg1))
+        send(mockdata.get(.msg2))
     }
+    
+    // ****** Helper functions *******
+    
+    func waitForData(_ data: Data){
+        if WaitUntil.waitUntil(10, self.writeData.isEmpty == false) {
+            XCTAssertEqual(writeData.first, data)
+            writeData.remove(at: 0)
+        }
+    }
+    
+    func send(_ data: Data){
+        for callback in callbacks{
+            print("Send data")
+            callback(data)
+        }
+    }
+    
+    // ****** Interface *******
     
     func write(_ data: [Data]) throws {
         print("Write is called in Mock")
-        writeData = data
-        didReceiveMsg = true
+        for item in data{
+            writeData.append(item)
+        }
     }
     
     func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
         print("Register is called in Mock")
-        self.callback.append(callback)
+        self.callbacks.append(callback)
     }
 }
-
-
-

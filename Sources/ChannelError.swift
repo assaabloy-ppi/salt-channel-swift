@@ -16,4 +16,5 @@ public enum ChannelError: Error {
     case couldNotDecrypt
     case couldNotCalculateSessionKey
     case errorInMessage(reason: String)
+    case handshakeAlreadyDone
 }

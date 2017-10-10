@@ -45,12 +45,22 @@ class SaltChannelTests: XCTestCase {
         DDTTYLogger.sharedInstance.colorsEnabled = true
     }
     
-    func testM1Validity() {
-        
-        
+    func waitForData(_ data: Data){
+        if WaitUntil.waitUntil(10, self.receivedData.isEmpty == false) {
+            XCTAssertEqual(receivedData.first, data)
+            receivedData.remove(at: 0)
+        }
     }
     
-    func testClientHandshake() {
+    func receiver(data: Data){
+        receivedData.append(data)
+    }
+    
+    func errorhandler(error: Error){
+        XCTAssert(true, error.localizedDescription)
+    }
+    
+    func testClientHandshake() throws{
         let mock = BasicHostMock(mockdata: testDataSet)
         
         var status = "Starting"
@@ -58,53 +68,11 @@ class SaltChannelTests: XCTestCase {
         
         mock.start()
         let channel = SaltChannel(channel: mock, sec: css, pub: csp)
+        channel.register(callback: receiver, errorhandler: errorhandler)
         
-        /*
-        XCTAssertThrowsError(try channel.getRemoteSignPub()) { error in
-            XCTAssertEqual(error as? ChannelError, ChannelError.setupNotDone)
-        }
-         */
-        
-        do {
-            try channel.handshake(clientEncSec: ces, clientEncPub: cep)
-            XCTAssertEqual(try channel.getRemoteSignPub(), ssp)
-        
-            channel.register(callback:
-                { data in
-                    DDLogInfo("Received Callback R2 for R1")
-                    status = "Received Callback"
-                    XCTAssertEqual(data, self.plain2)
-                }, errorhandler:
-                { error in
-                    print(error.localizedDescription)
-                    DDLogError("Received error instead of R2 for R1:")
-                    status = "Error"
-                    XCTAssert(false)
-            })
-            
-            try channel.write([self.plain1])
-            sleep(8)
-
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
-    }
-    
-    func testEcho() {
-        /*
-        let mock = EchoMock(mockdata: testDataSet)
-        
-        let css = testDataSet.get(.client_sk_sec)
-        let csp = testDataSet.get(.client_sk_pub)
-        let cep = testDataSet.get(.client_ek_pub)
-        let ces = testDataSet.get(.client_ek_sec)
-        let ssp = testDataSet.get(.host_sk_pub)
-        
-        let m1 = testDataSet.get(.m1)
-        
-        let channel = SaltChannel(channel: mock, sec: css, pub: csp)
-        let m1Hash = try? channel.m1(time: 0, myEncPub: cep)
-        */
+        try channel.handshake(clientEncSec: ces, clientEncPub: cep)
+        XCTAssertEqual(try channel.getRemoteSignPub(), self.ssp)
+        try channel.write([self.plain1])
+        waitForData(self.plain2)
     }
 }

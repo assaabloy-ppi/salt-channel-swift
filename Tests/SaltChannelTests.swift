@@ -15,6 +15,25 @@ let testDataSet = SaltTestData(name: "Basic")
 
 class SaltChannelTests: XCTestCase {
     let sodium = Sodium()
+    let css = testDataSet.get(.client_sk_sec)
+    let csp = testDataSet.get(.client_sk_pub)
+    let cep = testDataSet.get(.client_ek_pub)
+    let ces = testDataSet.get(.client_ek_sec)
+    let ssp = testDataSet.get(.host_sk_pub)
+    
+    let m1 = testDataSet.get(.m1)
+    let m2 = testDataSet.get(.m2)
+    let m3 = testDataSet.get(.m3)
+    let m4 = testDataSet.get(.m4)
+
+    // let a1 = testDataSet.get(.a1)
+    // let a2 = testDataSet.get(.a2)
+
+    let msg1 = testDataSet.get(.msg1)
+    let msg2 = testDataSet.get(.msg2)
+    
+    let plain1 = testDataSet.get(.plain1)
+    let plain2 = testDataSet.get(.plain2)
     
     override func setUp() {
         super.setUp()
@@ -22,30 +41,13 @@ class SaltChannelTests: XCTestCase {
         DDTTYLogger.sharedInstance.colorsEnabled = true
     }
     
-    func testDataValidity() {
-        let css = testDataSet.get(.client_sk_sec)
-        let csp = testDataSet.get(.client_sk_pub)
-        let cep = testDataSet.get(.client_ek_pub)
-        let ces = testDataSet.get(.client_ek_sec)
-        let ssp = testDataSet.get(.host_sk_pub)
-        
-        let r1 = testDataSet.get(.msg1)
-        let r2 = testDataSet.get(.msg2)
+    func testM1Validity() {
         
         
     }
     
     func testClientHandshake() {
         let mock = BasicHostMock(mockdata: testDataSet)
-        
-        let css = testDataSet.get(.client_sk_sec)
-        let csp = testDataSet.get(.client_sk_pub)
-        let cep = testDataSet.get(.client_ek_pub)
-        let ces = testDataSet.get(.client_ek_sec)
-        let ssp = testDataSet.get(.host_sk_pub)
-        
-        let r1 = testDataSet.get(.msg1)
-        let r2 = testDataSet.get(.msg2)
         
         var status = "Starting"
         defer { print("When leaving scope status is /(status)") }
@@ -67,15 +69,16 @@ class SaltChannelTests: XCTestCase {
                 { data in
                     DDLogInfo("Received Callback R2 for R1")
                     status = "Received Callback"
-                    XCTAssertEqual(data, r2)
+                    XCTAssertEqual(data, self.plain2)
                 }, errorhandler:
                 { error in
-                    DDLogError("Received error instead of R2 for R1: /(error)")
+                    print(error.localizedDescription)
+                    DDLogError("Received error instead of R2 for R1:")
                     status = "Error"
                     XCTAssert(false)
             })
             
-            try channel.write([r1])
+            try channel.write([self.plain1])
             sleep(8)
 
         } catch {

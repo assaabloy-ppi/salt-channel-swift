@@ -9,7 +9,8 @@ import Foundation
 
 public struct Session {
     private let starttime: Date
-    var time: TimeInterval { return Date().timeIntervalSince(starttime) }
+    //var time: TimeInterval { return Date().timeIntervalSince(starttime) }
+    var time: TimeInterval = 0
     
     var key: Data
     var lastMessage: Data?

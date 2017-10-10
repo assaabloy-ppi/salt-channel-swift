@@ -22,13 +22,41 @@ extension SaltChannel: Protocol {
     }
     
     /**
+     ##M1## is sent to the server in plain
+     */
+    public func unpackmM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+        DDLogInfo("Host: unpack M1")
+        let hash = sodium.genericHash.hashSha512(data: data)
+        let protocolId = data[..<4]
+        guard protocolId ==  Constants.protocolId else {
+            throw ChannelError.badMessageType(reason: "Expected M1 Header")
+        }
+        
+        let header = data[4..<6]
+        guard read(header: header) == PacketType.M1 else {
+            throw ChannelError.badMessageType(reason: "Expected M1 Header")
+        }
+        // TODO: better unpack for Integer and convert to Double
+        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
+        let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
+        guard remoteEncPub.count == 32 else {
+            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. /(time)")
+        }
+        
+        let realtime = TimeInterval(time)
+        DDLogInfo("M2 returning. Time= /(realtime)")
+        return (realtime, remoteEncPub, hash)
+    }
+    
+    /**
      ##M2## sent from the server in plain
      */
     public func m2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
-        DDLogInfo("Read called from M2 salt handshake.")
+        DDLogInfo("Client: Read called from M2 salt handshake.")
         let hash = sodium.genericHash.hashSha512(data: data)
         let header = data[..<2]
         guard read(header: header) == PacketType.M2 else {
+            print(header.hex)
             throw ChannelError.badMessageType(reason: "Expected M2 Header")
         }
         // TODO: better unpack for Integer and convert to Double
@@ -49,6 +77,10 @@ extension SaltChannel: Protocol {
      */
     public func m3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
         let header = data[..<2]
+        
+        print(header.hex)
+        print(data.hex)
+        
         guard read(header: header) == PacketType.M3 else {
             throw ChannelError.badMessageType(reason: "Expected M3 Header")
         }
@@ -93,10 +125,11 @@ extension SaltChannel: Protocol {
     }
     
     /**
-     ##A2## is sent from the server in the open
      */
     public func a2(data: Data) throws -> (time: TimeInterval, message: Data) {
         let header = data[..<2]
+        print(header.hex)
+        print(data.hex)
         guard read(header: header) == PacketType.App else {
             throw ChannelError.badMessageType(reason: "Expected A2 message header")
         }
@@ -108,7 +141,6 @@ extension SaltChannel: Protocol {
     }
     
     /**
-     ##APP## is the application layer protocol
      */
     func app(time: TimeInterval, message: Data) -> Data {
         return Data()

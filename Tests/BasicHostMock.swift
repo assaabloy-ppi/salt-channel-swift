@@ -13,15 +13,15 @@ class BasicHostMock : ByteChannel, MockRunner {
     var readData: Data = Data()
     var writeData: [Data] = []
     
-    let m1, m2, m3, m4, d1, d2: Data
+    let m1, m2, m3, m4, msg1, msg2: Data
     
     public init(mockdata: SaltTestData) {
         m1 = mockdata.get(.m1)
         m2 = mockdata.get(.m2)
         m3 = mockdata.get(.m3)
         m4 = mockdata.get(.m4)
-        d1 = mockdata.get(.msg1)
-        d2 = mockdata.get(.msg1)
+        msg1 = mockdata.get(.msg1)
+        msg2 = mockdata.get(.msg2)
     }
     
     public func start() {
@@ -44,12 +44,14 @@ class BasicHostMock : ByteChannel, MockRunner {
         }
         
         if WaitUntil.waitUntil(10, self.didReceiveMsg == true) {
-            XCTAssertEqual(writeData[0], d1)
+            print(msg1.hex)
+            print(writeData[0].hex)
+            XCTAssertEqual(writeData[0], msg1)
             self.didReceiveMsg = false
         }
         
         sleep(4)
-        callback.first!(d2)
+        callback.first!(msg2)
     }
     
     func write(_ data: [Data]) throws {

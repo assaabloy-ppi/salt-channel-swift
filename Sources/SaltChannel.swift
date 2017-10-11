@@ -16,9 +16,9 @@ public class SaltChannel: ByteChannel {
     var errorHandlers: [(Error) -> ()] = []
     var receiveData: [Data] = []
 
-    let channel: ByteChannel!
-    let clientSignSec: Data!
-    let clientSignPub: Data!
+    let channel: ByteChannel
+    let clientSignSec: Data
+    let clientSignPub: Data
     var remoteSignPub: Data?
 
     let sodium = Sodium()

@@ -42,9 +42,10 @@ extension SaltChannel: Header {
         let type = packBytes(UInt64(packageType.rawValue), parts: 1)
         
         // TODO: set noSuch bit and/or Last if required
-        let dummy = packBytes(0, parts: 1)
-        
-        return type + dummy
+        var bits: UInt8 = first ? 0b10000000: 0b00000000
+        bits = bits | (last ? 0b00000001: 0b00000000)
+
+        return type + Data(bytes: [bits])
     }
     
     func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool) {

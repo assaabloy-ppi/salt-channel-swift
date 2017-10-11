@@ -41,7 +41,7 @@ extension SaltChannel: Header {
     func createHeader(from packageType: PacketType, first: Bool = false, last: Bool = false) -> Data {
         let type = packBytes(UInt64(packageType.rawValue), parts: 1)
         
-        // TODO: set noSuch bit and/or Last if required
+        // TODO: optimize Data
         var bits: UInt8 = first ? 0b10000000: 0b00000000
         bits = bits | (last ? 0b00000001: 0b00000000)
 
@@ -49,22 +49,18 @@ extension SaltChannel: Header {
     }
     
     func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool) {
-        var first = false
-        var last = false
-        var unknown = (type: PacketType.Unknown, firstBit: first, lastBit: last)
+        let unknown = (type: PacketType.Unknown, firstBit: false, lastBit: false)
         
         guard data.count == 2,
             let byte1 = data.first,
-            let byte2 = data.last else {
+            let byte2 = data.last,
+            let type = PacketType(rawValue: byte1) else {
             return unknown
         }
+
+        let first = (byte2 & 0b10000000) != 0
+        let last  = (byte2 & 0b00000001) != 0
         
-        // TODO: read noSuch bit and/or Last if required
-        
-        if let type = PacketType(rawValue: byte1) {
-            return (type, first, last)
-        } else {
-            return unknown
-        }
+        return (type, first, last)
     }
 }

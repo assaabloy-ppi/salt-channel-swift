@@ -143,7 +143,10 @@ extension SaltChannel: Protocol {
      ##MultiApp## is multiple messages batched together in the application layer protocol
      */
     func writeMultiApp(data: Data) throws -> (time: TimeInterval, message: Data) {
-        return (0, Data())
+        let header = createHeader(from: PacketType.MultiApp)
+        let time = self.session!.time
+        let message = header + packBytes(UInt64(time), parts: 4)
+        return (time, message)
     }
     
     ///- Host --

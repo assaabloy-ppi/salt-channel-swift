@@ -17,6 +17,62 @@ class HeaderTests: XCTestCase {
     let sec = Data(bytes: [0x34, 0x11])
     let pub = Data(bytes: [0x34, 0x11])
     
+    func testPackeTypeToData() {
+        let u =   Data(bytes: [0x00])
+        let m1 =  Data(bytes: [0x01])
+        let m2 =  Data(bytes: [0x02])
+        let m3 =  Data(bytes: [0x03])
+        let m4 =  Data(bytes: [0x04])
+        let app = Data(bytes: [0x05])
+        let enc = Data(bytes: [0x06])
+        let a1 =  Data(bytes: [0x08])
+        let a2 =  Data(bytes: [0x09])
+        let tt =  Data(bytes: [0x0A])
+        let ma =  Data(bytes: [0x0B])
+
+        XCTAssert(u == PacketType.Unknown.data)
+        XCTAssert(m1 == PacketType.M1.data)
+        XCTAssert(m2 == PacketType.M2.data)
+        XCTAssert(m3 == PacketType.M3.data)
+        XCTAssert(m4 == PacketType.M4.data)
+        XCTAssert(app == PacketType.App.data)
+        XCTAssert(enc == PacketType.Encrypted.data)
+        XCTAssert(a1 == PacketType.A1.data)
+        XCTAssert(a2 == PacketType.A2.data)
+        XCTAssert(tt == PacketType.TT.data)
+        XCTAssert(ma == PacketType.MultiApp.data)
+        
+        XCTAssertFalse(tt == PacketType.Unknown.data)
+    }
+    
+    func testPackeTypeToHex() {
+        let u =   "0x00"
+        let m1 =  "0x01"
+        let m2 =  "0x02"
+        let m3 =  "0x03"
+        let m4 =  "0x04"
+        let app = "0x05"
+        let enc = "0x06"
+        let a1 =  "0x08"
+        let a2 =  "0x09"
+        let tt =  "0x0a"
+        let ma =  "0x0b"
+        
+        XCTAssertEqual(u, PacketType.Unknown.hex)
+        XCTAssertEqual(m1, PacketType.M1.hex)
+        XCTAssertEqual(m2, PacketType.M2.hex)
+        XCTAssertEqual(m3, PacketType.M3.hex)
+        XCTAssertEqual(m4, PacketType.M4.hex)
+        XCTAssertEqual(app, PacketType.App.hex)
+        XCTAssertEqual(enc, PacketType.Encrypted.hex)
+        XCTAssertEqual(a1, PacketType.A1.hex)
+        XCTAssertEqual(a2, PacketType.A2.hex)
+        XCTAssertEqual(tt, PacketType.TT.hex)
+        XCTAssertEqual(ma, PacketType.MultiApp.hex)
+        
+        XCTAssertFalse(tt == PacketType.Unknown.hex)
+    }
+    
     func testReadBadHeader() {
         let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
 

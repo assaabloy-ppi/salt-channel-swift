@@ -30,6 +30,14 @@ enum PacketType: Byte {
      12-127       Not used
      ´´´´
      */
+    
+    public var hex: String {
+        return data.toHexString("0x")
+    }
+    
+    public var data: Data {
+        return Data(bytes: [rawValue])
+    }
 }
 
 protocol Header {

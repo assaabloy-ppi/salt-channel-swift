@@ -7,17 +7,26 @@ import Foundation
 import CocoaLumberjack
 
 extension SaltChannel: Protocol {
+
     ///- Client --
 
     /**
      ##M1## is sent to the server in plain
      */
-    public func writeM1(time: TimeInterval, myEncPub: Data) throws -> Data {
-        let header = createHeader(from: PacketType.M1)
+    public func writeM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data? = nil) throws -> Data {
+        
+        let serverSignKeys = (serverSignPub != nil)
+        let header = createHeader(from: PacketType.M1, first: serverSignKeys)
         
         // TODO: better toBytes for Double
-        let m1 = Constants.protocolId + header + packBytes(UInt64(time), parts: 4) + myEncPub
-        DDLogInfo("Write called from M1 salt handshake")
+        var m1 = Constants.protocolId + header + packBytes(UInt64(time), parts: 4) + myEncPub
+        if let serverKeys = serverSignPub {
+            DDLogInfo("Client: Using Server Sign PubKeys")
+            m1 = m1 + serverKeys
+        } else {
+            // TODO
+        }
+        DDLogInfo("Client: Write called from M1 salt handshake")
         try self.channel.write([m1])
         
         return sodium.genericHash.hashSha512(data: m1)
@@ -31,14 +40,31 @@ extension SaltChannel: Protocol {
         let hash = sodium.genericHash.hashSha512(data: data)
         let header = data[..<2]
         
-        let (type, first, last) = self.readHeader(from: header)
-        guard type == PacketType.M2 else {
-            print(header.hex)
-            throw ChannelError.badMessageType(reason: "Expected M2 Header")
+        let (type, nosuch, last) = self.readHeader(from: header)
+        guard (nosuch && last) || (!nosuch && !last) else {
+            throw ChannelError.errorInMessage(reason:
+                "NoSuchMessage and Last must both be set or none of them")
         }
+        guard type == PacketType.M2 else {
+            throw ChannelError.badMessageType(reason: "Expected M2 Header ")
+        }
+        
+        if (last) {
+            guard let session = session else {
+                throw ChannelError.setupNotDone(reason: "Client: No session object in M2")
+            }
+            session.lastMessageReceived = true
+        }
+        
         // TODO: better unpack for Integer and convert to Double
         let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
         let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
+        
+        guard !nosuch || (nosuch && isNullContent(data: remoteEncPub)) else {
+            throw ChannelError.errorInMessage(reason:
+                "No such server set, but still sent remoteEncPub. \(time)")
+        }
+        
         guard remoteEncPub.count == 32 else {
             throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. \(time)")
         }
@@ -55,10 +81,7 @@ extension SaltChannel: Protocol {
     public func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
         let header = data[..<2]
         
-        print(header.hex)
-        print(data.hex)
-        
-        let (type, first, last) = readHeader(from: header)
+        let (type, _, _) = readHeader(from: header)
         guard type == PacketType.M3 else {
             throw ChannelError.badMessageType(reason: "Expected M3 Header")
         }
@@ -104,15 +127,26 @@ extension SaltChannel: Protocol {
     
     /**
      */
-    public func readA2(data: Data) throws -> (time: TimeInterval, message: Data) {
+    public func readA2(data: Data) throws -> [String] {
         let header = data[..<2]
-        let (type, first, last) = readHeader(from: header)
+        let (type, nosuch, last) = self.readHeader(from: header)
+        guard (nosuch && last) || (!nosuch && !last) else {
+            throw ChannelError.errorInMessage(reason:
+                "NoSuchMessage and Last must both be set or none of them")
+        }
+    
         guard type == PacketType.A2 else {
             throw ChannelError.badMessageType(reason: "Expected A2 message header")
         }
         
-        // TODO
-        return (0, Data())
+        if (last) {
+            guard let session = session else {
+                throw ChannelError.setupNotDone(reason: "Client: No session object in A2")
+            }
+            session.lastMessageReceived = true
+        }
+        
+        return try extractProtocols(data: data[2...])
     }
     
     /**
@@ -126,9 +160,7 @@ extension SaltChannel: Protocol {
      */
     public func readApp(data: Data) throws -> (time: TimeInterval, message: Data) {
         let header = data[..<2]
-        print(header.hex)
-        print(data.hex)
-        let (type, first, last) = readHeader(from: header)
+        let (type, _, _) = readHeader(from: header)
         guard  type == PacketType.App else {
             throw ChannelError.badMessageType(reason: "Expected App message header")
         }
@@ -163,9 +195,16 @@ extension SaltChannel: Protocol {
         }
         
         let header = data[4..<6]
-        let (type, first, last) = readHeader(from: header)
+        let (type, _, last) = readHeader(from: header)
         guard type == PacketType.M1 else {
             throw ChannelError.badMessageType(reason: "Expected M1 Header")
+        }
+        
+        if (last) {
+            guard let session = session else {
+                throw ChannelError.setupNotDone(reason: "Host: No session object in M1")
+            }
+            session.lastMessageReceived = true
         }
         
         // TODO: better unpack for Integer and convert to Double
@@ -181,3 +220,21 @@ extension SaltChannel: Protocol {
     }
 }
 
+public func extractProtocols(data: Data) throws -> [String] {
+    var versionArray: [String] = []
+    let length: Int = 10
+    let size = data.count
+    let n = data[0]
+
+    guard size > length, (size - 1) % length == 0, (length * Int(n)) == (size-1) else {
+        throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong.")
+    }
+    
+    for i in stride(from: 1, to: n*10, by: 10) {
+        let protocolData = data[i ..< i + 10]
+        let protocolString = String(data: protocolData, encoding: .utf8)
+        versionArray.append(protocolString ?? "SCBullshit")
+    }
+    
+    return versionArray
+}

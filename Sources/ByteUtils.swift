@@ -38,6 +38,10 @@ extension UInt32 {
     }
 }
 
+public func isNullContent(data: Data) -> Bool {
+    return data.reduce(true) { $0 && ($1 == 0) }
+}
+
 public func packBytes(_ value: UInt64, parts: Int) -> Data {
     precondition(parts > 0)
     

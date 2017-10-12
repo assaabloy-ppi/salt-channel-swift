@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */; };
 		5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */; };
 		5B49F0501F87AF4D00C15D30 /* EchoMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04F1F87AF4D00C15D30 /* EchoMock.swift */; };
 		5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */; };
@@ -68,6 +69,7 @@
 /* Begin PBXFileReference section */
 		2773C5788EF12ADE39406372 /* Pods-SaltChannel.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel/Pods-SaltChannel.debug.xcconfig"; sourceTree = "<group>"; };
 		2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AProtocolTests.swift; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F04F1F87AF4D00C15D30 /* EchoMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EchoMock.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				5B49F0531F87B13F00C15D30 /* MockRunner.swift */,
 				5B8201191F8BAC1800EA7D2D /* SessionTests.swift */,
 				5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */,
+				5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */,
 			);
 			path = Tests;
 			sourceTree = SOURCE_ROOT;
@@ -415,6 +418,7 @@
 				5B8201241F8D1A9200EA7D2D /* HeaderTests.swift in Sources */,
 				5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */,
 				5B49F0501F87AF4D00C15D30 /* EchoMock.swift in Sources */,
+				5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */,
 				5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */,
 				5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */,
 				OBJ_30 /* SaltChannelTests.swift in Sources */,

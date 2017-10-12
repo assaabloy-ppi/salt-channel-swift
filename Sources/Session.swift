@@ -14,6 +14,7 @@ public class Session {
     
     var key: Data
     var handshakeDone = false
+    var lastMessageReceived = false
     
     init(key: Data, timeKeeper: TimeKeeper) {
         self.timeKeeper = timeKeeper

@@ -6,10 +6,11 @@
 import Foundation
 
 /**
- **ByteChannel** is protocol implemented at many levels for SaltChannel and lower levels.
- The main idea is that writes happens and returns, only client side errors will be returned
- as part of the Exception. Registered handlers for callbacks and errors will manage anything
- happening in the channel that the user need to act on.
+ **ByteChannel** is protocol implemented at many levels for SaltChannel
+ and lower levels. The main idea is that writes happens and returns, only
+ client side errors will be returned as part of the Exception. Registered
+ handlers for callbacks and errors will manage anything happening in the
+ channel that the user need to act on.
  
  ### Usage Example for register(): ###
  ````

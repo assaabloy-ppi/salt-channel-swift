@@ -13,11 +13,16 @@ protocol Crypto {
 extension SaltChannel: Crypto {
 
     public func receiveAndDecryptMessage(message: Data, session: Session) throws -> Data {
-        DDLogInfo("read called from receiveAndDecryptMessage salt handshake")
+        DDLogInfo("Client: read called from receiveAndDecryptMessage salt handshake")
         let header = message[..<2]
-        let (type, first, last) = readHeader(from: header)
+        let (type, _, lastMessageFlag) = readHeader(from: header)
         guard type == PacketType.Encrypted else {
             throw ChannelError.badMessageType(reason: "Expected Encrypted PacketType Header")
+        }
+        
+        // TODO: check semantics for lastMsg
+        if (lastMessageFlag) {
+            DDLogInfo("Client: last message flag set. what now?")
         }
         
         let encryptedData = message.subdata(in: 2 ..< message.endIndex)
@@ -36,8 +41,8 @@ extension SaltChannel: Crypto {
         return encryptedMessage
     }
     
-    public func encryptAndSendMessage(session: Session, message: Data) throws {
-        let header = createHeader(from: PacketType.Encrypted)
+    public func encryptAndSendMessage(session: Session, message: Data, lastMessage: Bool = false) throws {
+        let header = createHeader(from: PacketType.Encrypted, last: lastMessage)
         let cipherData = sodium.box.seal(message: message, beforenm: session.key, nonce: sendNonce.getNextNonce())!
         try self.channel.write([header + cipherData])
     }
@@ -58,7 +63,7 @@ extension SaltChannel: Crypto {
     
     public func getRemoteSignPub() throws -> Data {
         guard let sign = self.remoteSignPub else {
-            throw ChannelError.setupNotDone
+            throw ChannelError.setupNotDone(reason: "No Host Sign Pub available")
         }
         
         return sign

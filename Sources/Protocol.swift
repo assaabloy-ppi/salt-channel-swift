@@ -15,14 +15,14 @@ enum Constants {
 typealias Protocol = Client
 
 protocol Client {
-    func writeM1(time: TimeInterval, myEncPub: Data) throws -> Data
+    func writeM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data?) throws -> Data
     func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)
     func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data)
     func writeM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data
     
     func writeA1(time: TimeInterval, message: Data) -> Data
-    func readA2(data: Data) throws -> (time: TimeInterval, message: Data)
-    
+    func readA2(data: Data) throws -> [String]
+
     func writeApp(time: TimeInterval, message: Data) -> Data
     func writeMultiApp(data: Data) throws -> (time: TimeInterval, message: Data)
 }

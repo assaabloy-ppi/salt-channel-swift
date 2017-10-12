@@ -8,9 +8,8 @@ import Foundation
 public enum ChannelError: Error {
     case readTimeout
     case notImplemented
-    case setupNotDone
+    case setupNotDone(reason: String)
     case badMessageType(reason: String)
-    // case gotWrongMessage
     case signatureDidNotMatch
     case couldNotCreateSignature
     case couldNotDecrypt

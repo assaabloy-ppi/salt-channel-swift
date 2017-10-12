@@ -1,9 +1,8 @@
 //
-//  File.swift
+//  SaltChannel+Header.swift
 //  SaltChannel
 //
 //  Created by Kenneth Pernyer on 2017-10-09.
-//
 
 import Foundation
 

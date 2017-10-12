@@ -41,7 +41,7 @@ public class SaltChannel: ByteChannel {
     // Mark: Channel
     public func write(_ data: [Data]) throws {
         guard let session = self.session else {
-            throw ChannelError.setupNotDone
+            throw ChannelError.setupNotDone(reason: "Expected a Session by now")
         }
         
         var packages: [Data] = []
@@ -85,7 +85,7 @@ public class SaltChannel: ByteChannel {
                     callback(message)
                 }
             } else {
-                error(ChannelError.setupNotDone)
+                error(ChannelError.setupNotDone(reason: "Failed in read"))
             }
         }
     }

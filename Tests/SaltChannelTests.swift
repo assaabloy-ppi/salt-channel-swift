@@ -4,9 +4,7 @@
 //  Created by Håkan Olsson on 2017-06-02.
 
 import XCTest
-import CocoaLumberjack
 import Sodium
-import Binson
 
 @testable import SaltChannel
 
@@ -41,12 +39,6 @@ class SaltChannelTests: XCTestCase {
 
     
     var receivedData: [Data] = []
-    
-    override func setUp() {
-        super.setUp()
-        DDLog.add(DDTTYLogger.sharedInstance) // TTY = Xcode console
-        DDTTYLogger.sharedInstance.colorsEnabled = true
-    }
     
     func waitForData(_ data: Data){
         if WaitUntil.waitUntil(10, self.receivedData.isEmpty == false) {

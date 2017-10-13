@@ -4,7 +4,6 @@
 //  Created by Kenneth Pernyer on 2017-10-02.
 
 import Foundation
-import CocoaLumberjack
 
 extension SaltChannel {
     
@@ -44,7 +43,7 @@ extension SaltChannel {
             throw ChannelError.readTimeout
         }
         let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
-        let (m3time, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+        let (_, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         self.remoteSignPub = remoteSignPub
         
         // *** Send M4 ***

@@ -10,11 +10,12 @@ class AProtocolTests: XCTestCase {
     let version1 = Data("SC2------1".utf8)
     let version2 = Data("SC2------2".utf8)
     let version3 = Data("SC2------3".utf8)
+    let version4 = Data("ECHO------".utf8)
 
     func testExtractProtocolsFromA2() {
         let oneprotocol = Data(bytes: [0x01]) + version1
         let twoprotocols = Data(bytes: [0x02]) + version1 + version2
-        let threeprotocol = Data(bytes: [0x03]) + version1 + version2 + version3
+        let threeprotocol = Data(bytes: [0x04]) + version1 + version2 + version3 + version4
 
         do {
             let array1: [String] = try extractProtocols(data: oneprotocol)
@@ -23,15 +24,13 @@ class AProtocolTests: XCTestCase {
         
             XCTAssertEqual(array1.count, 1)
             XCTAssertEqual(array2.count, 2)
-            XCTAssertEqual(array3.count, 3)
+            XCTAssertEqual(array3.count, 4)
         
             XCTAssertEqual(array1[0], "SC2------1")
             XCTAssertEqual(array2[0], "SC2------1")
             XCTAssertEqual(array3[0], "SC2------1")
-
             XCTAssertEqual(array2[1], "SC2------2")
             XCTAssertEqual(array3[1], "SC2------2")
-        
             XCTAssertEqual(array3[2], "SC2------3")
         } catch { XCTFail() }
     }

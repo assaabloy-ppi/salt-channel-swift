@@ -4,7 +4,7 @@
 //  Created by Kenneth Pernyer on 2017-10-03.
 
 import Foundation
-import CocoaLumberjack
+import os.log
 
 protocol Crypto {
 
@@ -13,7 +13,7 @@ protocol Crypto {
 extension SaltChannel: Crypto {
 
     public func receiveAndDecryptMessage(message: Data, session: Session) throws -> Data {
-        DDLogInfo("Client: read called from receiveAndDecryptMessage salt handshake")
+        os_log("Client: read called from receiveAndDecryptMessage salt handshake", log: log, type: .debug)
         let header = message[..<2]
         let (type, _, lastMessageFlag) = readHeader(from: header)
         guard type == PacketType.Encrypted else {
@@ -22,7 +22,8 @@ extension SaltChannel: Crypto {
         
         // TODO: check semantics for lastMsg
         if (lastMessageFlag) {
-            DDLogInfo("Client: last message flag set. what now?")
+            session.lastMessageReceived = true
+            os_log("Client: last message flag set. what now?", log: log)
         }
         
         let encryptedData = message.subdata(in: 2 ..< message.endIndex)

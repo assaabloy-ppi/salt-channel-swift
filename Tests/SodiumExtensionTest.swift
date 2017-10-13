@@ -5,7 +5,6 @@
 //  Copyright © 2017 Håkan Olsson. All rights reserved.
 
 import XCTest
-import CocoaLumberjack
 import Sodium
 
 @testable import SaltChannel

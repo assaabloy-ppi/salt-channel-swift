@@ -4,7 +4,7 @@
 //  Created by Håkan Ohlsson/Kenneth Pernyer on 2017-10-02.
 
 import Foundation
-import CocoaLumberjack
+import os.log
 
 extension SaltChannel: Protocol {
 
@@ -21,12 +21,12 @@ extension SaltChannel: Protocol {
         // TODO: better toBytes for Double
         var m1 = Constants.protocolId + header + packBytes(UInt64(time), parts: 4) + myEncPub
         if let serverKeys = serverSignPub {
-            DDLogInfo("Client: Using Server Sign PubKeys")
+            os_log("Client: Using Server Sign PubKeys %{public}s", log: log, type: .debug, serverKeys as CVarArg)
             m1 = m1 + serverKeys
         } else {
             // TODO
         }
-        DDLogInfo("Client: Write called from M1 salt handshake")
+        os_log("Client: Write called from M1 salt handshake", log: log, type: .debug)
         try self.channel.write([m1])
         
         return sodium.genericHash.hashSha512(data: m1)
@@ -36,7 +36,8 @@ extension SaltChannel: Protocol {
      ##M2## sent from the server in plain
      */
     public func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
-        DDLogInfo("Client: Read called from M2 salt handshake.")
+        os_log("Client: Read called from M2 salt handshake.", log: log, type: .debug)
+        
         let hash = sodium.genericHash.hashSha512(data: data)
         let header = data[..<2]
         
@@ -54,6 +55,7 @@ extension SaltChannel: Protocol {
                 throw ChannelError.setupNotDone(reason: "Client: No session object in M2")
             }
             session.lastMessageReceived = true
+            os_log("Client: last message flag received.", log: log, type: .debug)
         }
         
         // TODO: better unpack for Integer and convert to Double
@@ -70,7 +72,7 @@ extension SaltChannel: Protocol {
         }
         
         let realtime = TimeInterval(time)
-        DDLogInfo("M2 returning. Time= \(realtime)")
+        os_log("M2 returning. Time= %{public}s", log: log, type: .debug, realtime)
         return (realtime, remoteEncPub, hash)
     }
     
@@ -79,7 +81,8 @@ extension SaltChannel: Protocol {
      receiveAndDecryptMessage()
      */
     public func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
-        let header = data[..<2]
+        os_log("Client: Read called from M3 salt handshake.", log: log, type: .debug)
+       let header = data[..<2]
         
         let (type, _, _) = readHeader(from: header)
         guard type == PacketType.M3 else {
@@ -99,7 +102,7 @@ extension SaltChannel: Protocol {
         }
         
         let realtime = TimeInterval(time)
-        DDLogInfo("M3 returning. Time= \(realtime)")
+        os_log("M3 returning. Time= %{public}s", log: log, type: .debug, realtime)
         return (realtime, remoteSignPub)
     }
     
@@ -187,7 +190,8 @@ extension SaltChannel: Protocol {
      ##M1## is sent to the server in plain
      */
     public func readM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
-        DDLogInfo("Host: unpack M1")
+        os_log("Host: unpack M1", log: log, type: .debug)
+
         let hash = sodium.genericHash.hashSha512(data: data)
         let protocolId = data[..<4]
         guard protocolId ==  Constants.protocolId else {
@@ -215,7 +219,7 @@ extension SaltChannel: Protocol {
         }
         
         let realtime = TimeInterval(time)
-        DDLogInfo("M2 returning. Time= \(realtime)")
+        os_log("M1 returning. Time= %{public}s", log: log, type: .debug, realtime)
         return (realtime, remoteEncPub, hash)
     }
 }

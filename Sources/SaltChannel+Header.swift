@@ -6,8 +6,6 @@
 
 import Foundation
 
-typealias Byte = UInt8
-
 enum PacketType: Byte {
     case Unknown = 0, M1 = 1, M2 = 2, M3 = 3, M4 = 4, App = 5,
     Encrypted = 6, A1 = 8, A2 = 9, TT = 10, MultiApp = 11

@@ -4,11 +4,13 @@
 //  Created by Kenneth Pernyer on 2017-10-06.
 
 import XCTest
-import CocoaLumberjack
+import os.log
 
 @testable import SaltChannel
 
 class EchoMock : ByteChannel, MockRunner {
+    let log = OSLog(subsystem: "salt.aa.st", category: "EchoMock")
+
     var dataStore: [Data] = []
     var didReceiveMessage: Bool = false
     var callback: ((Data) -> (), (Error) -> ())? = nil
@@ -31,13 +33,13 @@ class EchoMock : ByteChannel, MockRunner {
     
     //-- ByteChannel
     func write(_ data: [Data]) throws {
-        print("EchoMock write is called")
+        os_log("EchoMock write is called", log: log, type: .debug)
         dataStore = data
         didReceiveMessage = true
     }
     
     func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
-        print("EchoMock register is called")
+        os_log("EchoMock register is called", log: log, type: .debug)
         self.callback = (callback, errorhandler)
     }
     

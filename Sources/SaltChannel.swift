@@ -5,13 +5,14 @@
 
 import Foundation
 import Sodium
-import Binson
-import CocoaLumberjack
+import os.log
 
 /**
  **SaltChannel** is a ByteChannel with encryption and authorization.
  */
 public class SaltChannel: ByteChannel {
+    let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
+
     var callbacks: [(Data) -> ()] = []
     var errorHandlers: [(Error) -> ()] = []
     var receiveData: [Data] = []
@@ -36,6 +37,8 @@ public class SaltChannel: ByteChannel {
         self.channel = channel
         self.clientSignSec = sec
         self.clientSignPub = pub
+        
+        os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
     }
     
     // Mark: Channel
@@ -68,6 +71,8 @@ public class SaltChannel: ByteChannel {
     // --- Callbacks -------
     
     func error(_ error: Error) {
+        os_log("Ended up in SaltChannel ErrorHandler: %{public}s", log: log, type: .error, error as CVarArg)
+
         for errorHandler in errorHandlers{
             errorHandler(error)
         }

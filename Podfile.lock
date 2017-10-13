@@ -1,29 +1,12 @@
 PODS:
-  - Binson (1.0.5)
-  - CocoaLumberjack/Default (3.2.1)
-  - CocoaLumberjack/Swift (3.2.1):
-    - CocoaLumberjack/Default
-  - Sodium (0.4)
+  - Sodium (0.5)
 
 DEPENDENCIES:
-  - Binson (from `https://github.com/assaabloy-ppi/binson-swift.git`)
-  - CocoaLumberjack/Swift
-  - Sodium (~> 0.4)
-
-EXTERNAL SOURCES:
-  Binson:
-    :git: https://github.com/assaabloy-ppi/binson-swift.git
-
-CHECKOUT OPTIONS:
-  Binson:
-    :commit: 0dd2113bc79cd4bfd67f03c1730c00efafe629e3
-    :git: https://github.com/assaabloy-ppi/binson-swift.git
+  - Sodium (~> 0.5)
 
 SPEC CHECKSUMS:
-  Binson: e7c3106a290e9ecf7a801d6c9a2ec06472eb1a13
-  CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
-  Sodium: 5dcea3c68241df72134e7f5ff41c2b6f09393d2a
+  Sodium: a3a17f2ba2dc1b83547e13db0075e7c5d426fc55
 
-PODFILE CHECKSUM: ffea1f214ca37d05efd57098419f45ad3a7c3fcc
+PODFILE CHECKSUM: b513363633e58b2b3ba2bb6c291498146d01ce8a
 
 COCOAPODS: 1.4.0.beta.1

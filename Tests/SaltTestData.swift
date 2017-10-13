@@ -4,7 +4,6 @@
 //  Created by Kenneth Pernyer on 2017-10-05.
 
 import XCTest
-import CocoaLumberjack
 
 @testable import SaltChannel
 

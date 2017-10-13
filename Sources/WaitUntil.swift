@@ -32,7 +32,7 @@ public class WaitUntil {
     // Utility function to wait for any kind of event using a closure,
     // with provided timeout
     public static func waitUntil(_ timeout: Double, _ checkSuccess: @autoclosure () -> Bool) -> Bool {
-        let startDate = NSDate()
+        let startDate = Date()
         var success = false
         while !success && abs(startDate.timeIntervalSinceNow) < timeout {
             RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.01))

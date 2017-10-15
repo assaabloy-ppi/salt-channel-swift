@@ -1,4 +1,13 @@
 VERSION = $(shell grep s.version SaltChannel.podspec | cut -f2 -d= | cut -f1 -d{)
+FLAGS = -Xswiftc "-target" -Xswiftc "x86_64-apple-macosx10.12"
+
+all: pod-install lint build test
+
+test:
+	swift test ${FLAGS}
+
+build:
+	swift build ${FLAGS}
 
 lint:
 	swiftlint
@@ -26,3 +35,6 @@ pushtag: tag
 
 verify:
 	pod spec lint SaltChannel.podspec
+
+format:
+	swiftformat --hexliteralcase lowercase --hexgrouping none --ranges nospace --wrapelements beforefirst --self remove Package.swift

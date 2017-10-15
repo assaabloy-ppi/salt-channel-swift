@@ -10,9 +10,9 @@ import XCTest
 class BasicHostMock : ByteChannel, MockRunner {
     var callbacks: [(Data) -> ()] = []
     var writeData: [Data] = []
-    let mockdata: SaltTestData
+    let mockdata: TestDataSet
     
-    public init(mockdata: SaltTestData) {
+    public init(mockdata: TestDataSet) {
         self.mockdata = mockdata
     }
     
@@ -21,27 +21,35 @@ class BasicHostMock : ByteChannel, MockRunner {
     }
     
     func handshake() {
-        waitForData(mockdata.get(.m1))
-        send(mockdata.get(.m2))
-        send(mockdata.get(.m3))
-        waitForData(mockdata.get(.m4))
-        waitForData(mockdata.get(.msg1))
-        send(mockdata.get(.msg2))
+        if let handshakeData = mockdata.handshake{
+            waitForData(handshakeData.m1)
+            send(handshakeData.m2)
+            send(handshakeData.m3)
+            waitForData(handshakeData.m4)
+        }
+        for transfer in mockdata.transfers{
+            if transfer.toHost{
+                waitForData(transfer.cipher)
+            }
+            else {
+                send(transfer.plain)
+            }
+        }
     }
     
     // ****** Helper functions *******
     
-    func waitForData(_ data: Data){
+    func waitForData(_ data: [Byte]){
         if WaitUntil.waitUntil(10, self.writeData.isEmpty == false) {
-            XCTAssertEqual(writeData.first, data)
+            XCTAssertEqual(writeData.first, Data(data))
             writeData.remove(at: 0)
         }
     }
     
-    func send(_ data: Data){
+    func send(_ data: [Byte]){
         for callback in callbacks{
             print("Send data")
-            callback(data)
+            callback(Data(data))
         }
     }
     

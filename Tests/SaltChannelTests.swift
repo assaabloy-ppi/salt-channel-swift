@@ -8,36 +8,8 @@ import Sodium
 
 @testable import SaltChannel
 
-let sodium = Sodium()
-let testDataSet = SaltTestData(name: "Basic")
-
 class SaltChannelTests: XCTestCase {
     let sodium = Sodium()
-    let css = testDataSet.get(.client_sk_sec)
-    let csp = testDataSet.get(.client_sk_pub)
-    let cep = testDataSet.get(.client_ek_pub)
-    let ces = testDataSet.get(.client_ek_sec)
-    let ssp = testDataSet.get(.host_sk_pub)
-    
-    let m1 = testDataSet.get(.m1)
-    let m2 = testDataSet.get(.m2)
-    let m3 = testDataSet.get(.m3)
-    let m4 = testDataSet.get(.m4)
-
-    let a1 = testDataSet.get(.a1)
-    let a2 = testDataSet.get(.a2)
-
-    let msg1 = testDataSet.get(.msg1)
-    let msg2 = testDataSet.get(.msg2)
-    let msg3 = testDataSet.get(.msg3)
-    let msg4 = testDataSet.get(.msg4)
-
-    let plain1 = testDataSet.get(.plain1)
-    let plain2 = testDataSet.get(.plain2)
-    let plain3 = testDataSet.get(.plain3)
-    let plain4 = testDataSet.get(.plain4)
-
-    
     var receivedData: [Data] = []
     
     func waitForData(_ data: Data){
@@ -55,15 +27,38 @@ class SaltChannelTests: XCTestCase {
         XCTAssert(true, error.localizedDescription)
     }
     
-    func testClientHandshake() throws{
+    func runClientHandshake(testDataSet: TestDataSet) throws{
         let mock = BasicHostMock(mockdata: testDataSet)
         mock.start()
-        let channel = SaltChannel(channel: mock, sec: css, pub: csp)
+        let channel = SaltChannel(channel: mock,
+                                  sec: Data(testDataSet.clientKeys.signSec),
+                                  pub: Data(testDataSet.clientKeys.signPub))
         channel.register(callback: receiver, errorhandler: errorhandler)
         
-        try channel.handshake(clientEncSec: ces, clientEncPub: cep)
-        XCTAssertEqual(try channel.getRemoteSignPub(), self.ssp)
-        try channel.write([self.plain1])
-        waitForData(self.plain2)
+        if testDataSet.handshake != nil {
+            try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
+                                  clientEncPub: Data(testDataSet.clientKeys.diffiPub))
+            XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))
+        }
+        for transfer in testDataSet.transfers{
+            if transfer.toHost{
+                try channel.write([Data(transfer.plain)])
+            }
+            else {
+                waitForData(Data(transfer.cipher))
+            }
+        }
+    }
+    
+    func testSession1ClientHandshake() throws{
+        try runClientHandshake(testDataSet: SaltTestData().session1TestData)
+    }
+    
+    func testSession2ClientHandshake() throws{
+        try runClientHandshake(testDataSet: SaltTestData().session2TestData)
+    }
+    
+    func testSession3ClientHandshake() throws{
+        try runClientHandshake(testDataSet: SaltTestData().session3TestData)
     }
 }

@@ -13,8 +13,8 @@ import os.log
 public class SaltChannel: ByteChannel {
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
 
-    var callbacks: [(Data) -> ()] = []
-    var errorHandlers: [(Error) -> ()] = []
+    var callbacks: [(Data) -> Void] = []
+    var errorHandlers: [(Error) -> Void] = []
     var receiveData: [Data] = []
 
     let channel: ByteChannel
@@ -25,8 +25,8 @@ public class SaltChannel: ByteChannel {
     let sodium = Sodium()
     var session: Session?
 
-    var sendNonce = Nonce(startValue: 1)
-    var receiveNonce = Nonce(startValue: 2)
+    var sendNonce = Nonce(value: 1)
+    var receiveNonce = Nonce(value: 2)
     
     var bufferedM4: Data?
     var handshakeDone = false
@@ -41,7 +41,7 @@ public class SaltChannel: ByteChannel {
         os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
     }
     
-    // Mark: Channel
+    // MARK: Channel
     public func write(_ data: [Data]) throws {
         guard let session = self.session else {
             throw ChannelError.setupNotDone(reason: "Expected a Session by now")
@@ -63,7 +63,7 @@ public class SaltChannel: ByteChannel {
         try self.channel.write(packages)
     }
     
-    public func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+    public func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
         self.errorHandlers.append(errorhandler)
         self.callbacks.append(callback)
     }
@@ -73,7 +73,7 @@ public class SaltChannel: ByteChannel {
     func error(_ error: Error) {
         os_log("Ended up in SaltChannel ErrorHandler: %{public}s", log: log, type: .error, error as CVarArg)
 
-        for errorHandler in errorHandlers{
+        for errorHandler in errorHandlers {
             errorHandler(error)
         }
     }
@@ -81,8 +81,7 @@ public class SaltChannel: ByteChannel {
     func read(_ data: Data) {
         if !self.handshakeDone {
             receiveData.append(data)
-        }
-        else {
+        } else {
             if let session = self.session,
                 let raw = try? receiveAndDecryptMessage(message: data, session: session),
                 let (_, message) = try? readApp(data: raw) {

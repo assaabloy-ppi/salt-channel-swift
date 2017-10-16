@@ -1,7 +1,11 @@
 disabled_rules:
+  - todo
+  - line_length
+  - type_body_length
 
 included:
   - Sources
+  - Tests
 
 excluded:
   - Carthage
@@ -19,6 +23,8 @@ function_body_length:
 
 trailing_whitespace:
   ignores_empty_lines: true
+
+shorthand_operator: warning
 
 force_cast: warning # implicitly
 force_try:
@@ -45,9 +51,18 @@ identifier_name:
   min_length:
     warning: 3
   max_length:
-      warning: 20
-      error: 30
+      warning: 25
+      error: 40
   excluded: # excluded via string array
+    - a1
+    - a2
+    - m1
+    - m2
+    - m3
+    - m4
+    - tt
+    - d1
+    - d2
     - n
     - i
     - by

@@ -8,12 +8,12 @@ import os.log
 
 @testable import SaltChannel
 
-class EchoMock : ByteChannel, MockRunner {
+class EchoMock: ByteChannel, MockRunner {
     let log = OSLog(subsystem: "salt.aa.st", category: "EchoMock")
 
     var dataStore: [Data] = []
     var didReceiveMessage: Bool = false
-    var callback: ((Data) -> (), (Error) -> ())? = nil
+    var callback: ((Data) -> Void, (Error) -> Void)?
 
     let m1, m2, m3, m4, d1, d2: Data
     
@@ -38,7 +38,7 @@ class EchoMock : ByteChannel, MockRunner {
         didReceiveMessage = true
     }
     
-    func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+    func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
         os_log("EchoMock register is called", log: log, type: .debug)
         self.callback = (callback, errorhandler)
     }

@@ -1,7 +1,11 @@
+language: swift
 os: osx
 osx_image: xcode9.1
-language: swift
 xcode_workspace: SaltChannel.xcworkspace
+xcode_scheme: SaltChannel-Tests
+
+script:
+  - make all
 
 env:
   - SWIFT_VERSION=4.0

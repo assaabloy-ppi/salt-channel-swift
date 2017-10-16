@@ -6,5 +6,5 @@
 import XCTest
 
 protocol MockRunner {
-    func start() -> Void
+    func start()
 }

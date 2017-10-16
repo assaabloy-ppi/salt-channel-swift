@@ -8,14 +8,14 @@ import Foundation
 extension UInt32 {
     
     enum ByteOrder {
-        case BigEndian
-        case LittleEndian
+        case bigEndian
+        case littleEndian
     }
     
-    func toBytes(_ order: ByteOrder = .LittleEndian) -> [UInt8] {
+    func toBytes(_ order: ByteOrder = .littleEndian) -> [UInt8] {
         var bytes: [UInt8] = [0, 0, 0, 0]
         var value: UInt32 = self.littleEndian
-        if order == .BigEndian {
+        if order == .bigEndian {
             value = self.bigEndian
         }
         bytes[0] = UInt8(value & 0x000000FF)
@@ -25,13 +25,13 @@ extension UInt32 {
         return bytes
     }
     
-    static func fromBytes(_ sizeBytes: [UInt8], order: ByteOrder = .LittleEndian) -> UInt32 {
+    static func fromBytes(_ sizeBytes: [UInt8], order: ByteOrder = .littleEndian) -> UInt32 {
         var value: UInt32 = 0
         value += UInt32(sizeBytes[0])
         value += UInt32(sizeBytes[1]) << 8
         value += UInt32(sizeBytes[2]) << 16
         value += UInt32(sizeBytes[3]) << 24
-        if order == .BigEndian {
+        if order == .bigEndian {
             return value.bigEndian
         }
         return value

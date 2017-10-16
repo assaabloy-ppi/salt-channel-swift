@@ -11,7 +11,7 @@ import Foundation
  client side errors will be returned as part of the Exception. Registered
  handlers for callbacks and errors will manage anything happening in the
  channel that the user need to act on.
- 
+
  ### Usage Example for register(): ###
  ````
  channel.register(
@@ -29,8 +29,9 @@ import Foundation
  */
 public protocol ByteChannel {
     /// Register a Callback and and Errorhandler
-    func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ())
-    
+    func register(callback: @escaping (Data) -> Void,
+                  errorhandler: @escaping (Error) -> Void)
+
     /// Write data to the Channel
     func write(_ data: [Data]) throws
 }

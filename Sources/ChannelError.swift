@@ -13,7 +13,7 @@ public enum ChannelError: Error {
     case signatureDidNotMatch
     case couldNotCreateSignature
     case couldNotDecrypt
-    case couldNotCalculateSessionKey
+    case couldNotCalculateKey
     case errorInMessage(reason: String)
     case handshakeAlreadyDone
 }

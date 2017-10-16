@@ -71,7 +71,7 @@ public class SaltTestData {
                 0xad, 0xfc, 0x7e, 0x14, 0x6f, 0x88, 0x2b, 0x4f
             ]
         ),
-        a: nil,
+        abox: nil,
         handshake: Handshake(
             m1: [
                 0x53, 0x43, 0x76, 0x32, 0x01, 0x00, 0x00, 0x00,
@@ -147,7 +147,7 @@ public class SaltTestData {
                 plain: [
                     0x01, 0x05, 0x05, 0x05, 0x05, 0x05
                 ]
-            ),
+            )
         ]
     )
     
@@ -212,7 +212,7 @@ public class SaltTestData {
                 0xad, 0xfc, 0x7e, 0x14, 0x6f, 0x88, 0x2b, 0x4f
             ]
         ),
-        a: A(
+        abox: ABox(
             a1: [
                 0x02, 0x00, 0x00, 0x00, // 2
                 0x08, 0x00
@@ -227,7 +227,6 @@ public class SaltTestData {
         handshake: nil,
         transfers: []
     )
-    
     
     public let session3TestData = TestDataSet(
         clientKeys: KeySet(
@@ -290,7 +289,7 @@ public class SaltTestData {
                 0xad, 0xfc, 0x7e, 0x14, 0x6f, 0x88, 0x2b, 0x4f
             ]
         ),
-        a: nil,
+        abox: nil,
         handshake: Handshake(
             m1: [
                 0x2a, 0x00, 0x00, 00, /* Size : 42 */
@@ -397,35 +396,35 @@ public class SaltTestData {
     )
 }
 
-public struct Transfer{
+public struct Transfer {
     let toHost: Bool
     let cipher: [Byte]
     let plain: [Byte]
 }
 
-public struct KeySet{
+public struct KeySet {
     let signSec: [Byte]
     let signPub: [Byte]
     let diffiSec: [Byte]
     let diffiPub: [Byte]
 }
 
-public struct A{
+public struct ABox {
     let a1: [Byte]
     let a2: [Byte]
 }
 
-public struct Handshake{
+public struct Handshake {
     let m1: [Byte]
     let m2: [Byte]
     let m3: [Byte]
     let m4: [Byte]
 }
 
-public struct TestDataSet{
+public struct TestDataSet {
     let clientKeys: KeySet
     let hostKeys: KeySet
-    let a: A?
+    let abox: ABox?
     let handshake: Handshake?
     let transfers: [Transfer]
 }

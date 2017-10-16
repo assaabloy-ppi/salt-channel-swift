@@ -10,7 +10,7 @@ import os.log
 public class SocketChannel: ByteChannel {
     let log = OSLog(subsystem: "salt.aa.st", category: "Socket")
 
-    var streams: (is: InputStream, os: OutputStream)? = nil
+    var streams: (is: InputStream, os: OutputStream)?
     var ping = Data("Hello".utf8)
     
     public let host: String
@@ -27,7 +27,7 @@ public class SocketChannel: ByteChannel {
     }
     
     /// Register a Callback and and Errorhandler
-    public func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+    public func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
         
     }
     
@@ -36,4 +36,3 @@ public class SocketChannel: ByteChannel {
         
     }
 }
-

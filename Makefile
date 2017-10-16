@@ -3,7 +3,7 @@ FLAGS = -Xswiftc "-target" -Xswiftc "x86_64-apple-macosx10.12"
 
 all: pod-install lint build test
 
-test:
+test: build
 	swift test ${FLAGS}
 
 build:
@@ -38,3 +38,7 @@ verify:
 
 format:
 	swiftformat --hexliteralcase lowercase --hexgrouping none --ranges nospace --wrapelements beforefirst --self remove Package.swift
+
+list:
+	xcodebuild -project SaltChannel.xcodeproj  -list
+	xcodebuild -workspace SaltChannel.xcworkspace  -list

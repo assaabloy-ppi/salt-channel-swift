@@ -17,9 +17,10 @@
 		5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541491F82D63A00730B41 /* ByteUtils.swift */; };
 		5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414B1F82D6BB00730B41 /* ByteChannel.swift */; };
 		5B55414E1F82D87000730B41 /* SaltChannel+Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */; };
-		5B5541501F82DAB000730B41 /* SaltChannel+Client-banana.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Client-banana.swift */; };
+		5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */; };
 		5B8105A91F94C74400F142DE /* SaltChannel+Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */; };
 		5B8105AB1F94C82E00F142DE /* SaltChannel+Host.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */; };
+		5B8105B21F95035400F142DE /* EchoMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105B11F95035400F142DE /* EchoMock.swift */; };
 		5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8201191F8BAC1800EA7D2D /* SessionTests.swift */; };
 		5B82011C1F8BB05900EA7D2D /* SaltChannel+Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */; };
 		5B82011E1F8BB0F600EA7D2D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011D1F8BB0F600EA7D2D /* Session.swift */; };
@@ -62,9 +63,11 @@
 		5B5541491F82D63A00730B41 /* ByteUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteUtils.swift; sourceTree = "<group>"; };
 		5B55414B1F82D6BB00730B41 /* ByteChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteChannel.swift; sourceTree = "<group>"; };
 		5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Handshake.swift"; sourceTree = "<group>"; };
-		5B55414F1F82DAB000730B41 /* SaltChannel+Client-banana.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client-banana.swift"; sourceTree = "<group>"; };
+		5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client.swift"; sourceTree = "<group>"; };
 		5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Peer.swift"; sourceTree = "<group>"; };
 		5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Host.swift"; sourceTree = "<group>"; };
+		5B8105AE1F94FCB800F142DE /* SaltChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaltChannel.h; sourceTree = "<group>"; };
+		5B8105B11F95035400F142DE /* EchoMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EchoMock.swift; sourceTree = "<group>"; };
 		5B8201191F8BAC1800EA7D2D /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Header.swift"; sourceTree = "<group>"; };
 		5B82011D1F8BB0F600EA7D2D /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
@@ -132,6 +135,7 @@
 		OBJ_12 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				5B8105B11F95035400F142DE /* EchoMock.swift */,
 				OBJ_13 /* SaltChannelTests.swift */,
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */,
@@ -169,6 +173,7 @@
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5B8105AE1F94FCB800F142DE /* SaltChannel.h */,
 				5BE382D11F8394BC00E40069 /* WaitUntil.swift */,
 				OBJ_9 /* Nonce.swift */,
 				OBJ_10 /* SaltChannel.swift */,
@@ -177,7 +182,7 @@
 				5B5541491F82D63A00730B41 /* ByteUtils.swift */,
 				5B55414B1F82D6BB00730B41 /* ByteChannel.swift */,
 				5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */,
-				5B55414F1F82DAB000730B41 /* SaltChannel+Client-banana.swift */,
+				5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */,
 				5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */,
 				5B49F0551F87D1A300C15D30 /* Protocol.swift */,
 				5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */,
@@ -393,6 +398,7 @@
 				5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */,
 				OBJ_30 /* SaltChannelTests.swift in Sources */,
 				OBJ_31 /* SodiumExtensionTest.swift in Sources */,
+				5B8105B21F95035400F142DE /* EchoMock.swift in Sources */,
 				5B49F0541F87B13F00C15D30 /* MockRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,7 +423,7 @@
 				5B36693B1F8F984300BE3983 /* SocketChannel.swift in Sources */,
 				5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */,
 				5B55414E1F82D87000730B41 /* SaltChannel+Handshake.swift in Sources */,
-				5B5541501F82DAB000730B41 /* SaltChannel+Client-banana.swift in Sources */,
+				5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */,
 				5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

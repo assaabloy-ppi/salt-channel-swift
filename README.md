@@ -1,5 +1,6 @@
 SaltChannel Swift
 ===================
+[![Build Status](https://travis-ci.org/assaabloy-ppi/salt-channel-swift.svg?branch=master)](https://travis-ci.org/assaabloy-ppi/salt-channel-swift)
 
 Salt-channel version 2 implemented in Swift. Can be used for iOS, MacOS and Linux projects.
 Read more about [Salt Channel v2 draft 7]

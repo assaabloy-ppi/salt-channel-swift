@@ -13,9 +13,12 @@ class SaltChannelTests: XCTestCase {
     var receivedData: [Data] = []
     
     func waitForData(_ data: Data){
-        if WaitUntil.waitUntil(10, self.receivedData.isEmpty == false) {
+        if WaitUntil.waitUntil(2, self.receivedData.isEmpty == false) {
             XCTAssertEqual(receivedData.first, data)
             receivedData.remove(at: 0)
+        }
+        else {
+            XCTAssert(false, "Did not receive data")
         }
     }
     
@@ -24,7 +27,8 @@ class SaltChannelTests: XCTestCase {
     }
     
     func errorhandler(error: Error){
-        XCTAssert(true, error.localizedDescription)
+        print(error)
+        XCTAssert(false, "Got error: " + error.localizedDescription)
     }
     
     func runClientHandshake(testDataSet: TestDataSet) throws{
@@ -45,8 +49,14 @@ class SaltChannelTests: XCTestCase {
                 try channel.write([Data(transfer.plain)])
             }
             else {
-                waitForData(Data(transfer.cipher))
+                waitForData(Data(transfer.plain))
             }
+        }
+        
+        // Wait until mock is done
+        if WaitUntil.waitUntil(4, mock.isDone == true) {
+            print("Mock is done")
+            XCTAssertEqual(mock.isDone, true)
         }
     }
     

@@ -25,7 +25,6 @@
 		5B36693B1F8F984300BE3983 /* SocketChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B36693A1F8F984300BE3983 /* SocketChannel.swift */; };
 		5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */; };
 		5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */; };
-		5B49F0541F87B13F00C15D30 /* MockRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0531F87B13F00C15D30 /* MockRunner.swift */; };
 		5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0551F87D1A300C15D30 /* Protocol.swift */; };
 		5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541451F82D2EF00730B41 /* ChannelError.swift */; };
 		5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541491F82D63A00730B41 /* ByteUtils.swift */; };
@@ -76,7 +75,6 @@
 		5B36693A1F8F984300BE3983 /* SocketChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannel.swift; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
-		5B49F0531F87B13F00C15D30 /* MockRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRunner.swift; sourceTree = "<group>"; };
 		5B49F0551F87D1A300C15D30 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
 		5B5541451F82D2EF00730B41 /* ChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelError.swift; sourceTree = "<group>"; };
 		5B5541491F82D63A00730B41 /* ByteUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteUtils.swift; sourceTree = "<group>"; };
@@ -174,7 +172,6 @@
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */,
 				5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */,
-				5B49F0531F87B13F00C15D30 /* MockRunner.swift */,
 				5B8201191F8BAC1800EA7D2D /* SessionTests.swift */,
 				5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */,
 				5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */,
@@ -423,13 +420,11 @@
 				5BD3EA9F1F90FC94001139E0 /* SocketChannelTests.swift in Sources */,
 				5B8201241F8D1A9200EA7D2D /* HeaderTests.swift in Sources */,
 				5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */,
-				5B49F0501F87AF4D00C15D30 /* EchoMock.swift in Sources */,
 				5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */,
 				5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */,
 				5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */,
 				OBJ_30 /* SaltChannelTests.swift in Sources */,
 				OBJ_31 /* SodiumExtensionTest.swift in Sources */,
-				5B49F0541F87B13F00C15D30 /* MockRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -33,7 +33,8 @@ extension GenericHash {
 
 extension Box {
     /**
-     Encrypts a message with the shared secret key generated from a recipient's public key and a sender's secret key using `beforenm()`.
+     Encrypts a message with the shared secret key generated from a recipient's
+     public key and a sender's secret key using `beforenm()`.
      - Parameter message: The message to encrypt.
      - Parameter beforenm: The shared secret key.
      - Parameter nonce: The encryption nonce.
@@ -46,12 +47,12 @@ extension Box {
     
         var authenticatedCipherText = Data(count: message.count + MacBytes)
     
-        let result = authenticatedCipherText.withUnsafeMutableBytes { authenticatedCipherTextPtr in
+        let result = authenticatedCipherText.withUnsafeMutableBytes { authCipherTextPtr in
             return message.withUnsafeBytes { messagePtr in
                 return nonce.withUnsafeBytes { noncePtr in
                     return beforenm.withUnsafeBytes { beforenmPtr in
                         return crypto_box_easy_afternm(
-                            authenticatedCipherTextPtr,
+                            authCipherTextPtr,
                             messagePtr,
                             CUnsignedLongLong(message.count),
                             noncePtr,

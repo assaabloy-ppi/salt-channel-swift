@@ -3,22 +3,8 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
-
-/* Begin PBXAggregateTarget section */
-		"SaltChannel::SaltChannelPackageTests::ProductTarget" /* SaltChannelPackageTests */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = OBJ_46 /* Build configuration list for PBXAggregateTarget "SaltChannelPackageTests" */;
-			buildPhases = (
-			);
-			dependencies = (
-				OBJ_49 /* PBXTargetDependency */,
-			);
-			name = SaltChannelPackageTests;
-			productName = SaltChannelPackageTests;
-		};
-/* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */; };
@@ -29,8 +15,10 @@
 		5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541451F82D2EF00730B41 /* ChannelError.swift */; };
 		5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541491F82D63A00730B41 /* ByteUtils.swift */; };
 		5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414B1F82D6BB00730B41 /* ByteChannel.swift */; };
-		5B55414E1F82D87000730B41 /* SaltChannel+Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */; };
-		5B5541501F82DAB000730B41 /* SaltChannel+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */; };
+		5B55414E1F82D87000730B41 /* SaltChannel+Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */; };
+		5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */; };
+		5B8105A91F94C74400F142DE /* SaltChannel+Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */; };
+		5B8105AB1F94C82E00F142DE /* SaltChannel+Host.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */; };
 		5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8201191F8BAC1800EA7D2D /* SessionTests.swift */; };
 		5B82011C1F8BB05900EA7D2D /* SaltChannel+Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */; };
 		5B82011E1F8BB0F600EA7D2D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011D1F8BB0F600EA7D2D /* Session.swift */; };
@@ -42,7 +30,6 @@
 		5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382D11F8394BC00E40069 /* WaitUntil.swift */; };
 		5DEEB4C106EA28AB099E3667 /* Pods_SaltChannel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */; };
 		A9E995203B5A83B1AB11990E /* Pods_SaltChannel_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6087A55C19DC7C6A5878CBF1 /* Pods_SaltChannel_Tests.framework */; };
-		OBJ_24 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
 		OBJ_30 /* SaltChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SaltChannelTests.swift */; };
 		OBJ_31 /* SodiumExtensionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* SodiumExtensionTest.swift */; };
 		OBJ_33 /* SaltChannel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "SaltChannel::SaltChannel::Product" /* SaltChannel.framework */; };
@@ -59,13 +46,6 @@
 			remoteGlobalIDString = "SaltChannel::SaltChannel";
 			remoteInfo = SaltChannel;
 		};
-		5B5541441F82D0F500730B41 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = OBJ_1 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = "SaltChannel::SaltChannel-Tests";
-			remoteInfo = "SaltChannel-Tests";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -79,13 +59,14 @@
 		5B5541451F82D2EF00730B41 /* ChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelError.swift; sourceTree = "<group>"; };
 		5B5541491F82D63A00730B41 /* ByteUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteUtils.swift; sourceTree = "<group>"; };
 		5B55414B1F82D6BB00730B41 /* ByteChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteChannel.swift; sourceTree = "<group>"; };
-		5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client.swift"; sourceTree = "<group>"; };
-		5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Protocol.swift"; sourceTree = "<group>"; };
+		5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Handshake.swift"; sourceTree = "<group>"; };
+		5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client.swift"; sourceTree = "<group>"; };
+		5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Peer.swift"; sourceTree = "<group>"; };
+		5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Host.swift"; sourceTree = "<group>"; };
+		5B8105AE1F94FCB800F142DE /* SaltChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaltChannel.h; sourceTree = "<group>"; };
 		5B8201191F8BAC1800EA7D2D /* SessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTests.swift; sourceTree = "<group>"; };
 		5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Header.swift"; sourceTree = "<group>"; };
 		5B82011D1F8BB0F600EA7D2D /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
-		5B8201201F8CCB6600EA7D2D /* test_data.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = test_data.h; path = "Tests/New Group/test_data.h"; sourceTree = SOURCE_ROOT; };
-		5B8201211F8CCB6600EA7D2D /* test_data.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = test_data.c; path = "Tests/New Group/test_data.c"; sourceTree = SOURCE_ROOT; };
 		5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderTests.swift; sourceTree = "<group>"; };
 		5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannelTests.swift; sourceTree = "<group>"; };
 		5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
@@ -101,20 +82,12 @@
 		OBJ_11 /* Sodium+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sodium+Extension.swift"; sourceTree = "<group>"; };
 		OBJ_13 /* SaltChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltChannelTests.swift; sourceTree = "<group>"; };
 		OBJ_14 /* SodiumExtensionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SodiumExtensionTest.swift; sourceTree = "<group>"; };
-		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		OBJ_9 /* Nonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nonce.swift; sourceTree = "<group>"; };
 		"SaltChannel::SaltChannel-Tests::Product" /* SaltChannel-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = "SaltChannel-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		"SaltChannel::SaltChannel::Product" /* SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		810E45A4DF35570D53DBF7FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		OBJ_32 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
@@ -146,15 +119,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		5B82011F1F8CCAF200EA7D2D /* data */ = {
-			isa = PBXGroup;
-			children = (
-				5B8201201F8CCB6600EA7D2D /* test_data.h */,
-				5B8201211F8CCB6600EA7D2D /* test_data.c */,
-			);
-			path = data;
-			sourceTree = SOURCE_ROOT;
-		};
 		9246E29B1A85CBF5BD9714A6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,7 +131,6 @@
 		OBJ_12 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				5B82011F1F8CCAF200EA7D2D /* data */,
 				OBJ_13 /* SaltChannelTests.swift */,
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */,
@@ -192,7 +155,6 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
-				OBJ_6 /* Package.swift */,
 				5BE382D41F83A8AE00E40069 /* Info.plist */,
 				OBJ_7 /* Sources */,
 				OBJ_12 /* Tests */,
@@ -205,6 +167,7 @@
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5B8105AE1F94FCB800F142DE /* SaltChannel.h */,
 				5BE382D11F8394BC00E40069 /* WaitUntil.swift */,
 				OBJ_9 /* Nonce.swift */,
 				OBJ_10 /* SaltChannel.swift */,
@@ -212,8 +175,8 @@
 				5B5541451F82D2EF00730B41 /* ChannelError.swift */,
 				5B5541491F82D63A00730B41 /* ByteUtils.swift */,
 				5B55414B1F82D6BB00730B41 /* ByteChannel.swift */,
-				5B55414D1F82D87000730B41 /* SaltChannel+Client.swift */,
-				5B55414F1F82DAB000730B41 /* SaltChannel+Protocol.swift */,
+				5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */,
+				5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */,
 				5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */,
 				5B49F0551F87D1A300C15D30 /* Protocol.swift */,
 				5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */,
@@ -221,6 +184,8 @@
 				5B36693A1F8F984300BE3983 /* SocketChannel.swift */,
 				5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */,
 				5BD3EAA21F9103C7001139E0 /* Array+Extension.swift */,
+				5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */,
+				5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */,
 			);
 			path = Sources;
 			sourceTree = SOURCE_ROOT;
@@ -236,6 +201,7 @@
 				OBJ_39 /* Sources */,
 				OBJ_44 /* Frameworks */,
 				1E9A2726C7618D48C30AFD3E /* [CP] Copy Pods Resources */,
+				5B8105AD1F94DF0300F142DE /* Swiftlint */,
 			);
 			buildRules = (
 			);
@@ -255,6 +221,7 @@
 				OBJ_32 /* Frameworks */,
 				060AB3CA2E47553D7865E33C /* [CP] Embed Pods Frameworks */,
 				0093239ED55D09D4387C901F /* [CP] Copy Pods Resources */,
+				5B8105AC1F94DE9800F142DE /* Swiftlint */,
 			);
 			buildRules = (
 			);
@@ -265,21 +232,6 @@
 			productName = SaltChannel_Tests;
 			productReference = "SaltChannel::SaltChannel-Tests::Product" /* SaltChannel-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		"SaltChannel::SwiftPMPackageDescription" /* SaltChannelPackageDescription */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = OBJ_20 /* Build configuration list for PBXNativeTarget "SaltChannelPackageDescription" */;
-			buildPhases = (
-				OBJ_23 /* Sources */,
-				810E45A4DF35570D53DBF7FC /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SaltChannelPackageDescription;
-			productName = SaltChannelPackageDescription;
-			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -292,13 +244,10 @@
 					"SaltChannel::SaltChannel-Tests" = {
 						LastSwiftMigration = 0900;
 					};
-					"SaltChannel::SaltChannelPackageTests::ProductTarget" = {
-						LastSwiftMigration = 0900;
-					};
 				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "SaltChannel" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -309,10 +258,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				"SaltChannel::SwiftPMPackageDescription" /* SaltChannelPackageDescription */,
 				"SaltChannel::SaltChannel-Tests" /* SaltChannel-Tests */,
 				"SaltChannel::SaltChannel" /* SaltChannel */,
-				"SaltChannel::SaltChannelPackageTests::ProductTarget" /* SaltChannelPackageTests */,
 			);
 		};
 /* End PBXProject section */
@@ -384,6 +331,34 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		5B8105AC1F94DE9800F142DE /* Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Swiftlint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"SwiftLint is not installed, download https://github.com/realm/SwiftLint\"\nfi";
+		};
+		5B8105AD1F94DF0300F142DE /* Swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Swiftlint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n    swiftlint\nelse\n    echo \"SwiftLint is not installed, download https://github.com/realm/SwiftLint\"\nfi";
+		};
 		C027C12FE1BA2CBBF46CFED0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -405,14 +380,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		OBJ_23 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 0;
-			files = (
-				OBJ_24 /* Package.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		OBJ_29 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
@@ -433,6 +400,8 @@
 			buildActionMask = 0;
 			files = (
 				5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */,
+				5B8105AB1F94C82E00F142DE /* SaltChannel+Host.swift in Sources */,
+				5B8105A91F94C74400F142DE /* SaltChannel+Peer.swift in Sources */,
 				5B82011C1F8BB05900EA7D2D /* SaltChannel+Header.swift in Sources */,
 				5BD3EAA11F9102A6001139E0 /* Data+Extension.swift in Sources */,
 				OBJ_41 /* Nonce.swift in Sources */,
@@ -445,8 +414,8 @@
 				OBJ_43 /* Sodium+Extension.swift in Sources */,
 				5B36693B1F8F984300BE3983 /* SocketChannel.swift in Sources */,
 				5BE382D31F8398D900E40069 /* WaitUntil.swift in Sources */,
-				5B55414E1F82D87000730B41 /* SaltChannel+Client.swift in Sources */,
-				5B5541501F82DAB000730B41 /* SaltChannel+Protocol.swift in Sources */,
+				5B55414E1F82D87000730B41 /* SaltChannel+Handshake.swift in Sources */,
+				5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */,
 				5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -459,32 +428,9 @@
 			target = "SaltChannel::SaltChannel" /* SaltChannel */;
 			targetProxy = 5B5541431F82D0F400730B41 /* PBXContainerItemProxy */;
 		};
-		OBJ_49 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = "SaltChannel::SaltChannel-Tests" /* SaltChannel-Tests */;
-			targetProxy = 5B5541441F82D0F500730B41 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		OBJ_21 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LD = /usr/bin/true;
-				OTHER_SWIFT_FLAGS = "-swift-version 4 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/4 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Debug;
-		};
-		OBJ_22 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				LD = /usr/bin/true;
-				OTHER_SWIFT_FLAGS = "-swift-version 4 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/4 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
-				SWIFT_VERSION = 4.0;
-			};
-			name = Release;
-		};
 		OBJ_27 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EAD45259D197B518FB387E4F /* Pods-SaltChannel-Tests.debug.xcconfig */;
@@ -663,25 +609,6 @@
 			};
 			name = Release;
 		};
-		OBJ_47 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Debug;
-		};
-		OBJ_48 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -690,15 +617,6 @@
 			buildConfigurations = (
 				OBJ_3 /* Debug */,
 				OBJ_4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		OBJ_20 /* Build configuration list for PBXNativeTarget "SaltChannelPackageDescription" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_21 /* Debug */,
-				OBJ_22 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -717,15 +635,6 @@
 			buildConfigurations = (
 				OBJ_37 /* Debug */,
 				OBJ_38 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		OBJ_46 /* Build configuration list for PBXAggregateTarget "SaltChannelPackageTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				OBJ_47 /* Debug */,
-				OBJ_48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

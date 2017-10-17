@@ -32,7 +32,7 @@ class AProtocolTests: XCTestCase {
             XCTAssertEqual(array2[1], "SC2------2")
             XCTAssertEqual(array3[1], "SC2------2")
             XCTAssertEqual(array3[2], "SC2------3")
-        } catch { XCTFail() }
+        } catch { XCTFail("Protocols malformated") }
     }
     
     func testExtractBadProtocolsFromA2() {
@@ -45,24 +45,24 @@ class AProtocolTests: XCTestCase {
         let fourprotocol = Data(bytes: [0x03]) + version5 + version4 + version3
 
         do {
-            let _ = try extractProtocols(data: oneprotocol)
-            XCTFail()
+            _ = try extractProtocols(data: oneprotocol)
+            XCTFail("Protocols malformated")
         } catch {  }
 
         do {
-            let _ = try extractProtocols(data: twoprotocols)
-            XCTFail()
+            _ = try extractProtocols(data: twoprotocols)
+            XCTFail("Protocols malformated")
         } catch {  }
         
         do {
-            let _ = try extractProtocols(data: threeprotocol)
-            XCTFail()
+            _ = try extractProtocols(data: threeprotocol)
+            XCTFail("Protocols malformated")
         } catch {  }
         
         do {
-            let _ = try extractProtocols(data: fourprotocol)
+            _ = try extractProtocols(data: fourprotocol)
             // No way we can know that they mixed 9 + 11 + 10
-        } catch { XCTFail()
+        } catch { XCTFail("Protocols malformated")
  }
     }
 }

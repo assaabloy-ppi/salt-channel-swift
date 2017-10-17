@@ -94,4 +94,3 @@ public func toHexArray(_ value: [Byte]) -> [String] {
 public func toHexString(_ value: [Byte]) -> String {
     return toHexArray(value).joined()
 }
-

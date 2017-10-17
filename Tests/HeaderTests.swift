@@ -9,7 +9,7 @@ import XCTest
 @testable import SaltChannel
 
 class Channel: ByteChannel {
-    func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {}
+    func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {}
     func write(_ data: [Data]) throws {}
 }
 
@@ -30,19 +30,19 @@ class HeaderTests: XCTestCase {
         let tt =  Data(bytes: [0x0A])
         let ma =  Data(bytes: [0x0B])
 
-        XCTAssert(u == PacketType.Unknown.data)
-        XCTAssert(m1 == PacketType.M1.data)
-        XCTAssert(m2 == PacketType.M2.data)
-        XCTAssert(m3 == PacketType.M3.data)
-        XCTAssert(m4 == PacketType.M4.data)
-        XCTAssert(app == PacketType.App.data)
-        XCTAssert(enc == PacketType.Encrypted.data)
-        XCTAssert(a1 == PacketType.A1.data)
-        XCTAssert(a2 == PacketType.A2.data)
-        XCTAssert(tt == PacketType.TT.data)
-        XCTAssert(ma == PacketType.MultiApp.data)
+        XCTAssert(u == PacketType.unknown.data)
+        XCTAssert(m1 == PacketType.m1.data)
+        XCTAssert(m2 == PacketType.m2.data)
+        XCTAssert(m3 == PacketType.m3.data)
+        XCTAssert(m4 == PacketType.m4.data)
+        XCTAssert(app == PacketType.app.data)
+        XCTAssert(enc == PacketType.encrypted.data)
+        XCTAssert(a1 == PacketType.a1.data)
+        XCTAssert(a2 == PacketType.a2.data)
+        XCTAssert(tt == PacketType.tt.data)
+        XCTAssert(ma == PacketType.multi.data)
         
-        XCTAssertFalse(tt == PacketType.Unknown.data)
+        XCTAssertFalse(tt == PacketType.unknown.data)
     }
     
     func testPackeTypeToHex() {
@@ -58,19 +58,19 @@ class HeaderTests: XCTestCase {
         let tt =  "0x0a"
         let ma =  "0x0b"
         
-        XCTAssertEqual(u, PacketType.Unknown.hex)
-        XCTAssertEqual(m1, PacketType.M1.hex)
-        XCTAssertEqual(m2, PacketType.M2.hex)
-        XCTAssertEqual(m3, PacketType.M3.hex)
-        XCTAssertEqual(m4, PacketType.M4.hex)
-        XCTAssertEqual(app, PacketType.App.hex)
-        XCTAssertEqual(enc, PacketType.Encrypted.hex)
-        XCTAssertEqual(a1, PacketType.A1.hex)
-        XCTAssertEqual(a2, PacketType.A2.hex)
-        XCTAssertEqual(tt, PacketType.TT.hex)
-        XCTAssertEqual(ma, PacketType.MultiApp.hex)
+        XCTAssert(u == PacketType.unknown.hex)
+        XCTAssert(m1 == PacketType.m1.hex)
+        XCTAssert(m2 == PacketType.m2.hex)
+        XCTAssert(m3 == PacketType.m3.hex)
+        XCTAssert(m4 == PacketType.m4.hex)
+        XCTAssert(app == PacketType.app.hex)
+        XCTAssert(enc == PacketType.encrypted.hex)
+        XCTAssert(a1 == PacketType.a1.hex)
+        XCTAssert(a2 == PacketType.a2.hex)
+        XCTAssert(tt == PacketType.tt.hex)
+        XCTAssert(ma == PacketType.multi.hex)
         
-        XCTAssertFalse(tt == PacketType.Unknown.hex)
+        XCTAssertFalse(tt == PacketType.unknown.hex)
     }
     
     func testReadBadHeader() {
@@ -91,11 +91,11 @@ class HeaderTests: XCTestCase {
         XCTAssertFalse(l1 && l2 && l3 && l4 && l5)
         XCTAssertFalse(f1 && f2 && f3 && f4 && f5)
         
-        XCTAssertTrue(t1 == PacketType.Unknown)
-        XCTAssertTrue(t2 == PacketType.Unknown)
-        XCTAssertTrue(t3 == PacketType.Unknown)
-        XCTAssertTrue(t4 == PacketType.Unknown)
-        XCTAssertTrue(t5 == PacketType.Unknown)
+        XCTAssertTrue(t1 == PacketType.unknown)
+        XCTAssertTrue(t2 == PacketType.unknown)
+        XCTAssertTrue(t3 == PacketType.unknown)
+        XCTAssertTrue(t4 == PacketType.unknown)
+        XCTAssertTrue(t5 == PacketType.unknown)
     }
 
     func testReadA1Header() {
@@ -119,18 +119,18 @@ class HeaderTests: XCTestCase {
         XCTAssertTrue(f2 && f4 && l3 && l4)
         XCTAssertFalse(f1 && f3 && l1 && l2)
 
-        XCTAssertTrue(t1 == PacketType.A1)
-        XCTAssertTrue(t2 == PacketType.A1)
-        XCTAssertTrue(t3 == PacketType.A1)
-        XCTAssertTrue(t4 == PacketType.A1)
+        XCTAssertTrue(t1 == PacketType.a1)
+        XCTAssertTrue(t2 == PacketType.a1)
+        XCTAssertTrue(t3 == PacketType.a1)
+        XCTAssertTrue(t4 == PacketType.a1)
     }
     
     func testCreateBadHeader() {
         let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
         
-        let unknown: Data = channel.createHeader(from: PacketType.Unknown)
+        let unknown: Data = channel.createHeader(from: PacketType.unknown)
         XCTAssertTrue(unknown.count == 2)
-        XCTAssertTrue(unknown[0] == PacketType.Unknown.rawValue)
+        XCTAssertTrue(unknown[0] == PacketType.unknown.rawValue)
 
         XCTAssertFalse(firstBitSet(byte: unknown[1]))
         XCTAssertFalse(lastBitSet(byte: unknown[1]))
@@ -139,20 +139,20 @@ class HeaderTests: XCTestCase {
     func testCreateA1Header() {
         let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
 
-        let h1_a1: Data = channel.createHeader(from: PacketType.A1)
-        let h2_a1: Data = channel.createHeader(from: PacketType.A1, first: true)
-        let h3_a1: Data = channel.createHeader(from: PacketType.A1, last: true)
-        let h4_a1: Data = channel.createHeader(from: PacketType.A1, first: true, last: true)
+        let h1_a1: Data = channel.createHeader(from: PacketType.a1)
+        let h2_a1: Data = channel.createHeader(from: PacketType.a1, first: true)
+        let h3_a1: Data = channel.createHeader(from: PacketType.a1, last: true)
+        let h4_a1: Data = channel.createHeader(from: PacketType.a1, first: true, last: true)
 
         XCTAssertTrue(h1_a1.count == 2)
         XCTAssertTrue(h2_a1.count == 2)
         XCTAssertTrue(h3_a1.count == 2)
         XCTAssertTrue(h4_a1.count == 2)
 
-        XCTAssertTrue(h1_a1.first! == PacketType.A1.rawValue)
-        XCTAssertTrue(h2_a1[0] == PacketType.A1.rawValue)
-        XCTAssertTrue(h3_a1[0] == PacketType.A1.rawValue)
-        XCTAssertTrue(h4_a1[0] == PacketType.A1.rawValue)
+        XCTAssertTrue(h1_a1.first! == PacketType.a1.rawValue)
+        XCTAssertTrue(h2_a1[0] == PacketType.a1.rawValue)
+        XCTAssertTrue(h3_a1[0] == PacketType.a1.rawValue)
+        XCTAssertTrue(h4_a1[0] == PacketType.a1.rawValue)
         
         print("A1 plain: \(h1_a1.hex)") // 0x0800
         print("A1 first: \(h2_a1.hex)") // 0x0880

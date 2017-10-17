@@ -7,8 +7,13 @@ import XCTest
 
 @testable import SaltChannel
 
+<<<<<<< HEAD
 class BasicHostMock : ByteChannel {
     var callbacks: [(Data) -> ()] = []
+=======
+class BasicHostMock: ByteChannel, MockRunner {
+    var callbacks: [(Data) -> Void] = []
+>>>>>>> d9a3a8f4b231e3913ac6c3e24a701eeb986a2340
     var writeData: [Data] = []
     var isDone: Bool = false
     let mockdata: TestDataSet
@@ -21,6 +26,7 @@ class BasicHostMock : ByteChannel {
         DispatchQueue.global().async { self.run() }
     }
     
+<<<<<<< HEAD
     func run() {
         if let aData = mockdata.a{
             print("Test A")
@@ -30,11 +36,16 @@ class BasicHostMock : ByteChannel {
         
         if let handshakeData = mockdata.handshake{
             print("Test handshake")
+=======
+    func handshake() {
+        if let handshakeData = mockdata.handshake {
+>>>>>>> d9a3a8f4b231e3913ac6c3e24a701eeb986a2340
             waitForData(handshakeData.m1)
             send(handshakeData.m2)
             send(handshakeData.m3)
             waitForData(handshakeData.m4)
         }
+<<<<<<< HEAD
         
         print("Test \(mockdata.transfers.count) transfers")
         for transfer in mockdata.transfers{
@@ -43,6 +54,13 @@ class BasicHostMock : ByteChannel {
             }
             else {
                 send(transfer.cipher)
+=======
+        for transfer in mockdata.transfers {
+            if transfer.toHost {
+                waitForData(transfer.cipher)
+            } else {
+                send(transfer.plain)
+>>>>>>> d9a3a8f4b231e3913ac6c3e24a701eeb986a2340
             }
         }
         
@@ -51,8 +69,13 @@ class BasicHostMock : ByteChannel {
     
     // ****** Helper functions *******
     
+<<<<<<< HEAD
     func waitForData(_ data: [Byte]){
         if WaitUntil.waitUntil(2, self.writeData.isEmpty == false) {
+=======
+    func waitForData(_ data: [Byte]) {
+        if WaitUntil.waitUntil(10, self.writeData.isEmpty == false) {
+>>>>>>> d9a3a8f4b231e3913ac6c3e24a701eeb986a2340
             XCTAssertEqual(writeData.first, Data(data))
             writeData.remove(at: 0)
         }
@@ -61,8 +84,8 @@ class BasicHostMock : ByteChannel {
         }
     }
     
-    func send(_ data: [Byte]){
-        for callback in callbacks{
+    func send(_ data: [Byte]) {
+        for callback in callbacks {
             print("Send data")
             callback(Data(data))
         }
@@ -72,12 +95,12 @@ class BasicHostMock : ByteChannel {
     
     func write(_ data: [Data]) throws {
         print("Write is called in Mock")
-        for item in data{
+        for item in data {
             writeData.append(item)
         }
     }
     
-    func register(callback: @escaping (Data) -> (), errorhandler: @escaping (Error) -> ()) {
+    func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
         print("Register is called in Mock")
         self.callbacks.append(callback)
     }

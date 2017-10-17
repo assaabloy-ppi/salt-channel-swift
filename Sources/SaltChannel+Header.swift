@@ -7,8 +7,8 @@
 import Foundation
 
 enum PacketType: Byte {
-    case Unknown = 0, M1 = 1, M2 = 2, M3 = 3, M4 = 4, App = 5,
-    Encrypted = 6, A1 = 8, A2 = 9, TT = 10, MultiApp = 11
+    case unknown = 0, m1 = 1, m2 = 2, m3 = 3, m4 = 4, app = 5,
+    encrypted = 6, a1 = 8, a2 = 9, tt = 10, multi = 11
     
     /**
      ````
@@ -54,7 +54,7 @@ extension SaltChannel: Header {
     }
     
     func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool) {
-        let unknown = (type: PacketType.Unknown, firstBit: false, lastBit: false)
+        let unknown = (type: PacketType.unknown, firstBit: false, lastBit: false)
         
         guard data.count == 2,
             let byte1 = data.first,

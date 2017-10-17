@@ -1,0 +1,19 @@
+language: swift
+os: osx
+osx_image: xcode9.1
+xcode_workspace: SaltChannel.xcworkspace
+xcode_scheme: SaltChannel-Tests
+
+script:
+  - make all
+
+env:
+  - SWIFT_VERSION=4.0
+
+notifications:
+  email:
+    recipients:
+      - kenneth@pernyer.se
+      - hakan.ohlsson@assaabloy.com
+    on_success: never
+    on_failure: always

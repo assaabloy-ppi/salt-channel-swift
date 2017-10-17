@@ -6,24 +6,30 @@
 import Foundation
 import Sodium
 
+enum NonceConstants {
+    static let bytesInUInt64 = 8
+    static let bytesInNonce = 24
+    static let bytesDiff = bytesInNonce - bytesInUInt64
+    static let step = UInt64(2)
+}
+
 public class Nonce {
-    private var value: UInt64!
-    private let bytesInUInt64 = 8
+    private var value: UInt64
     private let bytesInNonce = 24
     
-    init (startValue: UInt64) {
-        value = startValue
+    public init(value: UInt64) {
+        self.value = value
     }
     
-    func getNextNonce() -> Data {
+    func next() -> Data {
         let nonce = getNonceFromInteger(value: value)
-        value = value + 2
+        value += NonceConstants.step
         return nonce
     }
     
-    func getNonceFromInteger(value: UInt64) -> Data {
+    private func getNonceFromInteger(value: UInt64) -> Data {
         return
-            Data(packBytes(value, parts: bytesInUInt64).reversed()) +
-            Data(count: bytesInNonce-bytesInUInt64)
+            Data(packBytes(value, parts: NonceConstants.bytesInUInt64).reversed()) +
+            Data(count: NonceConstants.bytesDiff)
     }
 }

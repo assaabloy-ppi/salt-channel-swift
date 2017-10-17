@@ -1,69 +1,170 @@
-//  Handshake.swift
+//  Protocol.swift
 //  SaltChannel
 //
-//  Created by Kenneth Pernyer on 2017-10-02.
+//  Created by Håkan Ohlsson/Kenneth Pernyer on 2017-10-02.
 
 import Foundation
+import os.log
 
-extension SaltChannel {
-    
-    func handshake(holdUntilFirstWrite: Bool = false) throws {
-        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey, holdUntilFirstWrite: holdUntilFirstWrite)
-    }
-    
-    func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false) throws {
+extension SaltChannel: Client {
+    /**
+     ##M1## is sent to the server in plain
+     */
+    public func writeM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data? = nil) throws -> Data {
         
-        if self.handshakeDone {
-            throw ChannelError.handshakeAlreadyDone
-        }
+        let serverSignKeys = (serverSignPub != nil)
+        let header = createHeader(from: PacketType.m1, first: serverSignKeys)
         
-        self.channel.register(callback: read, errorhandler: error)
-        
-        // *** Send M1 ***
-        let m1Hash = try writeM1(time: 0, myEncPub: clientEncPub)
-        
-        // *** Receive M2 ***
-        guard let m2Raw = waitForData() else {
-            throw ChannelError.readTimeout
-        }
-        let (_, serverEncPub, m2Hash) = try readM2(data: m2Raw)
-        
-        // *** Create a session ***
-        guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub, senderSecretKey: clientEncSec) else {
-            throw ChannelError.couldNotCalculateSessionKey
-        }
-        self.session = Session(key: key, timeKeeper: NullTimeKeeper())
-        guard let session = self.session else {
-            throw ChannelError.couldNotCalculateSessionKey
-        }
-        
-        // *** Receive M3 ***
-        guard let m3Raw = waitForData() else {
-            throw ChannelError.readTimeout
-        }
-        let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
-        let (_, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
-        self.remoteSignPub = remoteSignPub
-        
-        // *** Send M4 ***
-        let m4Data: Data = try writeM4(time: 0, clientSignSec: clientSignSec, clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
-        
-        if holdUntilFirstWrite {
-            bufferedM4 = encryptMessage(session: session, message: m4Data)
+        // TODO: better toBytes for Double
+        var m1 = Constants.protocolId + header + packBytes(UInt64(time), parts: 4) + myEncPub
+        if let serverKeys = serverSignPub {
+            os_log("Client: Using Server Sign PubKeys %{public}s", log: log, type: .debug, serverKeys as CVarArg)
+            m1 += serverKeys
         } else {
-            try encryptAndSendMessage(session: session, message: m4Data)
+            // TODO
         }
+        os_log("Client: Write called from M1 salt handshake", log: log, type: .debug)
+        try self.channel.write([m1])
         
-        self.handshakeDone = true
+        return sodium.genericHash.hashSha512(data: m1)
     }
     
-    func waitForData() -> Data?{
-        if WaitUntil.waitUntil(10, receiveData.isEmpty == false) {
-            let temporery = receiveData.first
-            receiveData.remove(at: 0)
-            return temporery
+    /**
+     ##M2## sent from the server in plain
+     */
+    public func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+        os_log("Client: Read called from M2 salt handshake.", log: log, type: .debug)
+        
+        let hash = sodium.genericHash.hashSha512(data: data)
+        let header = data[..<2]
+        
+        let (type, nosuch, last) = self.readHeader(from: header)
+        guard (nosuch && last) || (!nosuch && !last) else {
+            throw ChannelError.errorInMessage(reason:
+                "NoSuchMessage and Last must both be set or none of them")
         }
-        return nil
+        guard type == PacketType.m2 else {
+            throw ChannelError.badMessageType(reason: "Expected M2 Header ")
+        }
+        
+        if last {
+            guard let session = session else {
+                throw ChannelError.setupNotDone(reason: "Client: No session object in M2")
+            }
+            session.lastMessageReceived = true
+            os_log("Client: last message flag received.", log: log, type: .debug)
+        }
+        
+        // TODO: better unpack for Integer and convert to Double
+        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
+        let remoteEncPub = data.subdata(in: 6 ..< data.endIndex)
+        
+        guard !nosuch || (nosuch && isNullContent(data: remoteEncPub)) else {
+            throw ChannelError.errorInMessage(reason:
+                "No such server set, but still sent remoteEncPub. \(time)")
+        }
+        
+        guard remoteEncPub.count == 32 else {
+            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong. \(time)")
+        }
+        
+        let realtime = TimeInterval(time)
+        os_log("M2 returning. Time= %{public}s", log: log, type: .debug, realtime)
+        return (realtime, remoteEncPub, hash)
     }
+    
+    /**
+     ##M3## sent from the server encrypted for me. Decrypted before this call using
+     receiveAndDecryptMessage()
+     */
+    public func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
+        os_log("Client: Read called from M3 salt handshake.", log: log, type: .debug)
+       let header = data[..<2]
+        
+        let (type, _, _) = readHeader(from: header)
+        guard type == PacketType.m3 else {
+            throw ChannelError.badMessageType(reason: "Expected M3 Header")
+        }
+        
+        // TODO: better unpack for Integer and convert to Double
+        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
+        let remoteSignPub = data.subdata(in: 6 ..< 38)
+        let sign = data.subdata(in: 38 ..< data.endIndex)
+        guard sign.count == 64 else {
+            throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong")
+        }
+        let signedMessage = Constants.serverprefix + m1Hash + m2Hash
+        guard validateSignature(sign: sign, signPub: remoteSignPub, signedData: signedMessage) else {
+            throw ChannelError.signatureDidNotMatch
+        }
+        
+        let realtime = TimeInterval(time)
+        os_log("M3 returning. Time= %{public}s", log: log, type: .debug, realtime)
+        return (realtime, remoteSignPub)
+    }
+    
+    /**
+     ##M4## is sent to the server encrypted
+     */
+    public func writeM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data {
+        let header = createHeader(from: PacketType.m4)
+        let signedMessage = Constants.clientprefix + m1Hash + m2Hash
+        guard let signature = createSignature(message: signedMessage, signSec: clientSignSec) else {
+            throw ChannelError.couldNotCreateSignature
+        }
+        
+        // TODO: better pack for Time
+        return header + packBytes(UInt64(time), parts: 4) + clientSignPub + signature
+    }
+    
+    /**
+     ##A1## is sent to the server in the open
+     */
+    public func writeA1(time: TimeInterval, message: Data) -> Data {
+        // TODO
+        return Data()
+    }
+    
+    /**
+     */
+    public func readA2(data: Data) throws -> [String] {
+        let header = data[..<2]
+        let (type, nosuch, last) = self.readHeader(from: header)
+        guard (nosuch && last) || (!nosuch && !last) else {
+            throw ChannelError.errorInMessage(reason:
+                "NoSuchMessage and Last must both be set or none of them")
+        }
+    
+        guard type == PacketType.a2 else {
+            throw ChannelError.badMessageType(reason: "Expected A2 message header")
+        }
+        
+        if last {
+            guard let session = session else {
+                throw ChannelError.setupNotDone(reason: "Client: No session object in A2")
+            }
+            session.lastMessageReceived = true
+        }
+        
+        return try extractProtocols(data: data[2...])
+    }
+}
+
+func extractProtocols(data: Data) throws -> [String] {
+    var versionArray: [String] = []
+    let length: Int = 10
+    let size = data.count
+    let n = data[0]
+
+    guard size > length, (size - 1) % length == 0, (length * Int(n)) == (size-1) else {
+        throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong.")
+    }
+    
+    for i in stride(from: 1, to: n*10, by: 10) {
+        let protocolData = data[i ..< i + 10]
+        let protocolString = String(data: protocolData, encoding: .utf8)
+        versionArray.append(protocolString ?? "SCBullshit")
+    }
+    
+    return versionArray
 }

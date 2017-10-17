@@ -23,11 +23,12 @@ class SessionTests: XCTestCase {
     }
     
     func testCounterTimeKeeper() {
-        var timeKeeper = CounterTimeKeeper()
-        XCTAssertTrue(timeKeeper.time() == 1)
-        XCTAssertTrue(timeKeeper.time() == 2)
-        XCTAssertTrue(timeKeeper.time() == 3)
-        XCTAssertTrue(timeKeeper.time() == 4)
+        let timeKeeper = CounterTimeKeeper()
+        
+        XCTAssertEqual(timeKeeper.time(), 1)
+        XCTAssertEqual(timeKeeper.time(), 2)
+        XCTAssertEqual(timeKeeper.time(), 3)
+        XCTAssertEqual(timeKeeper.time(), 4)
     }
     
     func testRealTimeKeeper() {
@@ -36,7 +37,7 @@ class SessionTests: XCTestCase {
         let time = timeKeeper.time()
         XCTAssertTrue(time > 0.0)
         
-        let time2 = timeKeeper.time()        
+        let time2 = timeKeeper.time()
         XCTAssertTrue(time2 > 0)
         XCTAssertTrue(time2 > time)
         XCTAssertTrue(time2 < timeKeeper.time())

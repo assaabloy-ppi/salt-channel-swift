@@ -8,7 +8,7 @@
 import XCTest
 @testable import SaltChannel
 
-class Channel: ByteChannel {
+class DummyChannel: ByteChannel {
     func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {}
     func write(_ data: [Data]) throws {}
 }
@@ -74,7 +74,7 @@ class HeaderTests: XCTestCase {
     }
     
     func testReadBadHeader() {
-        let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
+        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
 
         let bad1 = Data(bytes: [0xFF, 0x00])
         let bad2 = Data(bytes: [0x08, 0x80, 0x80])
@@ -99,11 +99,11 @@ class HeaderTests: XCTestCase {
     }
 
     func testReadA1Header() {
-        let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
+        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
 
         let h1_a1 = Data(bytes: [0x08, 0x00])
-        let h2_a1 = Data(bytes: [0x08, 0x80])
-        let h3_a1 = Data(bytes: [0x08, 0x01])
+        let h2_a1 = Data(bytes: [0x08, 0x01])
+        let h3_a1 = Data(bytes: [0x08, 0x80])
         let h4_a1 = Data(bytes: [0x08, 0x81])
 
         print("A1 plain: \(h1_a1.hex)") // 0x0800
@@ -126,7 +126,7 @@ class HeaderTests: XCTestCase {
     }
     
     func testCreateBadHeader() {
-        let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
+        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
         
         let unknown: Data = channel.createHeader(from: PacketType.unknown)
         XCTAssertTrue(unknown.count == 2)
@@ -137,7 +137,7 @@ class HeaderTests: XCTestCase {
     }
     
     func testCreateA1Header() {
-        let channel = SaltChannel(channel: Channel(), sec: sec, pub: pub)
+        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
 
         let h1_a1: Data = channel.createHeader(from: PacketType.a1)
         let h2_a1: Data = channel.createHeader(from: PacketType.a1, first: true)
@@ -180,9 +180,9 @@ class HeaderTests: XCTestCase {
 }
 
 func firstBitSet(byte: UInt8) -> Bool {
-    return (byte & 0b10000000) != 0
+    return (byte & SaltChannel.firstBitMask) != 0
 }
 
 func lastBitSet(byte: UInt8) -> Bool {
-    return (byte & 0b00000001) != 0
+    return (byte & SaltChannel.lastBitMask) != 0
 }

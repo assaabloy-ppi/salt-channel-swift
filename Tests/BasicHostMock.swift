@@ -2,8 +2,8 @@
 //  SaltChannel-Tests
 //
 //  Created by Håkan Olsson on 2017-10-05.
-import XCTest
 
+import XCTest
 @testable import SaltChannel
 
 class BasicHostMock: ByteChannel {

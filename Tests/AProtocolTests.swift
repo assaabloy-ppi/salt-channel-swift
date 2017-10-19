@@ -7,60 +7,72 @@ import XCTest
 @testable import SaltChannel
 
 class AProtocolTests: XCTestCase {
-    let version1 = Data("SC2------1".utf8)
-    let version2 = Data("SC2------2".utf8)
-    let version3 = Data("SC2------3".utf8)
-    let version4 = Data("ECHO------".utf8)
+    let salt  = Data("SCv2------".utf8)
+    let blank = Data("----------".utf8)
+    let echo  = Data("ECHO------".utf8)
 
     func testExtractProtocolsFromA2() {
-        let oneprotocol = Data(bytes: [0x01]) + version1
-        let twoprotocols = Data(bytes: [0x02]) + version1 + version2
-        let threeprotocol = Data(bytes: [0x04]) + version1 + version2 + version3 + version4
-
         do {
-            let array1: [String] = try extractProtocols(data: oneprotocol)
-            let array2: [String] = try extractProtocols(data: twoprotocols)
-            let array3: [String] = try extractProtocols(data: threeprotocol)
+            
+            let protocols1: [(first: String, second: String)] = try extractProtocols(n: 1, data: salt + blank)
+            let protocols2: [(first: String, second: String)] = try extractProtocols(n: 2, data: salt + echo + salt + blank)
+            let protocols3: [(first: String, second: String)] = try extractProtocols(n: 3, data: salt + echo + salt + salt + salt + blank)
         
-            XCTAssertEqual(array1.count, 1)
-            XCTAssertEqual(array2.count, 2)
-            XCTAssertEqual(array3.count, 4)
+            XCTAssertEqual(protocols1.count, 1)
+            XCTAssertEqual(protocols2.count, 2)
+            XCTAssertEqual(protocols3.count, 3)
         
-            XCTAssertEqual(array1[0], "SC2------1")
-            XCTAssertEqual(array2[0], "SC2------1")
-            XCTAssertEqual(array3[0], "SC2------1")
-            XCTAssertEqual(array2[1], "SC2------2")
-            XCTAssertEqual(array3[1], "SC2------2")
-            XCTAssertEqual(array3[2], "SC2------3")
-        } catch { XCTFail("Protocols malformated") }
+            XCTAssertEqual(protocols1[0].first, "SCv2------")
+            XCTAssertEqual(protocols1[0].second, "----------")
+
+            XCTAssertEqual(protocols2[0].first, "SCv2------")
+            XCTAssertEqual(protocols2[0].second, "ECHO------")
+            XCTAssertEqual(protocols2[1].first, "SCv2------")
+            XCTAssertEqual(protocols2[1].second, "----------")
+            
+            XCTAssertEqual(protocols3[0].first, "SCv2------")
+            XCTAssertEqual(protocols3[0].second, "ECHO------")
+            XCTAssertEqual(protocols3[1].first, "SCv2------")
+            XCTAssertEqual(protocols3[1].second, "SCv2------")
+            XCTAssertEqual(protocols3[2].first, "SCv2------")
+            XCTAssertEqual(protocols3[2].second, "----------")
+        } catch {
+            print(error)
+            XCTFail("Protocols malformated")
+        }
     }
     
     func testExtractBadProtocolsFromA2() {
-        let version4 = Data("1234567890A".utf8)
-        let version5 = Data("123456789".utf8)
-
-        let oneprotocol = Data(bytes: [0x02]) + version1
-        let twoprotocols = Data(bytes: [0x01]) + version1 + version2
-        let threeprotocol = Data(bytes: [0x03]) + version1 + version2 + version4
-        let fourprotocol = Data(bytes: [0x03]) + version5 + version4 + version3
+        let long = Data("1234567890A".utf8)
+        let short = Data("123456789".utf8)
 
         do {
-            _ = try extractProtocols(data: oneprotocol)
+            _ = try extractProtocols(n: 2, data: salt)
             XCTFail("Protocols malformated")
         } catch {  }
 
         do {
-            _ = try extractProtocols(data: twoprotocols)
+            _ = try extractProtocols(n: 0, data: salt + echo)
             XCTFail("Protocols malformated")
         } catch {  }
         
         do {
-            _ = try extractProtocols(data: threeprotocol)
+            _ = try extractProtocols(n: 1, data: salt + echo + salt + blank)
             XCTFail("Protocols malformated")
         } catch {  }
         
         do {
-            _ = try extractProtocols(data: fourprotocol)
+            _ = try extractProtocols(n: 2, data: salt + salt + salt + salt + salt)
+            XCTFail("Protocols malformated")
+        } catch {  }
+        
+        do {
+            _ = try extractProtocols(n: 2, data: salt + salt + salt + short)
+            XCTFail("Protocols malformated")
+        } catch {  }
+        
+        do {
+            _ = try extractProtocols(n: 2, data: salt + short + salt + long)
             // No way we can know that they mixed 9 + 11 + 10
         } catch { XCTFail("Protocols malformated")
  }

@@ -43,14 +43,17 @@ protocol Header {
 }
 
 extension SaltChannel: Header {
+    static let firstBitMask: UInt8 = 0b00000001
+    static let lastBitMask: UInt8  = 0b10000000
+    
     func createHeader(from packageType: PacketType, first: Bool = false, last: Bool = false) -> Data {
         let type = packBytes(UInt64(packageType.rawValue), parts: 1)
         
         // TODO: optimize Data
-        var bits: UInt8 = first ? 0b10000000: 0b00000000
-        bits = bits | (last ? 0b00000001: 0b00000000)
+        var bits: UInt8 = first ? SaltChannel.firstBitMask: 0b00000000
+        bits = bits | (last ? SaltChannel.lastBitMask: 0b00000000)
 
-        return type + Data(bytes: [bits])
+        return type + Data([bits])
     }
     
     func readHeader(from data: Data) -> (type: PacketType, firstBit: Bool, lastBit: Bool) {
@@ -63,8 +66,8 @@ extension SaltChannel: Header {
             return unknown
         }
 
-        let first = (byte2 & 0b10000000) != 0
-        let last  = (byte2 & 0b00000001) != 0
+        let first = (byte2 & SaltChannel.firstBitMask) != 0
+        let last  = (byte2 & SaltChannel.lastBitMask) != 0
         
         return (type, first, last)
     }

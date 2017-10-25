@@ -54,7 +54,7 @@ class BasicHostMock: ByteChannel {
             XCTAssertEqual(writeData.first, Data(data))
             writeData.remove(at: 0)
         } else {
-            XCTAssert(false, "Did not receive data")
+            XCTFail("Did not receive data")
         }
     }
     

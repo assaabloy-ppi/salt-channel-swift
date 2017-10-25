@@ -11,6 +11,17 @@ class SaltChannelTests: XCTestCase {
     let sodium = Sodium()
     var receivedData: [Data] = []
     
+    enum ProtocolAStrings {
+        static let saltStr = "SCv2------"
+        static let  blankStr = "----------"
+        static let  echoStr = "ECHO------"
+    }
+    /*
+     let salt  = Data(saltStr.utf8)  // "534376322d2d2d2d2d2d"
+     let blank = Data(blankStr.utf8) // "2d2d2d2d2d2d2d2d2d2d"
+     let echo  = Data(echoStr.utf8)  // "4543484f2d2d2d2d2d2d"
+     */
+    
     func waitForData(_ data: Data) {
         if WaitUntil.waitUntil(2, self.receivedData.isEmpty == false) {
             XCTAssertEqual(receivedData.first, data)
@@ -60,78 +71,84 @@ class SaltChannelTests: XCTestCase {
         }
     }
     
-    func testVerifySession2A2Data() throws {
-        let testdata = SaltTestData().session2TestData
-        let sec = Data(testdata.clientKeys.signSec)
-        let pub = Data(testdata.clientKeys.signPub)
+    func runVerifyA1Data(testDataSet: TestDataSet, aData: [(type: Int, pubKey: Data?)]) throws {
+        let a1 = Data(testDataSet.abox!.a1)
         
-        let saltStr  = "SCv2------"
-        let blankStr = "----------"
-        let echoStr  = "ECHO------"
+        let channel = SaltChannel(channel: DummyChannel(),
+                                  sec: Data(testDataSet.clientKeys.signSec),
+                                  pub: Data(testDataSet.clientKeys.signPub))
         
-        let salt  = Data(saltStr.utf8)  // "534376322d2d2d2d2d2d"
-        let blank = Data(blankStr.utf8) // "2d2d2d2d2d2d2d2d2d2d"
-        let echo  = Data(echoStr.utf8)  // "4543484f2d2d2d2d2d2d"
-        
-        guard let box = testdata.abox else {
-            XCTFail("Test data without ABox")
-            return
+        // ToDo Fix me, Check that the same amount of data is received
+        for aItem in aData {
+            let data = try channel.writeA1(type: aItem.type, pubKey: aItem.pubKey)
+            XCTAssertEqual(a1, data) // ToDo Fix me, How to handle more than one item?
         }
-        
-        let a2_type0 = Data(box.a2)
-        let a2_type1 = Data(box.a2long)
-        
-        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
-        channel.session = Session(key: Data([0x23, 0x34, 0x01]), timeKeeper: NullTimeKeeper())
-        
-        let protocols1: [(first: String, second: String)] = try channel.readA2(data: a2_type0) ?? []
-        let protocols2: [(first: String, second: String)] = try channel.readA2(data: a2_type1) ?? []
-        
-        XCTAssertEqual(protocols1.count, 1)
-        XCTAssertEqual(protocols2.count, 2)
-        
-        XCTAssertEqual(protocols1[0].first, "SCv2------")
-        XCTAssertEqual(protocols1[0].second, "----------")
-        
-        XCTAssertEqual(protocols2[0].first, "SCv2------")
-        XCTAssertEqual(protocols2[0].second, "ECHO------")
-        XCTAssertEqual(protocols2[1].first, "SCv2------")
-        XCTAssertEqual(protocols2[1].second, "----------")
     }
     
-    func testVerifySession2A1Data() throws {
-        let testdata = SaltTestData().session2TestData
-        let sec = Data(testdata.clientKeys.signSec)
-        let pub = Data(testdata.clientKeys.signPub)
+    func runVerifyA2Data(testDataSet: TestDataSet, expectedData: [(first: String, second: String)]) throws {
+        let a2 = Data(testDataSet.abox!.a2)
         
-        guard let box = testdata.abox else {
-            XCTFail("Test data without ABox")
-            return
+        let channel = SaltChannel(channel: DummyChannel(),
+                                  sec: Data(testDataSet.clientKeys.signSec),
+                                  pub: Data(testDataSet.clientKeys.signPub))
+        channel.session = Session(key: Data([0x23, 0x34, 0x01]), timeKeeper: NullTimeKeeper())
+        
+        let protocolA: [(first: String, second: String)] = try channel.readA2(data: a2) ?? []
+        
+        XCTAssertEqual(protocolA.count, expectedData.count)
+        for index in 0...protocolA.count {
+            XCTAssertEqual(protocolA[index].first, expectedData[index].first)
+            XCTAssertEqual(protocolA[index].second, expectedData[index].second)
         }
-        
-        let a1_type0 = Data(box.a1)
-        let a1_type1 = Data(box.a1long)
+    }
+    
+    /*********************************************************/
+    // Test A2
+    
+    func testVerifySession2A2Data() throws {
+        try runVerifyA2Data(testDataSet: SaltTestData().sessionALong,
+                            expectedData: [
+                                (first: ProtocolAStrings.saltStr, ProtocolAStrings.saltStr)
+            ])
+    }
+    
+    func testVerifySessionALongA2Data() throws {
+        try runVerifyA2Data(testDataSet: SaltTestData().sessionALong,
+                            expectedData: [
+                                (first: ProtocolAStrings.saltStr, ProtocolAStrings.saltStr)
+            ])
+    }
+    
+    /*********************************************************/
+    // Test A1
+    
+    func testVerifySession2A1Data() throws {
+        try runVerifyA1Data(testDataSet: SaltTestData().session2TestData,
+                            aData: [(type: 0, pubKey: nil)])
+    }
+    
+    func testVerifySessionALongA1Data() throws {
+        let testData = SaltTestData().sessionALong
+        try runVerifyA1Data(testDataSet: testData,
+                            aData: [(type: 1, pubKey: Data(testData.clientKeys.signPub))])
+    }
+    
+    func testNegativeA1() {
+        let clientKeys = SaltTestData().session1TestData.clientKeys
+        let channel = SaltChannel(channel: DummyChannel(), sec: Data(clientKeys.signSec), pub: Data(clientKeys.signPub))
 
-        let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
-        
-        let data0 = try channel.writeA1(type: 0)
-        let data1 = try channel.writeA1(type: 1, pubKey: pub)
-        
-        XCTAssertEqual(a1_type0, data0)
-        XCTAssertEqual(a1_type1, data1)
-        
         do {
             _ = try channel.writeA1(type: 1)
             XCTFail("Should have failed")
         } catch { }
         
         do {
-            _ = try channel.writeA1(type: 0, pubKey: pub)
+            _ = try channel.writeA1(type: 0, pubKey: Data(clientKeys.signPub))
             XCTFail("Should have failed")
         } catch { }
         
         do {
-            _ = try channel.writeA1(type: 48, pubKey: pub)
+            _ = try channel.writeA1(type: 48, pubKey: Data(clientKeys.signPub))
             XCTFail("Should have failed")
         } catch { }
         
@@ -145,6 +162,9 @@ class SaltChannelTests: XCTestCase {
             XCTFail("Should have failed")
         } catch { }
     }
+    
+    /*********************************************************/
+    // Test handshake
     
     func testSession1ClientHandshake() throws {
         try runClientHandshake(testDataSet: SaltTestData().session1TestData)

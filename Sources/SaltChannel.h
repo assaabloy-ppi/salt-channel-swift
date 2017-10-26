@@ -1,10 +1,8 @@
-//
 //  saltchannel.h
 //  saltchannel
 //
 //  Created by Kenneth Pernyer on 2017-10-02.
 //  Copyright © 2017 Assa Abloy Shared Technologies. All rights reserved.
-//
 
 #import <UIKit/UIKit.h>
 

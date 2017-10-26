@@ -38,6 +38,8 @@ public class SaltChannel: ByteChannel {
         self.clientSignSec = sec
         self.clientSignPub = pub
         
+        self.channel.register(callback: read, errorhandler: error)
+        
         os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
     }
     

@@ -7,6 +7,11 @@ import Foundation
 import os.log
 
 extension SaltChannel: Client {
+    enum A1Types {
+        static let defaultAddress  = Data(bytes: [0x00])
+        static let specificAddress = Data(bytes: [0x01])
+    }
+    
     /**
      ##M1## is sent to the server in plain
      **** M1 ****
@@ -41,7 +46,7 @@ extension SaltChannel: Client {
      7b  Zero.
      Bits set to 0.
      */
-    public func writeM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data? = nil) throws -> Data {
+    public func packM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data? = nil) throws -> (hash: Data, data: Data) {
         let serverSignKeys = (serverSignPub != nil)
         let header = createHeader(from: PacketType.m1, first: serverSignKeys)
         
@@ -54,9 +59,8 @@ extension SaltChannel: Client {
             // TODO
         }
         os_log("Client: Write called from M1 salt handshake", log: log, type: .debug)
-        try self.channel.write([m1])
         
-        return sodium.genericHash.hashSha512(data: m1)
+        return ( hash: sodium.genericHash.hashSha512(data: m1), data: m1)
     }
     
     /**
@@ -92,7 +96,7 @@ extension SaltChannel: Client {
      Set to 1 when this is the last message of the session.
      That is, when the NoSuchServer bit is set.
      */
-    public func readM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+    public func unpackM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
         os_log("Client: Read called from M2 salt handshake.", log: log, type: .debug)
         
         guard data.count == 38 else {
@@ -174,7 +178,7 @@ extension SaltChannel: Client {
      Bits set to 0.
      
      */
-    public func readM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
+    public func unpackM3(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data) {
         os_log("Client: Read called from M3 salt handshake.", log: log, type: .debug)
         
         guard data.count == 102 else {
@@ -209,7 +213,7 @@ extension SaltChannel: Client {
      ##M4## is sent to the server encrypted
      
      */
-    public func writeM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data {
+    public func packM4(time: TimeInterval, clientSignSec: Data, clientSignPub: Data, m1Hash: Data, m2Hash: Data) throws -> Data {
         let header = createHeader(from: PacketType.m4)
         let signedMessage = Constants.clientprefix + m1Hash + m2Hash
         guard let signature = createSignature(message: signedMessage, signSec: clientSignSec) else {
@@ -238,21 +242,17 @@ extension SaltChannel: Client {
      x   Address
      The address.
      */
-    public func writeA1(type: Int, pubKey: Data? = nil) throws -> Data {
+    public func packA1(pubKey: Data? = nil) throws -> Data {
         let header = createHeader(from: PacketType.a1)
         var a1 = header
-        
-        guard (type == 0) && (pubKey == nil) || (type == 1) && (pubKey != nil) else {
-            throw ChannelError.badMessageType(reason: "Expected Type 0 or 1 Header ")
-        }
-        
-        if let pub = pubKey {
-            guard pub.count == 32 else {
+
+        if let garanteedPubKey = pubKey {
+            guard garanteedPubKey.count == 32 else {
                 throw ChannelError.badMessageType(reason: "Expected PubKey of size 32")
             }
-            a1 += Constants.a1Type1 + Data(bytes: [0x00, 0x20]) + pub
+            a1 += A1Types.specificAddress + Data(bytes: [0x00, 0x20]) + garanteedPubKey
         } else {
-            a1 += Constants.a1Type0 + Data(bytes: [0x00, 0x00])
+            a1 += A1Types.defaultAddress + Data(bytes: [0x00, 0x00])
         }
         
         return a1
@@ -309,7 +309,7 @@ extension SaltChannel: Client {
      information about the layer above, the server MUST use value
      "----------" for this field.
      */
-    public func readA2(data: Data) throws -> [(first: String, second: String)]? {
+    public func unpackA2(data: Data) throws -> [(first: String, second: String)] {
         guard data.count >= 3 else {
             throw ChannelError.errorInMessage(reason: "Size is to small")
         }
@@ -322,12 +322,14 @@ extension SaltChannel: Client {
                 "Last Bit should always be set for A2")
         }
     
+        /* ToDo Shall this be here
         guard let session = session else {
             throw ChannelError.setupNotDone(reason: "Client: No session object in A2")
         }
         
         session.lastMessageReceived = true
-        
+         */
+ 
         guard type == PacketType.a2 else {
             throw ChannelError.badMessageType(reason: "Expected A2 message header")
         }
@@ -338,7 +340,9 @@ extension SaltChannel: Client {
             throw ChannelError.badMessageType(reason: "No such server should not return protocols")
         }
         
-        guard !nosuch && data.count >= 23 else { return nil }
+        guard !nosuch && data.count >= 23 else {
+            throw ChannelError.badMessageType(reason: "No such server and data to large")
+        }
         
         let rest = data[3...]
         return try extractProtocols(n: Int(number), data: Data(rest))

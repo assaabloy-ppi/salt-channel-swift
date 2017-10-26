@@ -13,6 +13,20 @@ extension SaltChannel {
         try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
             holdUntilFirstWrite: holdUntilFirstWrite)
     }
+    
+    func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
+        if self.handshakeDone {
+            throw ChannelError.handshakeAlreadyDone
+        }
+        
+        let a1 = try packA1(pubKey: pubKey)
+        try channel.write([a1])
+        
+        guard let a2Raw = waitForData() else {
+            throw ChannelError.readTimeout
+        }
+        return try unpackA2(data: a2Raw)
+    }
 
     func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false) throws {
 
@@ -20,16 +34,15 @@ extension SaltChannel {
             throw ChannelError.handshakeAlreadyDone
         }
 
-        self.channel.register(callback: read, errorhandler: error)
-
         // *** Send M1 ***
-        let m1Hash = try writeM1(time: 0, myEncPub: clientEncPub)
+        let (m1Hash, m1) = try packM1(time: 0, myEncPub: clientEncPub)
+        try channel.write([m1])
 
         // *** Receive M2 ***
         guard let m2Raw = waitForData() else {
             throw ChannelError.readTimeout
         }
-        let (_, serverEncPub, m2Hash) = try readM2(data: m2Raw)
+        let (_, serverEncPub, m2Hash) = try unpackM2(data: m2Raw)
 
         // *** Create a session ***
         guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub,
@@ -46,11 +59,11 @@ extension SaltChannel {
             throw ChannelError.readTimeout
         }
         let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
-        let (_, remoteSignPub) = try readM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
+        let (_, remoteSignPub) = try unpackM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         self.remoteSignPub = remoteSignPub
 
         // *** Send M4 ***
-        let m4Data: Data = try writeM4(time: 0, clientSignSec: clientSignSec,
+        let m4Data: Data = try packM4(time: 0, clientSignSec: clientSignSec,
             clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
 
         if holdUntilFirstWrite {

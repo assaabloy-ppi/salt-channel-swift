@@ -10,7 +10,7 @@ extension SaltChannel: Host {
     /**
      ##M1## is sent to the server in plain
      */
-    public func readM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
+    public func unpackM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data) {
         os_log("Host: unpack M1", log: log, type: .debug)
         
         let hash = sodium.genericHash.hashSha512(data: data)
@@ -44,27 +44,27 @@ extension SaltChannel: Host {
         return (realtime, remoteEncPub, hash)
     }
     
-    func writeM2(time: TimeInterval, myEncPub: Data) throws -> Data {
+    func packM2(time: TimeInterval, myEncPub: Data) throws -> Data {
         // TODO
         return Data()
     }
     
-    func writeM3(time: TimeInterval, myEncPub: Data) throws -> Data {
+    func packM3(time: TimeInterval, myEncPub: Data) throws -> Data {
         // TODO
         return Data()
     }
     
-    func readM4(data: Data) throws -> (time: TimeInterval, message: Data) {
+    func unpackM4(data: Data) throws -> (time: TimeInterval, message: Data) {
         // TODO
         return (1, Data())
     }
     
-    func writeA2(time: TimeInterval, message: Data) -> Data {
+    func packA2(time: TimeInterval, message: Data) -> Data {
         // TODO
         return Data()
     }
     
-    func readA1(data: Data) throws -> (time: TimeInterval, message: Data) {
+    func unpackA1(data: Data) throws -> (time: TimeInterval, message: Data) {
         // TODO
         return (1, Data())
     }

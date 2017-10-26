@@ -11,17 +11,6 @@ class SaltChannelTests: XCTestCase {
     let sodium = Sodium()
     var receivedData: [Data] = []
     
-    enum ProtocolAStrings {
-        static let saltStr = "SCv2------"
-        static let  blankStr = "----------"
-        static let  echoStr = "ECHO------"
-    }
-    /*
-     let salt  = Data(saltStr.utf8)  // "534376322d2d2d2d2d2d"
-     let blank = Data(blankStr.utf8) // "2d2d2d2d2d2d2d2d2d2d"
-     let echo  = Data(echoStr.utf8)  // "4543484f2d2d2d2d2d2d"
-     */
-    
     func waitForData(_ data: Data) {
         if WaitUntil.waitUntil(2, self.receivedData.isEmpty == false) {
             XCTAssertEqual(receivedData.first, data)
@@ -50,7 +39,20 @@ class SaltChannelTests: XCTestCase {
         
             let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub)
             channel.register(callback: receiver, errorhandler: errorhandler)
-        
+            
+            if let abox = testDataSet.abox {
+                var pubKey: Data? = nil
+                if abox.pubKey != nil {
+                    pubKey = Data(abox.pubKey!)
+                }
+                let unpackedA2 = try channel.negotiate(pubKey: pubKey)
+                XCTAssertEqual(unpackedA2.count, abox.unpackedA2.count)
+                for index in 0..<unpackedA2.count {
+                    XCTAssertEqual(unpackedA2[index].first, abox.unpackedA2[index].first)
+                    XCTAssertEqual(unpackedA2[index].second, abox.unpackedA2[index].second)
+                }
+            }
+            
             if testDataSet.handshake != nil {
                 try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub))
@@ -76,110 +78,20 @@ class SaltChannelTests: XCTestCase {
         }
     }
     
-    func runVerifyA1Data(testDataSet: TestDataSet, type: Int, pubKey: Data?) {
-        do {
-            let a1 = Data(testDataSet.abox!.a1)
-            
-            let channel = SaltChannel(channel: DummyChannel(),
-                                      sec: Data(testDataSet.clientKeys.signSec),
-                                      pub: Data(testDataSet.clientKeys.signPub))
-
-            let data = try channel.writeA1(type: type, pubKey: pubKey)
-            XCTAssertEqual(a1, data)
-        } catch {
-            print(error)
-            XCTFail("Got exception")
-        }
-    }
-    
-    func runVerifyA2Data(testDataSet: TestDataSet, expectedData: [(first: String, second: String)]) {
-        do {
-            let a2 = Data(testDataSet.abox!.a2)
-            
-            let channel = SaltChannel(channel: DummyChannel(),
-                                      sec: Data(testDataSet.clientKeys.signSec),
-                                      pub: Data(testDataSet.clientKeys.signPub))
-            channel.session = Session(key: Data([0x23, 0x34, 0x01]), timeKeeper: NullTimeKeeper())
-            
-            let protocolA: [(first: String, second: String)] = try channel.readA2(data: a2) ?? []
-            
-            XCTAssertEqual(protocolA.count, expectedData.count)
-            for index in 0..<protocolA.count {
-                XCTAssertEqual(protocolA[index].first, expectedData[index].first)
-                XCTAssertEqual(protocolA[index].second, expectedData[index].second)
-            }
-        } catch {
-            print(error)
-            XCTFail("Got exception")
-        }
-    }
-    
     /*********************************************************/
-    // Test A1
-    
-    func testVerifySession2A1Data() {
-        runVerifyA1Data(testDataSet: SaltTestData().session2TestData,
-                        type: 0,
-                        pubKey: nil)
-    }
-    
-    func testVerifySessionALongA1Data() {
-        let testData = SaltTestData().sessionALong
-        runVerifyA1Data(testDataSet: testData,
-                        type: 1,
-                        pubKey: Data(testData.clientKeys.signPub))
-    }
-    
+    // Negative testes
     func testNegativeA1() {
         let clientKeys = SaltTestData().session1TestData.clientKeys
         let channel = SaltChannel(channel: DummyChannel(), sec: Data(clientKeys.signSec), pub: Data(clientKeys.signPub))
 
         do {
-            _ = try channel.writeA1(type: 1)
-            XCTFail("Should have failed")
-        } catch { }
-        
-        do {
-            _ = try channel.writeA1(type: 0, pubKey: Data(clientKeys.signPub))
-            XCTFail("Should have failed")
-        } catch { }
-        
-        do {
-            _ = try channel.writeA1(type: 48, pubKey: Data(clientKeys.signPub))
-            XCTFail("Should have failed")
-        } catch { }
-        
-        do {
-            _ = try channel.writeA1(type: 48, pubKey: Data([0x22, 0x34]))
-            XCTFail("Should have failed")
-        } catch { }
-        
-        do {
-            _ = try channel.writeA1(type: 48, pubKey: nil)
+            _ = try channel.packA1(pubKey: Data([0x22, 0x34]))
             XCTFail("Should have failed")
         } catch { }
     }
-    
+
     /*********************************************************/
-    // Test A2
-    
-    func testVerifySession2A2Data() {
-        runVerifyA2Data(testDataSet: SaltTestData().session2TestData,
-                        expectedData: [
-                            (first: ProtocolAStrings.saltStr, ProtocolAStrings.echoStr)
-            ])
-    }
-    
-    func testVerifySessionALongA2Data() {
-        runVerifyA2Data(testDataSet: SaltTestData().sessionALong,
-                        expectedData: [
-                            (first: ProtocolAStrings.saltStr, ProtocolAStrings.echoStr),
-                            (first: ProtocolAStrings.saltStr, ProtocolAStrings.blankStr)
-            ])
-    }
-    
-    /*********************************************************/
-    // Test handshake
+    // Test handshake, a1 and a2
     
     func testSession1ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session1TestData)
@@ -191,5 +103,9 @@ class SaltChannelTests: XCTestCase {
     
     func testSession3ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session3TestData)
+    }
+    
+    func testSessionALongClientHandshake() {
+        runClientHandshake(testDataSet: SaltTestData().sessionALong)
     }
 }

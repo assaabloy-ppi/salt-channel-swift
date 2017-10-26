@@ -10,6 +10,12 @@ import XCTest
 typealias Byte = UInt8
 
 public class SaltTestData {
+    enum ProtocolAStrings {
+        static let saltStr  = "SCv2------"
+        static let blankStr = "----------"
+        static let echoStr  = "ECHO------"
+    }
+    
     static let keysA = KeySet(
         signSec: [
             0x55, 0xf4, 0xd1, 0xd1, 0x98, 0x09, 0x3c, 0x84,
@@ -166,6 +172,10 @@ public class SaltTestData {
                 0x09, 0x80, 0x01, 0x53, 0x43, 0x76, 0x32, 0x2d,
                 0x2d, 0x2d, 0x2d, 0x2d, 0x2d, 0x45, 0x43, 0x48,
                 0x4f, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d
+            ],
+            pubKey: nil,
+            unpackedA2: [
+                (first: ProtocolAStrings.saltStr, second: ProtocolAStrings.echoStr)
             ]
         ),
         handshake: nil,
@@ -298,6 +308,16 @@ public class SaltTestData {
                 0x43, 0x76, 0x32, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d,
                 0x2d, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d, 0x2d,
                 0x2d, 0x2d, 0x2d
+            ],
+            pubKey: [
+                0x55, 0x29, 0xce, 0x8c, 0xcf, 0x68, 0xc0, 0xb8,
+                0xac, 0x19, 0xd4, 0x37, 0xab, 0x0f, 0x5b, 0x32,
+                0x72, 0x37, 0x82, 0x60, 0x8e, 0x93, 0xc6, 0x26,
+                0x4f, 0x18, 0x4b, 0xa1, 0x52, 0xc2, 0x35, 0x7b
+            ],
+            unpackedA2: [
+                (first: ProtocolAStrings.saltStr, second: ProtocolAStrings.echoStr),
+                (first: ProtocolAStrings.saltStr, second: ProtocolAStrings.blankStr)
             ]
         ),
         handshake: nil,
@@ -321,6 +341,8 @@ public struct KeySet {
 public struct ABox {
     let a1: [Byte]
     let a2: [Byte]
+    let pubKey: [Byte]?
+    let unpackedA2: [(first: String, second: String)]
 }
 
 public struct Handshake {

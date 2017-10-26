@@ -2,9 +2,10 @@ SaltChannel Swift
 ===================
 
 [![Build Status](https://travis-ci.org/assaabloy-ppi/salt-channel-swift.svg?branch=master)](https://travis-ci.org/assaabloy-ppi/salt-channel-swift)
+[![Codebeat Quality](https://codebeat.co/badges/82efe8db-c3e8-4817-b263-032199150179)](https://codebeat.co/projects/github-com-assaabloy-ppi-saltchannel-swift-master)
+[![Code Coverage](https://codecov.io/gh/assaabloy-ppi/saltchannel-swift/branch/master/graph/badge.svg)](https://codecov.io/gh/assaabloy-ppi/saltchannel-swift)
 
-
-Salt Channel version 2 implemented in Swift. Can be used for iOS, MacOS and Linux projects. Read more about [Salt Channel](https://github.com/assaabloy-ppi/salt-channel)
+Salt Channel version 2 implemented in Swift. To be used for iOS, MacOS and Linux projects. Read more about [Salt Channel](https://github.com/assaabloy-ppi/salt-channel)
 
 
 Salt Channel
@@ -22,7 +23,7 @@ financed by ASSA ABLOY AB -- the global leader in door opening solutions.
 Thank you for supporting this work.
 
 Session Format
-------
+--------------
 
 An overview of a typical Salt Channel session is shown below.
 ```  

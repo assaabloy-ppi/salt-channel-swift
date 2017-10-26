@@ -351,13 +351,13 @@ func extractProtocols(n: Int, data: Data) throws -> [(first: String, second: Str
     let half: Int = chunk/2
     let size = data.count
 
-    guard size >= chunk, size % chunk == 0, (chunk * Int(n)) == size else {
+    guard size != 0, size % chunk == 0, (chunk * Int(n)) == size else {
         throw ChannelError.errorInMessage(reason: "Size of Messsage is wrong.")
     }
     
     for i in stride(from: 0, to: n*chunk, by: chunk) {
         let part1 = data[i..<(i+half)]
-        let part2 = data[half..<chunk]
+        let part2 = data[i+half..<i+chunk]
         let str1 = String(data: part1, encoding: .utf8)!
         let str2 = String(data: part2, encoding: .utf8)!
 

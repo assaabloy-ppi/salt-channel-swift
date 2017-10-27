@@ -11,7 +11,7 @@ protocol Crypto {
 }
 
 extension SaltChannel: Crypto {
-    public func receiveAndDecryptMessage(message: Data, session: Session) throws -> Data {
+    public func decryptMessage(message: Data, session: Session) throws -> Data {
         os_log("Client: read called from receiveAndDecryptMessage salt handshake", log: log, type: .debug)
         let header = message[..<2]
         let (type, _, lastMessageFlag) = readHeader(from: header)
@@ -35,21 +35,12 @@ extension SaltChannel: Crypto {
         return decryptedData
     }
     
-    public func encryptMessage(session: Session, message: Data) -> Data {
-        // Added for byte channel multicall, TODO: Review
-        let header = createHeader(from: PacketType.encrypted)
+    public func encryptMessage(session: Session, message: Data, isLastMessage: Bool = false) -> Data {
+        let header = createHeader(from: PacketType.encrypted, last: isLastMessage)
         let encryptedMessage =  header +
             sodium.box.seal(message: message, beforenm: session.key,
                             nonce: sendNonce.next())!
         return encryptedMessage
-    }
-    
-    public func encryptAndSendMessage(session: Session,
-                                      message: Data, lastMessage: Bool = false) throws {
-        let header = createHeader(from: PacketType.encrypted, last: lastMessage)
-        let cipherData = sodium.box.seal(message: message, beforenm: session.key,
-                                         nonce: sendNonce.next())!
-        try self.channel.write([header + cipherData])
     }
     
     public func validateSignature(sign: Data, signPub: Data, signedData: Data) -> Bool {

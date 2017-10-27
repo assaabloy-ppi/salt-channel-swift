@@ -6,16 +6,11 @@
 import Foundation
 
 public class Session {
-    private var timeKeeper: TimeKeeper
-
-    var time: TimeInterval { return timeKeeper.time() }
-
     var key: Data
     var handshakeDone = false
     var lastMessageReceived = false
 
-    init(key: Data, timeKeeper: TimeKeeper) {
-        self.timeKeeper = timeKeeper
+    init(key: Data) {
         self.key = key
     }
 }
@@ -29,10 +24,15 @@ public struct NullTimeKeeper: TimeKeeper {
 }
 
 public class CounterTimeKeeper: TimeKeeper {
-    var counter: TimeInterval = 0
+    let timeArray: [TimeInterval]
+    var counter: Int = 0
+    init(timeArray: [TimeInterval]) {
+        self.timeArray = timeArray
+    }
     public func time() -> TimeInterval {
+        let time = timeArray[counter]
         counter += 1
-        return counter
+        return time
     }
 }
 

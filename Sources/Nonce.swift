@@ -29,7 +29,7 @@ public class Nonce {
     
     private func getNonceFromInteger(value: UInt64) -> Data {
         return
-            Data(packBytes(value, parts: NonceConstants.bytesInUInt64).reversed()) +
+            Data(packBytes(value, parts: NonceConstants.bytesInUInt64)) +
             Data(count: NonceConstants.bytesDiff)
     }
 }

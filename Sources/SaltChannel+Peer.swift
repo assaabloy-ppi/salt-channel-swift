@@ -7,6 +7,21 @@ import Foundation
 import os.log
 
 extension SaltChannel: Peer {
+    
+    func unpackApp(_ data: Data) throws -> (time: TimeInterval, message: [Data]) {
+        let header = data[..<2]
+        let time = TimeInterval(unpackInteger(data, count: 4).value)
+        let (type, _, _) = readHeader(from: header)
+        let body = data.subdata(in: 6 ..< data.endIndex)
+        if type == PacketType.app {
+            return (time: time, message: [body])
+        } else if type == PacketType.multi {
+            return (time: time, message: readMultiApp(body))
+        } else {
+            throw ChannelError.badMessageType(reason: "Expected App message header")
+        }
+    }
+    
     /**
      */
     func writeApp(time: TimeInterval, message: Data) -> Data {
@@ -16,31 +31,33 @@ extension SaltChannel: Peer {
     
     /**
      */
-    public func readApp(data: Data) throws -> (time: TimeInterval, message: Data) {
-        let header = data[..<2]
-        let (type, _, _) = readHeader(from: header)
-        guard  type == PacketType.app else {
-            throw ChannelError.badMessageType(reason: "Expected App message header")
-        }
-        
-        // TODO: better unpack for Time
-        let (time, _) = unpackInteger(data.subdata(in: 2 ..< 6), count: 4)
-        let message = data.subdata(in: 6 ..< data.endIndex)
-        return (Double(time), message)
+    public func readApp(_ data: Data) -> Data {
+        return data.subdata(in: 6 ..< data.endIndex)
     }
     
     /**
      ##MultiApp## is multiple messages batched together in the application layer protocol
      */
-    func writeMultiApp(message: Data) throws -> (time: TimeInterval, message: Data) {
+    func writeMultiApp(time: TimeInterval, messages: [Data]) -> Data {
         let header = createHeader(from: PacketType.multi)
-        let time = self.session!.time
-        let message = header + packBytes(UInt64(time), parts: 4)
-        return (time, message)
+        let time = packBytes(UInt64(timeKeeper.time()), parts: 4)
+        let msgCount = packBytes(UInt64(messages.count), parts: 2)
+        var appMessage = header + time + msgCount
+        for message in messages {
+            appMessage += packBytes(UInt64(message.count), parts: 2) + message
+        }
+        return appMessage
     }
     
-    func readMultiApp(data: Data) throws -> [String] {
-        // TODO
-        return []
+    func readMultiApp(_ data: Data) -> [Data] {
+        var (count, remainder) = unpackInteger(data, count: 2)
+        var size: UInt64 = 0
+        var messages: [Data] = []
+        for _ in 1...count {
+            (size, remainder) = unpackInteger(remainder, count: 2)
+            messages.append(remainder.subdata(in: 0 ..< Int(size)))
+            remainder = remainder.subdata(in: Int(size) ..< remainder.endIndex )
+        }
+        return messages
     }
 }

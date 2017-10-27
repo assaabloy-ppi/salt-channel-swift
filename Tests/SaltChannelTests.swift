@@ -29,17 +29,19 @@ class SaltChannelTests: XCTestCase {
         XCTFail("Got error: " + error.localizedDescription)
     }
     
-    func runClientHandshake(testDataSet: TestDataSet) {
+    func runClientHandshake(testDataSet: TestDataSet, timeKeeper: TimeKeeper) {
         do {
+            /*** Setup ***/
             let signSec = Data(testDataSet.clientKeys.signSec)
             let signPub = Data(testDataSet.clientKeys.signPub)
         
             let mock = BasicHostMock(mockdata: testDataSet)
             mock.start()
         
-            let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub)
+            let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub, timeKeeper: timeKeeper)
             channel.register(callback: receiver, errorhandler: errorhandler)
             
+            /*** A1 A2 negotiation ***/
             if let abox = testDataSet.abox {
                 var pubKey: Data? = nil
                 if abox.pubKey != nil {
@@ -53,17 +55,21 @@ class SaltChannelTests: XCTestCase {
                 }
             }
             
+            /*** Handshake ***/
             if testDataSet.handshake != nil {
                 try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub))
                 XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))
             }
         
+            /*** Data transfer ***/
             for transfer in testDataSet.transfers {
                 if transfer.toHost {
-                    try channel.write([Data(transfer.plain)])
+                    try channel.write(transfer.plain.map {Data($0)})
                 } else {
-                    waitForData(Data(transfer.plain))
+                    for item in transfer.plain {
+                        waitForData(Data(item))
+                    }
                 }
             }
         
@@ -94,18 +100,18 @@ class SaltChannelTests: XCTestCase {
     // Test handshake, a1 and a2
     
     func testSession1ClientHandshake() {
-        runClientHandshake(testDataSet: SaltTestData().session1TestData)
+        runClientHandshake(testDataSet: SaltTestData().session1TestData, timeKeeper: NullTimeKeeper())
     }
     
     func testSession2ClientHandshake() {
-        runClientHandshake(testDataSet: SaltTestData().session2TestData)
+        runClientHandshake(testDataSet: SaltTestData().session2TestData, timeKeeper: NullTimeKeeper())
     }
     
     func testSession3ClientHandshake() {
-        runClientHandshake(testDataSet: SaltTestData().session3TestData)
+        runClientHandshake(testDataSet: SaltTestData().session3TestData, timeKeeper: CounterTimeKeeper(timeArray: [1, 3, 0, 5, 5]))
     }
     
     func testSessionALongClientHandshake() {
-        runClientHandshake(testDataSet: SaltTestData().sessionALong)
+        runClientHandshake(testDataSet: SaltTestData().sessionALong, timeKeeper: NullTimeKeeper())
     }
 }

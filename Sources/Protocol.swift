@@ -14,11 +14,12 @@ enum Constants {
 typealias Protocol = Client & Host
 
 protocol Peer {
-    func writeApp(time: TimeInterval, message: Data) throws -> Data
-    func writeMultiApp(message: Data) throws -> (time: TimeInterval, message: Data)
+    func unpackApp(_ data: Data) throws -> (time: TimeInterval, message: [Data])
+    func writeApp(time: TimeInterval, message: Data) -> Data
+    func writeMultiApp(time: TimeInterval, messages: [Data]) -> Data
     
-    func readApp(data: Data) throws -> (time: TimeInterval, message: Data)
-    func readMultiApp(data: Data) throws -> [String]
+    func readApp(_ data: Data) -> Data
+    func readMultiApp(_ data: Data) -> [Data]
 }
 
 protocol Client: Peer {

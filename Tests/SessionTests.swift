@@ -23,7 +23,7 @@ class SessionTests: XCTestCase {
     }
     
     func testCounterTimeKeeper() {
-        let timeKeeper = CounterTimeKeeper()
+        let timeKeeper = CounterTimeKeeper(timeArray: [1, 2, 3, 4])
         
         XCTAssertEqual(timeKeeper.time(), 1)
         XCTAssertEqual(timeKeeper.time(), 2)
@@ -44,59 +44,35 @@ class SessionTests: XCTestCase {
     }
     
     func testSessionNulltime() {
-        let session = Session(key: key, timeKeeper: NullTimeKeeper())
+        let nullTimeKeeper = NullTimeKeeper()
         
-        let time = session.time
-        // print(time)
-        XCTAssertTrue(time == 0)
-        XCTAssertFalse(session.handshakeDone)
-        
-        let time2 = session.time
-        // print(time2)
-        
-        XCTAssertTrue(time2 == 0)
-        XCTAssertTrue(session.time == 0)
-        XCTAssertTrue(session.time == 0)
-        
-        session.handshakeDone = true
-        XCTAssertTrue(session.handshakeDone)
+        XCTAssertEqual(nullTimeKeeper.time(), 0)
+        XCTAssertEqual(nullTimeKeeper.time(), 0)
+        XCTAssertEqual(nullTimeKeeper.time(), 0)
+        XCTAssertEqual(nullTimeKeeper.time(), 0)
+        XCTAssertEqual(nullTimeKeeper.time(), 0)
     }
     
     func testSessionCountertime() {
-        let session = Session(key: key, timeKeeper: CounterTimeKeeper())
+        let counterTimeKeeper = CounterTimeKeeper(timeArray: [1, 2, 3, 4, 5])
         
-        let time = session.time
-        // print(time)
-        XCTAssertTrue(time == 1)
-        XCTAssertFalse(session.handshakeDone)
-        
-        let time2 = session.time
-        // print(time2)
-        
-        XCTAssertTrue(time2 == 2)
-        XCTAssertTrue(session.time == 3)
-        XCTAssertTrue(session.time == 4)
-
-        session.handshakeDone = true
-        XCTAssertTrue(session.handshakeDone)
+        XCTAssertEqual(counterTimeKeeper.time(), 1)
+        XCTAssertEqual(counterTimeKeeper.time(), 2)
+        XCTAssertEqual(counterTimeKeeper.time(), 3)
+        XCTAssertEqual(counterTimeKeeper.time(), 4)
+        XCTAssertEqual(counterTimeKeeper.time(), 5)
     }
     
     func testSessionRealtime() {
-        let session = Session(key: key, timeKeeper: RealTimeKeeper())
+        let realTimeKeeper = RealTimeKeeper()
         
-        let time = session.time
-        // print(time)
-        XCTAssertTrue(time > 0)
-        XCTAssertFalse(session.handshakeDone)
-        
-        let time2 = session.time
-        // print(time2)
-
-        XCTAssertTrue(time2 > 0)
-        XCTAssertTrue(time2 > time)
-        XCTAssertTrue(time2 < session.time)
-
-        session.handshakeDone = true
-        XCTAssertTrue(session.handshakeDone)
+        let time1 = realTimeKeeper.time()
+        XCTAssertTrue(time1 >= 0)
+        let time2 = realTimeKeeper.time()
+        XCTAssertTrue(time2 >= time1)
+        let time3 = realTimeKeeper.time()
+        XCTAssertTrue(time3 >= time2)
+        let time4 = realTimeKeeper.time()
+        XCTAssertTrue(time4 >= time3)
     }
 }

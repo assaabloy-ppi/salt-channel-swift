@@ -35,7 +35,7 @@ extension SaltChannel {
         }
 
         // *** Send M1 ***
-        let (m1Hash, m1) = try packM1(time: 0, myEncPub: clientEncPub)
+        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: clientEncPub)
         try channel.write([m1])
 
         // *** Receive M2 ***
@@ -49,7 +49,7 @@ extension SaltChannel {
             senderSecretKey: clientEncSec) else {
             throw ChannelError.couldNotCalculateKey
         }
-        self.session = Session(key: key, timeKeeper: NullTimeKeeper())
+        self.session = Session(key: key)
         guard let session = self.session else {
             throw ChannelError.couldNotCalculateKey
         }
@@ -58,18 +58,19 @@ extension SaltChannel {
         guard let m3Raw = waitForData() else {
             throw ChannelError.readTimeout
         }
-        let data: Data = try receiveAndDecryptMessage(message: m3Raw, session: session)
+        let data: Data = try decryptMessage(message: m3Raw, session: session)
         let (_, remoteSignPub) = try unpackM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         self.remoteSignPub = remoteSignPub
 
         // *** Send M4 ***
-        let m4Data: Data = try packM4(time: 0, clientSignSec: clientSignSec,
+        let m4Data: Data = try packM4(time: timeKeeper.time(), clientSignSec: clientSignSec,
             clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
-
+        let m4cipher = encryptMessage(session: session, message: m4Data)
+        
         if holdUntilFirstWrite {
-            bufferedM4 = encryptMessage(session: session, message: m4Data)
+            bufferedM4 = m4cipher
         } else {
-            try encryptAndSendMessage(session: session, message: m4Data)
+            try channel.write([m4cipher])
         }
 
         self.handshakeDone = true

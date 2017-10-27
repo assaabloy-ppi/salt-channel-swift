@@ -12,6 +12,7 @@ import os.log
  */
 public class SaltChannel: ByteChannel {
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
+    var timeKeeper: TimeKeeper
 
     var callbacks: [(Data) -> Void] = []
     var errorHandlers: [(Error) -> Void] = []
@@ -31,9 +32,14 @@ public class SaltChannel: ByteChannel {
     var bufferedM4: Data?
     var handshakeDone = false
     
+    public convenience init (channel: ByteChannel, sec: Data, pub: Data) {
+        self.init(channel: channel, sec: sec, pub: pub, timeKeeper: RealTimeKeeper())
+    }
+    
     /// Create a SaltChannel with channel to wrap plus the clients signing
     /// keypair.
-    public init (channel: ByteChannel, sec: Data, pub: Data) {
+    public init (channel: ByteChannel, sec: Data, pub: Data, timeKeeper: TimeKeeper) {
+        self.timeKeeper = timeKeeper
         self.channel = channel
         self.clientSignSec = sec
         self.clientSignPub = pub
@@ -49,20 +55,19 @@ public class SaltChannel: ByteChannel {
             throw ChannelError.setupNotDone(reason: "Expected a Session by now")
         }
         
-        var packages: [Data] = []
+        var appMessage = Data()
+        if data.count == 1 {
+            appMessage = writeApp(time: timeKeeper.time(), message: data.first!)
+        } else {
+            appMessage = writeMultiApp(time: timeKeeper.time(), messages: data)
+        }
         
+        let cipherMessage = encryptMessage(session: session, message: appMessage)
         if let m4 = self.bufferedM4 {
-            packages.append(m4)
-            self.bufferedM4 = nil
+            try self.channel.write([m4, cipherMessage])
+        } else {
+            try self.channel.write([cipherMessage])
         }
-        
-        // Create an array of encrypted packages
-        for package in data {
-            let msg = writeApp(time: session.time, message: package)
-            packages.append(encryptMessage(session: session, message: msg))
-        }
-        
-        try self.channel.write(packages)
     }
     
     public func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
@@ -85,10 +90,12 @@ public class SaltChannel: ByteChannel {
             receiveData.append(data)
         } else {
             if let session = self.session,
-                let raw = try? receiveAndDecryptMessage(message: data, session: session),
-                let (_, message) = try? readApp(data: raw) {
+                let raw = try? decryptMessage(message: data, session: session),
+                let (_, messages) = try? unpackApp(raw) {
                 for callback in callbacks {
-                    callback(message)
+                    for message in messages {
+                        callback(message)
+                    }
                 }
             } else {
                 error(ChannelError.setupNotDone(reason: "Failed in read"))

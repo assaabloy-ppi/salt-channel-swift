@@ -40,7 +40,7 @@ extension SaltChannel: Peer {
      */
     func writeMultiApp(time: TimeInterval, messages: [Data]) -> Data {
         let header = createHeader(from: PacketType.multi)
-        let time = packBytes(UInt64(timeKeeper.time()), parts: 4)
+        let time = packBytes(UInt64(time), parts: 4)
         let msgCount = packBytes(UInt64(messages.count), parts: 2)
         var appMessage = header + time + msgCount
         for message in messages {

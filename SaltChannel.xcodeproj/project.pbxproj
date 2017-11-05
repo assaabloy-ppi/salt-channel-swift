@@ -53,6 +53,8 @@
 		2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AProtocolTests.swift; sourceTree = "<group>"; };
 		5B36693A1F8F984300BE3983 /* SocketChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannel.swift; sourceTree = "<group>"; };
+		5B475A5E1FAFAFEF00D6FF09 /* Session4.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Session4.rtf; sourceTree = "<group>"; };
+		5B475A5F1FAFB03C00D6FF09 /* Session3.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Session3.rtf; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
 		5B49F0551F87D1A300C15D30 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
@@ -139,6 +141,8 @@
 				5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */,
 				5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */,
 				5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */,
+				5B475A5E1FAFAFEF00D6FF09 /* Session4.rtf */,
+				5B475A5F1FAFB03C00D6FF09 /* Session3.rtf */,
 			);
 			path = Tests;
 			sourceTree = SOURCE_ROOT;

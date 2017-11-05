@@ -187,6 +187,12 @@ public class SaltTestData {
         hostKeys: keysB,
         abox: nil,
         handshake: Handshake(
+            // 5343763201000100
+            // 00008520f0098930
+            // a754748b7ddcb43e
+            // f75a0dbf3a0d2638
+            // 1af4eba4a98eaa9b
+            // 4e6a
             m1: [
                 0x53, 0x43, 0x76, 0x32, 0x01, 0x00, 0x01, 0x00,
                 0x00, 0x00, 0x85, 0x20, 0xf0, 0x09, 0x89, 0x30,
@@ -195,6 +201,11 @@ public class SaltTestData {
                 0x1a, 0xf4, 0xeb, 0xa4, 0xa9, 0x8e, 0xaa, 0x9b,
                 0x4e, 0x6a
             ],
+            // 020001000000de9e
+            // db7d7b7dc1b4d35b
+            // 61c2ece435373f83
+            // 43c85b78674dadfc
+            // 7e146f882b4f
             m2: [
                 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0xde, 0x9e,
                 0xdb, 0x7d, 0x7b, 0x7d, 0xc1, 0xb4, 0xd3, 0x5b,
@@ -202,6 +213,8 @@ public class SaltTestData {
                 0x43, 0xc8, 0x5b, 0x78, 0x67, 0x4d, 0xad, 0xfc,
                 0x7e, 0x14, 0x6f, 0x88, 0x2b, 0x4f
             ],
+/* 06005f545037bc60f771254bb562a5545193c6cdd969b86e299a47a9b1f1c18666e5cf8b000742bad609bfd9bf2ef2798743ee092b07eb32f55c386d4c5f986a22a793f2886c407756e9c16f416ad6a039bec1f546c28e53e3cdd8b6a0b728e1b576dc73c0826fde10a8e8fa95dd840f27887fad9c43e523
+            */
             m3: [
                 0x06, 0x00, 0x71, 0x6b, 0x3b, 0xf4, 0xe6, 0xab,
                 0x0b, 0xcd, 0x47, 0x9f, 0xcb, 0x8a, 0x3c, 0x91,

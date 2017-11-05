@@ -1,0 +1,8 @@
+xcodebuild_arguments:
+  - -project
+  - Binson.xcodeproj
+  - -scheme
+  - Binson-Package
+author: Kenneth Pernyer
+author_url: http://www.assaabloy.net/
+github_url: https://github.com/assaabloy-ppi/binson-swift.git

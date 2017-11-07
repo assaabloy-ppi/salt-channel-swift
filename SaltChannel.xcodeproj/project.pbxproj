@@ -17,6 +17,7 @@
 		5B55414C1F82D6BB00730B41 /* ByteChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414B1F82D6BB00730B41 /* ByteChannel.swift */; };
 		5B55414E1F82D87000730B41 /* SaltChannel+Handshake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */; };
 		5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */; };
+		5B5820111FB20A0C00B48509 /* ByteIntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5820101FB20A0C00B48509 /* ByteIntegerTests.swift */; };
 		5B8105A91F94C74400F142DE /* SaltChannel+Peer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */; };
 		5B8105AB1F94C82E00F142DE /* SaltChannel+Host.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */; };
 		5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8201191F8BAC1800EA7D2D /* SessionTests.swift */; };
@@ -53,8 +54,6 @@
 		2FE8F3DAEB60D204B9B40DA2 /* Pods_SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AProtocolTests.swift; sourceTree = "<group>"; };
 		5B36693A1F8F984300BE3983 /* SocketChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannel.swift; sourceTree = "<group>"; };
-		5B475A5E1FAFAFEF00D6FF09 /* Session4.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Session4.rtf; sourceTree = "<group>"; };
-		5B475A5F1FAFB03C00D6FF09 /* Session3.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Session3.rtf; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
 		5B49F0551F87D1A300C15D30 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
@@ -63,6 +62,7 @@
 		5B55414B1F82D6BB00730B41 /* ByteChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteChannel.swift; sourceTree = "<group>"; };
 		5B55414D1F82D87000730B41 /* SaltChannel+Handshake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Handshake.swift"; sourceTree = "<group>"; };
 		5B55414F1F82DAB000730B41 /* SaltChannel+Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Client.swift"; sourceTree = "<group>"; };
+		5B5820101FB20A0C00B48509 /* ByteIntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteIntegerTests.swift; sourceTree = "<group>"; };
 		5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Peer.swift"; sourceTree = "<group>"; };
 		5B8105AA1F94C82E00F142DE /* SaltChannel+Host.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Host.swift"; sourceTree = "<group>"; };
 		5B8105AE1F94FCB800F142DE /* SaltChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaltChannel.h; sourceTree = "<group>"; };
@@ -141,8 +141,7 @@
 				5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */,
 				5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */,
 				5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */,
-				5B475A5E1FAFAFEF00D6FF09 /* Session4.rtf */,
-				5B475A5F1FAFB03C00D6FF09 /* Session3.rtf */,
+				5B5820101FB20A0C00B48509 /* ByteIntegerTests.swift */,
 			);
 			path = Tests;
 			sourceTree = SOURCE_ROOT;
@@ -389,6 +388,7 @@
 			buildActionMask = 0;
 			files = (
 				5BD3EA9F1F90FC94001139E0 /* SocketChannelTests.swift in Sources */,
+				5B5820111FB20A0C00B48509 /* ByteIntegerTests.swift in Sources */,
 				5B8201241F8D1A9200EA7D2D /* HeaderTests.swift in Sources */,
 				5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */,
 				5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */,

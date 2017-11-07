@@ -1,9 +1,7 @@
-//
 //  Array+Extension.swift
 //  SaltChannel
 //
 //  Created by Kenneth Pernyer on 2017-10-13.
-
 //  Support to go back and forth between Hex String and ByteArray
 
 public typealias Byte = UInt8

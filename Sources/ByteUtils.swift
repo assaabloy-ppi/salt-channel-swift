@@ -5,32 +5,66 @@
 
 import Foundation
 
+enum ByteOrder {
+    case bigEndian
+    case littleEndian
+}
+
 extension UInt32 {
-    
-    enum ByteOrder {
-        case bigEndian
-        case littleEndian
-    }
-    
-    func toBytes(_ order: ByteOrder = .littleEndian) -> [UInt8] {
-        var bytes: [UInt8] = [0, 0, 0, 0]
+    func toBytes(_ order: ByteOrder = .littleEndian) -> [Byte] {
+        var bytes: [Byte] = [0, 0, 0, 0]
         var value: UInt32 = self.littleEndian
         if order == .bigEndian {
             value = self.bigEndian
         }
-        bytes[0] = UInt8(value & 0x000000FF)
-        bytes[1] = UInt8((value & 0x0000FF00) >> 8) //0x12345678 => 0x00005600 >> 8 => 0x00000056
-        bytes[2] = UInt8((value & 0x00FF0000) >> 16)
-        bytes[3] = UInt8((value & 0xFF000000) >> 24)
+        bytes[0] = Byte(value & 0x000000FF)
+        bytes[1] = Byte((value & 0x0000FF00) >> 8)
+        bytes[2] = Byte((value & 0x00FF0000) >> 16)
+        bytes[3] = Byte((value & 0xFF000000) >> 24)
         return bytes
     }
     
-    static func fromBytes(_ sizeBytes: [UInt8], order: ByteOrder = .littleEndian) -> UInt32 {
+    static func fromBytes(_ sizeBytes: [Byte], order: ByteOrder = .littleEndian) -> UInt32 {
         var value: UInt32 = 0
         value += UInt32(sizeBytes[0])
         value += UInt32(sizeBytes[1]) << 8
         value += UInt32(sizeBytes[2]) << 16
         value += UInt32(sizeBytes[3]) << 24
+        if order == .bigEndian {
+            return value.bigEndian
+        }
+        return value
+    }
+}
+
+extension UInt64 {
+    func toBytes(_ order: ByteOrder = .littleEndian) -> [Byte] {
+        var bytes: [Byte] = [0, 0, 0, 0, 0, 0, 0, 0]
+        var value: UInt64 = self.littleEndian
+        if order == .bigEndian {
+            value = self.bigEndian
+        }
+        bytes[0] = Byte((value & 0x00000000000000FF))
+        bytes[1] = Byte((value & 0x000000000000FF00) >> 8)
+        bytes[2] = Byte((value & 0x0000000000FF0000) >> 16)
+        bytes[3] = Byte((value & 0x00000000FF000000) >> 24)
+        bytes[4] = Byte((value & 0x000000FF00000000) >> 32)
+        bytes[5] = Byte((value & 0x0000FF0000000000) >> 40)
+        bytes[6] = Byte((value & 0x00FF000000000000) >> 48)
+        bytes[7] = Byte((value & 0xFF00000000000000) >> 56)
+        return bytes
+    }
+    
+    static func fromBytes(_ sizeBytes: [UInt8], order: ByteOrder = .littleEndian) -> UInt64 {
+        var value: UInt64 = 0
+        value += UInt64(sizeBytes[0])
+        value += UInt64(sizeBytes[1]) << 8
+        value += UInt64(sizeBytes[2]) << 16
+        value += UInt64(sizeBytes[3]) << 24
+        value += UInt64(sizeBytes[4]) << 32
+        value += UInt64(sizeBytes[5]) << 40
+        value += UInt64(sizeBytes[6]) << 48
+        value += UInt64(sizeBytes[7]) << 56
         if order == .bigEndian {
             return value.bigEndian
         }

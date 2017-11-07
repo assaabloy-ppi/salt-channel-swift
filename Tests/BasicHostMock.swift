@@ -37,7 +37,7 @@ class BasicHostMock: ByteChannel {
         
         print("Test \(mockdata.transfers.count) transfers")
         for transfer in mockdata.transfers {
-            if transfer.toHost {
+            if transfer.direction == .toHost {
                 waitForData(transfer.cipher)
             } else {
                 send(transfer.cipher)

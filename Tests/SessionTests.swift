@@ -1,9 +1,7 @@
-//
 //  SessionTests.swift
 //  SaltChannel-Tests
 //
 //  Created by Kenneth Pernyer on 2017-10-09.
-//
 
 import XCTest
 @testable import SaltChannel

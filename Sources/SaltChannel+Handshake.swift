@@ -28,14 +28,15 @@ extension SaltChannel {
         return try unpackA2(data: a2Raw)
     }
 
-    func handshake(clientEncSec: Data, clientEncPub: Data, holdUntilFirstWrite: Bool = false) throws {
+    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
+                   holdUntilFirstWrite: Bool = false) throws {
 
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
         }
 
         // *** Send M1 ***
-        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: clientEncPub)
+        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: clientEncPub, serverSignPub: serverSignPub)
         try channel.write([m1])
 
         // *** Receive M2 ***

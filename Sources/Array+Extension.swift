@@ -5,6 +5,7 @@
 //  Created by Kenneth Pernyer on 2017-10-13.
 
 //  Support to go back and forth between Hex String and ByteArray
+
 public typealias Byte = UInt8
 
 extension Array where Element: BinaryInteger, Element.IntegerLiteralType == Byte {
@@ -60,11 +61,31 @@ extension Array where Iterator.Element == Byte {
     public func toHexString(_ separator: String = "") -> String {
         return self.lazy.reduce("") {
             var str = String($1, radix: 16)
-            if str.characters.count == 1 {
+            if str.count == 1 {
                 str = "0" + str
             }
             return $0 + "\(separator)\(str)"
         }
+    }
+    
+    private func toHexRow() -> String {
+        return self.lazy.reduce("") {
+            var str = String($1, radix: 16)
+            if str.count == 1 {
+                str = "0" + str
+            }
+            return $0 + "0x\(str), "
+        }
+    }
+    
+    // Quick and Dirty Pretty print
+    public func prettyPrint(_ columns: Int = 8) {
+        for i in stride(from: 0, to: self.count, by: columns) {
+            let end = Swift.min(i+columns, self.count)
+            let row = [Byte](self[i ... end-1])
+            print(row.toHexRow())
+        }
+        print()
     }
 }
 

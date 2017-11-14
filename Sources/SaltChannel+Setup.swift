@@ -6,15 +6,9 @@
 import Foundation
 import os.log
 
-extension SaltChannel {
-
-    func handshake(holdUntilFirstWrite: Bool = false) throws {
-        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
-            holdUntilFirstWrite: holdUntilFirstWrite)
-    }
+extension SaltChannel: Setup {
     
-    func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
+    public func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
         }
@@ -28,8 +22,8 @@ extension SaltChannel {
         return try unpackA2(data: a2Raw)
     }
 
-    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-                   holdUntilFirstWrite: Bool = false) throws {
+    public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
+                holdUntilFirstWrite: Bool = false) throws {
 
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -77,6 +71,12 @@ extension SaltChannel {
         self.handshakeDone = true
     }
 
+    public func handshake(holdUntilFirstWrite: Bool = false) throws {
+        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
+        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
+                      holdUntilFirstWrite: holdUntilFirstWrite)
+    }
+    
     func waitForData() -> Data? {
         if WaitUntil.waitUntil(10, receiveData.isEmpty == false) {
             let temporery = receiveData.first

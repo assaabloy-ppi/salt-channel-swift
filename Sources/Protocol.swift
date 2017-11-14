@@ -11,6 +11,12 @@ enum Constants {
     static let clientprefix = Data("SC-SIG02".utf8)
 }
 
+protocol Setup {
+    func negotiate(pubKey: Data?) throws -> [(first: String, second: String)]
+    func handshake(holdUntilFirstWrite: Bool) throws
+    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?, holdUntilFirstWrite: Bool) throws
+}
+
 typealias Protocol = Client & Host
 
 protocol Peer {

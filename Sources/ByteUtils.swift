@@ -5,12 +5,12 @@
 
 import Foundation
 
-enum ByteOrder {
+public enum ByteOrder {
     case bigEndian
     case littleEndian
 }
 
-extension UInt32 {
+public extension UInt32 {
     func toBytes(_ order: ByteOrder = .littleEndian) -> [Byte] {
         var bytes: [Byte] = [0, 0, 0, 0]
         var value: UInt32 = self.littleEndian
@@ -37,7 +37,7 @@ extension UInt32 {
     }
 }
 
-extension UInt64 {
+public extension UInt64 {
     func toBytes(_ order: ByteOrder = .littleEndian) -> [Byte] {
         var bytes: [Byte] = [0, 0, 0, 0, 0, 0, 0, 0]
         var value: UInt64 = self.littleEndian
@@ -86,7 +86,7 @@ public func packBytes(_ value: UInt64, parts: Int) -> Data {
     return Data(bytesw.reversed())
 }
 
-func unpackInteger(_ data: Data, count: Int) -> (value: UInt64, remainder: Data) {
+public func unpackInteger(_ data: Data, count: Int) -> (value: UInt64, remainder: Data) {
     /*
      guard count > 0 else {
      throw Error

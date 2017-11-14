@@ -31,4 +31,13 @@ class ByteIntegerTests: XCTestCase {
         let b4a: [Byte] = u4a.toBytes()
         XCTAssertEqual(b4a.toHexString(), "ffffffffffffff7f")
     }
+    
+    func testPackTime() {
+        let time: TimeInterval = 345554.3212
+        
+        let t_bytes = packBytes(UInt64(time), parts: 4)
+        let t_bytes2 = UInt32(time).toBytes()
+
+        XCTAssertEqual(t_bytes.bytes, t_bytes2)
+    }
 }

@@ -6,15 +6,15 @@
 import Foundation
 
 extension Data {
-    public var bytes: [UInt8] {
+    var bytes: [UInt8] {
         return Array(self)
     }
     
-    public var hex: String {
+    var hex: String {
         return self.bytes.toHexString()
     }
     
-    public var string: String {
+    var string: String {
         return self.toString() ?? ""
     }
     

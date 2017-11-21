@@ -8,7 +8,7 @@ SaltChannel Swift 2.0, 2017-11-22
 ---------------------------------
 
 We're pleased to present SaltChannel Swift 2.0. This release implements
-[Salt Channel v2, draft8](https://github.com/assaabloy-ppi/salt-channel/blob/master/files/spec/spec-salt-channel-v2-draft8.md).
+[Salt Channel v2](https://github.com/assaabloy-ppi/salt-channel).
 
 ### Highlights
   * A1-A2 protocol

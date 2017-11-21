@@ -70,6 +70,8 @@
 		5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Header.swift"; sourceTree = "<group>"; };
 		5B82011D1F8BB0F600EA7D2D /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderTests.swift; sourceTree = "<group>"; };
+		5B8EDFA11FC4C9690013847A /* Release-Notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Release-Notes.md"; sourceTree = "<group>"; };
+		5B8EDFA21FC4C9790013847A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannelTests.swift; sourceTree = "<group>"; };
 		5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		5BD3EAA21F9103C7001139E0 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
@@ -162,6 +164,8 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
+				5B8EDFA21FC4C9790013847A /* LICENSE */,
+				5B8EDFA11FC4C9690013847A /* Release-Notes.md */,
 				5BE744811FBB44BD00394013 /* Podfile */,
 				5BE744801FBB44AF00394013 /* SaltChannel.podspec */,
 				5BE7447F1FBB449C00394013 /* README.md */,

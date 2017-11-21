@@ -23,7 +23,7 @@ extension SaltChannel: Setup {
     }
 
     public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-                holdUntilFirstWrite: Bool = false) throws {
+                          holdUntilFirstWrite: Bool = false) throws {
 
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone

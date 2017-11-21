@@ -87,18 +87,18 @@ extension Array where Iterator.Element == Byte {
     }
 }
 
-public func toByteArray<T>(_ value: T) -> [Byte] {
+func toByteArray<T>(_ value: T) -> [Byte] {
     var value = value
     return withUnsafeBytes(of: &value) { Array($0) }
 }
 
-public func fromByteArray<T>(_ value: [Byte], _: T.Type) -> T {
+func fromByteArray<T>(_ value: [Byte], _: T.Type) -> T {
     return value.withUnsafeBytes {
         $0.baseAddress!.load(as: T.self)
     }
 }
 
-public func fromByteArray2<T>(_ value: [Byte], _: T.Type) -> T {
+func fromByteArray2<T>(_ value: [Byte], _: T.Type) -> T {
     return value.withUnsafeBufferPointer {
         $0.baseAddress!.withMemoryRebound(to: T.self, capacity: 1) {
             $0.pointee
@@ -106,10 +106,10 @@ public func fromByteArray2<T>(_ value: [Byte], _: T.Type) -> T {
     }
 }
 
-public func toHexArray(_ value: [Byte]) -> [String] {
+func toHexArray(_ value: [Byte]) -> [String] {
     return value.map { String(format: "%02x", $0) }
 }
 
-public func toHexString(_ value: [Byte]) -> String {
+func toHexString(_ value: [Byte]) -> String {
     return toHexArray(value).joined()
 }

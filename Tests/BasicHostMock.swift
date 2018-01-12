@@ -69,9 +69,7 @@ class BasicHostMock: ByteChannel {
     
     func write(_ data: [Data]) throws {
         print("Write is called in Mock")
-        for item in data {
-            writeData.append(item)
-        }
+        self.writeData.append(contentsOf: data)
     }
     
     func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {

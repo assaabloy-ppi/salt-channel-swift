@@ -7,13 +7,21 @@
 import Foundation
 
 class NetHandler {
+    let host: String
+    let port: Int
+    
+    init(_ host: String, _ port: Int) {
+        self.host = host
+        self.port = port
+    }
     
     // ncat -k -l -p 4444
     func sendText(_ str: String) {
         var inputStream: InputStream?
         var outputStream: OutputStream?
         
-        Stream.getStreamsToHost(withName: "localhost", port: 4444, inputStream: &inputStream, outputStream: &outputStream)
+        Stream.getStreamsToHost(withName: host, port: port,
+                                inputStream: &inputStream, outputStream: &outputStream)
         
         guard let outs = outputStream else { return }
         var text = [UInt8]((str + "\n").utf8)
@@ -29,7 +37,7 @@ class NetHandler {
         var inputStream: InputStream?
         var outputStream: OutputStream?
         
-        Stream.getStreamsToHost(withName: "localhost", port: 4444, inputStream: &inputStream, outputStream: &outputStream)
+        Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         guard let ins = inputStream, let outs = outputStream else { return nil }
         var text = [UInt8]((str + "\r\n").utf8)

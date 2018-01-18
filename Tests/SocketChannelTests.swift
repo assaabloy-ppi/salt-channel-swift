@@ -4,7 +4,6 @@
 //  Created by Kenneth Pernyer on 2017-10-13.
 
 import XCTest
-
 @testable import SaltChannel
 
 /*  To test versus a standard Socket server use
@@ -28,10 +27,28 @@ class SocketChannelTests: XCTestCase {
     
     let pingport  = 4711
     
+    let clientKeys    = SaltTestData().session2TestData.clientKeys
+    let hostKeys      = SaltTestData().session2TestData.hostKeys
+    
+    var clientSignSec, clientSignPub, clientEncSec, clientEncPub, serverSignPub: Data?
     var reply: Data?
 
+    override func setUp() {
+        super.setUp()
+        clientSignSec = Data(clientKeys.signSec)
+        clientSignPub = Data(clientKeys.signPub)
+        clientEncSec  = Data(clientKeys.diffiSec)
+        clientEncPub  = Data(clientKeys.diffiPub)
+        serverSignPub = Data(hostKeys.signPub)
+    }
+    
+    override func tearDown() {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        super.tearDown()
+    }
+    
     func testNetHandler() {
-        let client = NetHandler()
+        let client = NetHandler(hostname, pingport)
         client.sendText("Hallå nu startar vi chatten!")
         print(client.sendAndReceiveText("Hej vad heter du?")!)
     }
@@ -47,7 +64,10 @@ class SocketChannelTests: XCTestCase {
         do {
             let socket = try ClientSocket(hostname, pingport, mode: .sync).start()
             
-            sleep(2)
+            guard WaitUntil.waitUntil(10, socket.ready()) else {
+                XCTFail("Stream not opened")
+                return
+            }
             
             guard case socket.status().input = Stream.Status.open,
                 case socket.status().output = Stream.Status.open else {
@@ -93,30 +113,46 @@ class SocketChannelTests: XCTestCase {
         XCTFail("Got error: " + error.localizedDescription)
     }
     
-    func testSocketSaltByteChannel() {
-        let clientKeys = SaltTestData.keysA
-        let clientSignSec = Data(clientKeys.signSec)
-        let clientSignPub = Data(clientKeys.signPub)
-        let clientEncSec  = Data(clientKeys.diffiSec)
-        let clientEncPub  = Data(clientKeys.diffiPub)
+    func testSocketByteChannel() {
+        guard let channel = try? SocketChannel(hostname, pingport) else {
+            XCTFail("Failed to create SocketChannel")
+            return
+        }
         
-        let hostKeys = SaltTestData.keysB
-        let serverSignPub = Data(hostKeys.signPub)
-
+        do {
+            channel.register(callback: receiver, errorhandler: errorhandler)
+            
+            let pingData = Data(ping.utf8)
+            try channel.write([pingData])
+            
+            if WaitUntil.waitUntil(10, reply != nil) {
+                print("Echo is done")
+                XCTAssertEqual(reply, pingData)
+            } else {
+                XCTFail("Failed to get reply within 10 seconds")
+                return
+            }
+        } catch {
+            XCTFail("Failed to create SocketChannel")
+            return
+        }
+    }
+        
+    func testSocketSaltByteChannel() {
         guard let socketChannel = try? SocketChannel(hostname, saltport) else {
             XCTFail("Failed to create SocketChannel")
             return
         }
         
-        let channel = SaltChannel(channel: socketChannel, sec: clientSignSec, pub: clientSignPub)
+        let channel = SaltChannel(channel: socketChannel, sec: clientSignSec!, pub: clientSignPub!)
         do {
             channel.register(callback: receiver, errorhandler: errorhandler)
         
             let protocols = try channel.negotiate(pubKey: serverSignPub)
             XCTAssertEqual(protocols.count, 1)
             
-            try channel.handshake(clientEncSec: clientEncSec,
-                                  clientEncPub: clientEncPub,
+            try channel.handshake(clientEncSec: clientEncSec!,
+                                  clientEncPub: clientEncPub!,
                                   serverSignPub: serverSignPub)
             
             let hostKeySignPub = try channel.getRemoteSignPub()

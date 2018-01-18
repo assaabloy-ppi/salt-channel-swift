@@ -55,6 +55,15 @@ public class SocketChannel: ByteChannel, SocketDelegate {
             errorHandler(error)
         }
     }
+    
+    public func ready() -> Bool {
+        guard case socket.status().input = Stream.Status.open,
+            case socket.status().output = Stream.Status.open else {
+                return false
+        }
+        
+        return true
+    }
 }
 
 // Set up an input stream and an output stream for the communication socket
@@ -103,7 +112,6 @@ class ClientSocket: NSObject, StreamDelegate {
         mode = Mode.async
         
         // Instead of Polling the RunLoop call stream(_, handle)
-        // No need to register the output
         streams.in.schedule(in: .current, forMode: .defaultRunLoopMode)
         streams.out.schedule(in: .current, forMode: .defaultRunLoopMode)
         
@@ -135,6 +143,15 @@ class ClientSocket: NSObject, StreamDelegate {
     func status() -> SocketStatus {
         return SocketStatus(input: streams.in.streamStatus, output: streams.out.streamStatus)
     }
+    
+    public func ready() -> Bool {
+        guard case status().input = Stream.Status.open,
+            case status().output = Stream.Status.open else {
+                return false
+        }
+        
+        return true
+    }
 
     func echo(data: Data) throws -> Data {
         guard case mode = Mode.sync else {
@@ -159,21 +176,14 @@ class ClientSocket: NSObject, StreamDelegate {
                 String(data: data, encoding: .utf8) ?? "Pong")
     }
     
+    // Blocking read. Read no more than 2048 bytes. No check for hasBytesAvailable
+    // or looping until all available bytes are read
     func read() throws -> Data {
-        var total = 0
+        var buffer = [Byte](repeating: 0, count: 2048)
+        let n = streams.in.read(&buffer, maxLength: buffer.count)
         
-        var buffer = [Byte](repeating: 0, count: 1048576)
-        var data = Data(bytes: buffer)
-        
-        while streams.in.hasBytesAvailable {
-            let n = streams.in.read(&buffer, maxLength: 1024)
-            total += n
-            data.append(buffer, count: total)
-        }
-        
-        guard total > 0 else { throw SocketError.noReply("Could not read bytes") }
-        
-        return Data(bytes: buffer[...(total-1)])
+        guard n > 0 else { throw SocketError.noReply("Could not read bytes") }
+        return Data(bytes: buffer[...(n-1)])
     }
     
     func write(_ data: [Data]) throws {

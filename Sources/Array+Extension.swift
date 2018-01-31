@@ -56,6 +56,12 @@ extension Array where Element: BinaryInteger, Element.IntegerLiteralType == Byte
 
 extension Array where Iterator.Element == Byte {
     
+    func chunks(_ n: Int) -> [[Element]] {
+        return stride(from: 0, to: self.count, by: n).map {
+            Array(self[$0..<Swift.min($0 + n, self.count)])
+        }
+    }
+    
     func toHexString(_ separator: String = "") -> String {
         return self.lazy.reduce("") {
             var str = String($1, radix: 16)

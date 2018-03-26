@@ -7,10 +7,24 @@ import Foundation
 import Sodium
 import os.log
 
+public enum HandshakeState {
+    case m0
+    case m1
+    case m2
+    case m3
+    case m4
+}
+
+public protocol SaltChannelDelegate: class {
+    func onHandshakeDone()
+    func onHandshakeFail(_ error : Error)
+}
+
 /**
  **SaltChannel** is a ByteChannel with encryption and authorization.
  */
 public class SaltChannel: ByteChannel {
+    
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
     var timeKeeper: TimeKeeper
 
@@ -22,6 +36,7 @@ public class SaltChannel: ByteChannel {
     let clientSignSec: Data
     let clientSignPub: Data
     var remoteSignPub: Data?
+    weak var saltchannelDelegate: SaltChannelDelegate?
 
     let sodium = Sodium()
     var session: Session?
@@ -30,7 +45,22 @@ public class SaltChannel: ByteChannel {
     var receiveNonce = Nonce(value: 2)
     
     var bufferedM4: Data?
-    var handshakeDone = false
+    var handshakeDone = false {
+        didSet {
+            if self.handshakeDone == true {
+                self.saltchannelDelegate?.onHandshakeDone()
+            }
+        }
+    }
+    
+    //OLA
+    var serverEncPub: Data?
+    var m1Hash: Data?
+    var m2Hash: Data?
+    var clientEncSec: Data?
+    var clientEncPub: Data?
+    public var handshakeState: HandshakeState
+    
     
     public convenience init (channel: ByteChannel, sec: Data, pub: Data) {
         self.init(channel: channel, sec: sec, pub: pub, timeKeeper: RealTimeKeeper())
@@ -43,10 +73,15 @@ public class SaltChannel: ByteChannel {
         self.channel = channel
         self.clientSignSec = sec
         self.clientSignPub = pub
+        self.handshakeState = .m0
         
         self.channel.register(callback: read, errorhandler: error)
         
         os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
+    }
+    
+    public func register(_ delegate: SaltChannelDelegate) {
+     self.saltchannelDelegate = delegate
     }
     
     // MARK: Channel
@@ -87,7 +122,22 @@ public class SaltChannel: ByteChannel {
     
     func read(_ data: Data) {
         if !self.handshakeDone {
-            receiveData.append(data)
+            do {
+                switch self.handshakeState {
+                case .m1:
+                    try self.handshake_M2(m2Raw: data)
+                case .m2:
+                    try self.handshake_M3(m3Raw: data)
+                    try self.handshake_M4()
+                default:
+                    print("\(self.handshakeState)")
+                }
+            }
+            catch {
+                print("Something wrong during handshake, step: \(self.handshakeState)")
+            }
+            
+            
         } else {
             if let session = self.session,
                 let raw = try? decryptMessage(message: data, session: session),

@@ -1,12 +1,16 @@
 PODS:
-  - Sodium (0.5)
+  - Sodium (0.6)
 
 DEPENDENCIES:
-  - Sodium (~> 0.5)
+  - Sodium (~> 0.6)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Sodium
 
 SPEC CHECKSUMS:
-  Sodium: a3a17f2ba2dc1b83547e13db0075e7c5d426fc55
+  Sodium: bf524b0a3d5ad6870dcf343205cca7e659c15ad5
 
-PODFILE CHECKSUM: a4cc37f449134d24adf2ca1e65752a2bdf5f5798
+PODFILE CHECKSUM: e32f023cd0f620b07ea97c6d7954624da1dcc778
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3

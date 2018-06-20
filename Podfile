@@ -1,8 +1,7 @@
 platform :ios, '11.0'
 
 target 'SaltChannel' do
-  use_frameworks!
-  pod 'Sodium', '~> 0.5'
+  pod 'Sodium', '~> 0.6'
 
   target 'SaltChannel-Tests' do
     inherit! :search_paths

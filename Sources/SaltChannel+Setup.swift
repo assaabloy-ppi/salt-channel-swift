@@ -7,8 +7,7 @@ import Foundation
 import os.log
 
 extension SaltChannel: Setup {
-    
-    
+
     public func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
         /*if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -24,7 +23,6 @@ extension SaltChannel: Setup {
         return []
     }
 
-    
     public func handshake_M1(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil) throws {
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -87,12 +85,10 @@ extension SaltChannel: Setup {
         self.handshakeDone = true
 
     }
-    
-    
-    
-    
-   public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-                          holdUntilFirstWrite: Bool = false) throws {
+
+   public func handshake(
+                    clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
+                    holdUntilFirstWrite: Bool = false) throws {
 
       /*   if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone

@@ -51,8 +51,8 @@ extension SaltChannel: Client {
         let header = createHeader(from: PacketType.m1, first: serverSignKeys)
         
         // TODO: better toBytes for Double
-        let t_data = Data(UInt32(time).toBytes())
-        var m1 = Constants.protocolId + header + t_data + myEncPub
+        let tData = Data(UInt32(time).toBytes())
+        var m1 = Constants.protocolId + header + tData + myEncPub
         if let serverKeys = serverSignPub {
             os_log("Client: Using Server Sign PubKeys %{public}s", log: log, type: .debug, serverKeys as CVarArg)
             m1 += serverKeys
@@ -221,8 +221,8 @@ extension SaltChannel: Client {
             throw ChannelError.couldNotCreateSignature
         }
         
-        let t_data = Data(UInt32(time).toBytes())
-        return header + t_data + clientSignPub + signature
+        let tData = Data(UInt32(time).toBytes())
+        return header + tData + clientSignPub + signature
     }
     
     /**

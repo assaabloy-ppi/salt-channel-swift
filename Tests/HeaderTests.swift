@@ -101,20 +101,20 @@ class HeaderTests: XCTestCase {
     func testReadA1Header() {
         let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
 
-        let h1_a1 = Data(bytes: [0x08, 0x00])
-        let h2_a1 = Data(bytes: [0x08, 0x01])
-        let h3_a1 = Data(bytes: [0x08, 0x80])
-        let h4_a1 = Data(bytes: [0x08, 0x81])
+        let h1a1 = Data(bytes: [0x08, 0x00])
+        let h2a1 = Data(bytes: [0x08, 0x01])
+        let h3a1 = Data(bytes: [0x08, 0x80])
+        let h4a1 = Data(bytes: [0x08, 0x81])
 
-        print("A1 plain: \(h1_a1.hex)") // 0x0800
-        print("A1 first: \(h2_a1.hex)") // 0x0880
-        print("A1 last: \(h3_a1.hex)")  // 0x0801
-        print("A1 both: \(h4_a1.hex)")  // 0x0881
+        print("A1 plain: \(h1a1.hex)") // 0x0800
+        print("A1 first: \(h2a1.hex)") // 0x0880
+        print("A1 last: \(h3a1.hex)")  // 0x0801
+        print("A1 both: \(h4a1.hex)")  // 0x0881
         
-        let (t1, f1, l1) = channel.readHeader(from: h1_a1)
-        let (t2, f2, l2) = channel.readHeader(from: h2_a1)
-        let (t3, f3, l3) = channel.readHeader(from: h3_a1)
-        let (t4, f4, l4) = channel.readHeader(from: h4_a1)
+        let (t1, f1, l1) = channel.readHeader(from: h1a1)
+        let (t2, f2, l2) = channel.readHeader(from: h2a1)
+        let (t3, f3, l3) = channel.readHeader(from: h3a1)
+        let (t4, f4, l4) = channel.readHeader(from: h4a1)
 
         XCTAssertTrue(f2 && f4 && l3 && l4)
         XCTAssertFalse(f1 && f3 && l1 && l2)
@@ -139,42 +139,42 @@ class HeaderTests: XCTestCase {
     func testCreateA1Header() {
         let channel = SaltChannel(channel: DummyChannel(), sec: sec, pub: pub)
 
-        let h1_a1: Data = channel.createHeader(from: PacketType.a1)
-        let h2_a1: Data = channel.createHeader(from: PacketType.a1, first: true)
-        let h3_a1: Data = channel.createHeader(from: PacketType.a1, last: true)
-        let h4_a1: Data = channel.createHeader(from: PacketType.a1, first: true, last: true)
+        let h1a1: Data = channel.createHeader(from: PacketType.a1)
+        let h2a1: Data = channel.createHeader(from: PacketType.a1, first: true)
+        let h3a1: Data = channel.createHeader(from: PacketType.a1, last: true)
+        let h4a1: Data = channel.createHeader(from: PacketType.a1, first: true, last: true)
 
-        XCTAssertTrue(h1_a1.count == 2)
-        XCTAssertTrue(h2_a1.count == 2)
-        XCTAssertTrue(h3_a1.count == 2)
-        XCTAssertTrue(h4_a1.count == 2)
+        XCTAssertTrue(h1a1.count == 2)
+        XCTAssertTrue(h2a1.count == 2)
+        XCTAssertTrue(h3a1.count == 2)
+        XCTAssertTrue(h4a1.count == 2)
 
-        XCTAssertTrue(h1_a1.first! == PacketType.a1.rawValue)
-        XCTAssertTrue(h2_a1[0] == PacketType.a1.rawValue)
-        XCTAssertTrue(h3_a1[0] == PacketType.a1.rawValue)
-        XCTAssertTrue(h4_a1[0] == PacketType.a1.rawValue)
+        XCTAssertTrue(h1a1.first! == PacketType.a1.rawValue)
+        XCTAssertTrue(h2a1[0] == PacketType.a1.rawValue)
+        XCTAssertTrue(h3a1[0] == PacketType.a1.rawValue)
+        XCTAssertTrue(h4a1[0] == PacketType.a1.rawValue)
         
-        print("A1 plain: \(h1_a1.hex)") // 0x0800
-        print("A1 first: \(h2_a1.hex)") // 0x0880
-        print("A1 last: \(h3_a1.hex)")  // 0x0801
-        print("A1 both: \(h4_a1.hex)")  // 0x0881
+        print("A1 plain: \(h1a1.hex)") // 0x0800
+        print("A1 first: \(h2a1.hex)") // 0x0880
+        print("A1 last: \(h3a1.hex)")  // 0x0801
+        print("A1 both: \(h4a1.hex)")  // 0x0881
 
-        let ha1_f_f = h1_a1[1]
-        let ha1_t_f = h2_a1[1]
-        let ha1_f_t = h3_a1[1]
-        let ha1_t_t = h4_a1[1]
+        let ha1ff = h1a1[1]
+        let ha1tf = h2a1[1]
+        let ha1ft = h3a1[1]
+        let ha1tt = h4a1[1]
         
-        XCTAssertFalse(firstBitSet(byte: ha1_f_f))
-        XCTAssertFalse(lastBitSet(byte: ha1_f_f))
+        XCTAssertFalse(firstBitSet(byte: ha1ff))
+        XCTAssertFalse(lastBitSet(byte: ha1ff))
 
-        XCTAssertTrue(firstBitSet(byte: ha1_t_f))
-        XCTAssertFalse(lastBitSet(byte: ha1_t_f))
+        XCTAssertTrue(firstBitSet(byte: ha1tf))
+        XCTAssertFalse(lastBitSet(byte: ha1tf))
         
-        XCTAssertFalse(firstBitSet(byte: ha1_f_t))
-        XCTAssertTrue(lastBitSet(byte: ha1_f_t))
+        XCTAssertFalse(firstBitSet(byte: ha1ft))
+        XCTAssertTrue(lastBitSet(byte: ha1ft))
         
-        XCTAssertTrue(firstBitSet(byte: ha1_t_t))
-        XCTAssertTrue(lastBitSet(byte: ha1_t_t))
+        XCTAssertTrue(firstBitSet(byte: ha1tt))
+        XCTAssertTrue(lastBitSet(byte: ha1tt))
     }
     
 }

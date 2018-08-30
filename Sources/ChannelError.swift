@@ -16,4 +16,5 @@ public enum ChannelError: Error {
     case couldNotCalculateKey
     case errorInMessage(reason: String)
     case handshakeAlreadyDone
+    case invalidHandshakeSequence
 }

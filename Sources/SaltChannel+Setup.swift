@@ -8,147 +8,91 @@ import os.log
 
 extension SaltChannel: Setup {
 
-    public func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
-        /*if self.handshakeDone {
+    public func negotiate(pubKey: Data?, completion: (([(first: String, second: String)]) -> Void)?) throws {
+        guard handshakeState == .notStarted else {
             throw ChannelError.handshakeAlreadyDone
         }
-        
+
+        handshakeData.negotiateCompleted = completion
+
         let a1 = try packA1(pubKey: pubKey)
         try channel.write([a1])
-        
-        guard let a2Raw = waitForData() else {
-            throw ChannelError.readTimeout
-        }
-        return try unpackA2(data: a2Raw)*/
-        return []
+
+        handshakeState = .expectA2
     }
 
-    public func handshake_M1(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil) throws {
-        if self.handshakeDone {
+    public func handshake(
+        clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil, completion: (() -> Void)?) throws {
+
+        guard handshakeState == .notStarted  else {
             throw ChannelError.handshakeAlreadyDone
         }
-        self.clientEncSec = clientEncSec
-        self.clientEncPub = clientEncPub
+
+        handshakeData.clientEncSec = clientEncSec
+        handshakeData.clientEncPub = clientEncPub
+        handshakeData.handshakeCompleted = completion
+
         // *** Send M1 ***
-        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: self.clientEncPub!, serverSignPub: serverSignPub)
-        self.m1Hash = m1Hash
-        self.handshakeState = HandshakeState.m1
+        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: handshakeData.clientEncPub!, serverSignPub: serverSignPub)
+        handshakeData.m1Hash = m1Hash
         try channel.write([m1])
+        handshakeState = .expectM2
     }
-    
-    public func handshake_M2(m2Raw: Data, serverSignPub: Data? = nil) throws {
-        if self.handshakeDone {
-            throw ChannelError.handshakeAlreadyDone
+
+    public func handshake(completion: (() -> Void)?) throws {
+        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
+        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey, completion: completion)
+    }
+
+    internal func receiveA2(a2Raw: Data) throws {
+        guard handshakeState == .expectA2 else {
+            throw ChannelError.invalidHandshakeSequence
+        }
+
+        let a2 = try unpackA2(data: a2Raw)
+        handshakeState = .notStarted
+
+        print("🤝 Negotiate completed!!")
+
+        handshakeData.negotiateCompleted?(a2)
+    }
+
+    internal func receiveM2(m2Raw: Data) throws {
+        guard handshakeState == .expectM2 else {
+            throw ChannelError.invalidHandshakeSequence
         }
         // *** Receive M2 ***
         let (_, serverEncPub, m2Hash) = try unpackM2(data: m2Raw)
-        self.m2Hash = m2Hash
-        self.serverEncPub = serverEncPub
-        self.handshakeState = HandshakeState.m2
+        handshakeData.m2Hash = m2Hash
+        handshakeData.serverEncPub = serverEncPub
+        handshakeState = .expectM3
     }
-    
-    public func handshake_M3(m3Raw: Data, serverSignPub: Data? = nil) throws {
-        if self.handshakeDone {
-            throw ChannelError.handshakeAlreadyDone
+
+    public func receiveM3sendM4(m3Raw: Data) throws {
+        guard handshakeState == .expectM3 else {
+            throw ChannelError.invalidHandshakeSequence
         }
         // *** Create a session ***
-        guard let key = sodium.box.beforenm(recipientPublicKey: self.serverEncPub!,
-                                            senderSecretKey: self.clientEncSec!) else {
+        guard let key = sodium.box.beforenm(recipientPublicKey: handshakeData.serverEncPub!,
+                                            senderSecretKey: handshakeData.clientEncSec!) else {
                                                 throw ChannelError.couldNotCalculateKey
         }
-        self.session = Session(key: key)
-        guard let session = self.session else {
-            throw ChannelError.couldNotCalculateKey
-        }
+        let session = Session(key: key)
+        self.session = session
         // *** Receive M3 ***
         let data: Data = try decryptMessage(message: m3Raw, session: session)
-        let (_, remoteSignPub) = try unpackM3(data: data, m1Hash: self.m1Hash!, m2Hash: self.m2Hash!)
+        let (_, remoteSignPub) = try unpackM3(data: data, m1Hash: handshakeData.m1Hash!, m2Hash: handshakeData.m2Hash!)
         self.remoteSignPub = remoteSignPub
-        self.handshakeState = HandshakeState.m3
-    }
-    
-    public func handshake_M4(serverSignPub: Data? = nil) throws {
-        if self.handshakeDone {
-            throw ChannelError.handshakeAlreadyDone
-        }
+
         // *** Send M4 ***
         let m4Data: Data = try packM4(time: timeKeeper.time(), clientSignSec: clientSignSec,
-                                      clientSignPub: clientSignPub, m1Hash: m1Hash!, m2Hash: m2Hash!)
-        guard let session = self.session else {
-            throw ChannelError.couldNotCalculateKey
-        }
+                                      clientSignPub: clientSignPub, m1Hash: handshakeData.m1Hash!, m2Hash: handshakeData.m2Hash!)
         let m4cipher = encryptMessage(session: session, message: m4Data)
-        
-        self.handshakeState = HandshakeState.m4
+
         try channel.write([m4cipher])
+        self.handshakeState = .done
         print("🤝 Handshake completed!!")
-        self.handshakeDone = true
 
+        handshakeData.handshakeCompleted?()
     }
-
-   public func handshake(
-                    clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-                    holdUntilFirstWrite: Bool = false) throws {
-
-      /*   if self.handshakeDone {
-            throw ChannelError.handshakeAlreadyDone
-        }
-
-        // *** Send M1 ***
-        let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: clientEncPub, serverSignPub: serverSignPub)
-        try channel.write([m1])
-
-        // *** Receive M2 ***
-        guard let m2Raw = waitForData() else {
-            print("☠️ Read timeout")
-            throw ChannelError.readTimeout
-        }
-        let (_, serverEncPub, m2Hash) = try unpackM2(data: m2Raw)
-
-        // *** Create a session ***
-        guard let key = sodium.box.beforenm(recipientPublicKey: serverEncPub,
-            senderSecretKey: clientEncSec) else {
-            throw ChannelError.couldNotCalculateKey
-        }
-        self.session = Session(key: key)
-        guard let session = self.session else {
-            throw ChannelError.couldNotCalculateKey
-        }
-
-        // *** Receive M3 ***
-        guard let m3Raw = waitForData() else {
-            throw ChannelError.readTimeout
-        }
-        let data: Data = try decryptMessage(message: m3Raw, session: session)
-        let (_, remoteSignPub) = try unpackM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
-        self.remoteSignPub = remoteSignPub
-
-        // *** Send M4 ***
-        let m4Data: Data = try packM4(time: timeKeeper.time(), clientSignSec: clientSignSec,
-            clientSignPub: clientSignPub, m1Hash: m1Hash, m2Hash: m2Hash)
-        let m4cipher = encryptMessage(session: session, message: m4Data)
-        
-        if holdUntilFirstWrite {
-            bufferedM4 = m4cipher
-        } else {
-            try channel.write([m4cipher])
-        }
-
-        self.handshakeDone = true*/
-    }
-
-    public func handshake(holdUntilFirstWrite: Bool = false) throws {
-        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
-                      holdUntilFirstWrite: holdUntilFirstWrite)
-    }
-    
-    /*func waitForData() -> Data? {
-        if WaitUntil.waitUntil(10, receiveData.isEmpty == false) {
-            let temporery = receiveData.first
-            receiveData.remove(at: 0)
-            return temporery
-        }
-        return nil
-    }*/
 }

@@ -39,7 +39,7 @@ class SocketChannelTests: XCTestCase {
         clientSignPub = Data(clientKeys.signPub)
         clientEncSec  = Data(clientKeys.diffiSec)
         clientEncPub  = Data(clientKeys.diffiPub)
-        serverSignPub = Data(hostKeys.signPub)
+        serverSignPub = nil // Data(hostKeys.signPub)
     }
     
     override func tearDown() {
@@ -147,14 +147,25 @@ class SocketChannelTests: XCTestCase {
         let channel = SaltChannel(channel: socketChannel, sec: clientSignSec!, pub: clientSignPub!)
         do {
             channel.register(callback: receiver, errorhandler: errorhandler)
-        
-            let protocols = try channel.negotiate(pubKey: serverSignPub)
+
+            let expectation1 = expectation(description: "Negotiation successfull")
+            var protocols = [(first: String, second: String)]()
+
+            try channel.negotiate(pubKey: serverSignPub) { result in
+                protocols = result
+                expectation1.fulfill()
+            }
+            waitForExpectations(timeout: 2.0)
             XCTAssertEqual(protocols.count, 1)
-            
+
+            let expectation2 = expectation(description: "Handshake successfull")
             try channel.handshake(clientEncSec: clientEncSec!,
                                   clientEncPub: clientEncPub!,
-                                  serverSignPub: serverSignPub)
-            
+                                  serverSignPub: serverSignPub) {
+                expectation2.fulfill()
+            }
+            waitForExpectations(timeout: 2.0)
+
             let hostKeySignPub = try channel.getRemoteSignPub()
             XCTAssertEqual(hostKeySignPub, serverSignPub)
         } catch {

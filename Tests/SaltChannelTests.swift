@@ -44,11 +44,19 @@ class SaltChannelTests: XCTestCase {
             
             /*** A1 A2 negotiation ***/
             if let abox = testDataSet.abox {
-                var pubKey: Data? = nil
+                var pubKey: Data?
                 if abox.pubKey != nil {
                     pubKey = Data(abox.pubKey!)
                 }
-                let unpackedA2 = try channel.negotiate(pubKey: pubKey)
+
+                let expectation1 = expectation(description: "Negotiation successfull")
+                var unpackedA2 = [(first: String, second: String)]()
+                try channel.negotiate(pubKey: pubKey) { result in
+                    unpackedA2 = result
+                    expectation1.fulfill()
+                }
+                waitForExpectations(timeout: 2.0)
+
                 XCTAssertEqual(unpackedA2.count, abox.unpackedA2.count)
                 for index in 0..<unpackedA2.count {
                     XCTAssertEqual(unpackedA2[index].first, abox.unpackedA2[index].first)
@@ -59,9 +67,15 @@ class SaltChannelTests: XCTestCase {
             /*** Handshake ***/
             if testDataSet.handshake != nil {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil
+
+                let expectation2 = expectation(description: "Handshake successfull")
                 try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub),
-                                      serverSignPub: serverSignPub)
+                                      serverSignPub: serverSignPub) {
+                    expectation2.fulfill()
+                }
+                waitForExpectations(timeout: 2.0)
+
                 XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))
             }
         

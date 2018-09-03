@@ -12,9 +12,10 @@ enum Constants {
 }
 
 protocol Setup {
-    func negotiate(pubKey: Data?, completion: (([(first: String, second: String)]) -> Void)?) throws
-    func handshake(completion: (() -> Void)?) throws
-    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?, completion: (() -> Void)?) throws
+    func negotiate(pubKey: Data?, success: (([(first: String, second: String)]) -> Void)?, failure: ((Error) -> Void)?)
+    func handshake(success: (() -> Void)?, failure: ((Error) -> Void)?)
+    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
+                   success: (() -> Void)?, failure: ((Error) -> Void)?)
 }
 
 typealias Protocol = Client & Host

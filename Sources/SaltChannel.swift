@@ -16,6 +16,7 @@ internal struct HandshakeData {
 
     var negotiateCompleted: (([(first: String, second: String)]) -> Void)?
     var handshakeCompleted: (() -> Void)?
+    var failure: ((Error) -> Void)?
 }
 
 public enum HandshakeState {
@@ -108,11 +109,11 @@ public class SaltChannel: ByteChannel {
             case .notStarted:
                 throw ChannelError.setupNotDone(reason: "Handshake not done yet!")
             case .expectM2:
-                try receiveM2(m2Raw: data)
+                receiveM2(m2Raw: data)
             case .expectM3:
-                try receiveM3sendM4(m3Raw: data)
+                receiveM3sendM4(m3Raw: data)
             case .expectA2:
-                try receiveA2(a2Raw: data)
+                receiveA2(a2Raw: data)
             case .done:
                 guard let session = self.session else {
                     throw ChannelError.setupNotDone(reason: "Expected a Session by now")

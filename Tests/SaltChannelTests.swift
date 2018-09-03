@@ -51,10 +51,12 @@ class SaltChannelTests: XCTestCase {
 
                 let expectation1 = expectation(description: "Negotiation successfull")
                 var unpackedA2 = [(first: String, second: String)]()
-                try channel.negotiate(pubKey: pubKey) { result in
+                channel.negotiate(pubKey: pubKey, success: { result in
                     unpackedA2 = result
                     expectation1.fulfill()
-                }
+                }, failure: { error in
+                    XCTFail("Negotiate failed: \(error)")
+                })
                 waitForExpectations(timeout: 2.0)
 
                 XCTAssertEqual(unpackedA2.count, abox.unpackedA2.count)
@@ -69,11 +71,13 @@ class SaltChannelTests: XCTestCase {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil
 
                 let expectation2 = expectation(description: "Handshake successfull")
-                try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
+                channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub),
-                                      serverSignPub: serverSignPub) {
+                                      serverSignPub: serverSignPub, success: {
                     expectation2.fulfill()
-                }
+                }, failure: { error in
+                    XCTFail("Handshake failed: \(error)")
+                })
                 waitForExpectations(timeout: 2.0)
 
                 XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))

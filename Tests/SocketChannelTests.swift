@@ -151,19 +151,24 @@ class SocketChannelTests: XCTestCase {
             let expectation1 = expectation(description: "Negotiation successfull")
             var protocols = [(first: String, second: String)]()
 
-            try channel.negotiate(pubKey: serverSignPub) { result in
+            channel.negotiate(pubKey: serverSignPub, success: { result in
                 protocols = result
                 expectation1.fulfill()
-            }
+            }, failure: { error in
+                XCTFail("Negotiation failed: \(error)")
+            })
             waitForExpectations(timeout: 2.0)
             XCTAssertEqual(protocols.count, 1)
 
             let expectation2 = expectation(description: "Handshake successfull")
-            try channel.handshake(clientEncSec: clientEncSec!,
+            channel.handshake(clientEncSec: clientEncSec!,
                                   clientEncPub: clientEncPub!,
-                                  serverSignPub: serverSignPub) {
+                                  serverSignPub: serverSignPub,
+                                  success: {
                 expectation2.fulfill()
-            }
+            }, failure: { error in
+                XCTFail("Handshake failed: \(error)")
+            })
             waitForExpectations(timeout: 2.0)
 
             let hostKeySignPub = try channel.getRemoteSignPub()

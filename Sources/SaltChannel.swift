@@ -67,7 +67,7 @@ public class SaltChannel: ByteChannel {
         
         self.channel.register(callback: handleRead, errorhandler: handleError)
         
-        os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
+        os_log("Created SaltChannel %@", log: log, type: .debug, pub as CVarArg)
     }
 
     // MARK: Channel
@@ -95,7 +95,7 @@ public class SaltChannel: ByteChannel {
     // --- Callbacks -------
     
     private func handleError(_ error: Error) {
-        os_log("Ended up in SaltChannel ErrorHandler: %{public}s", log: log, type: .error, error as CVarArg)
+        os_log("Ended up in SaltChannel ErrorHandler: %@", log: log, type: .error, error as CVarArg)
 
         for errorHandler in errorHandlers {
             errorHandler(error)

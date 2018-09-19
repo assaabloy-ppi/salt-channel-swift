@@ -54,14 +54,14 @@ extension SaltChannel: Client {
         let tData = Data(UInt32(time).toBytes())
         var m1 = Constants.protocolId + header + tData + myEncPub
         if let serverKeys = serverSignPub {
-            os_log("Client: Using Server Sign PubKeys %{public}s", log: log, type: .debug, serverKeys as CVarArg)
+            os_log("Client: Using Server Sign PubKeys %@", log: log, type: .debug, serverKeys as CVarArg)
             m1 += serverKeys
         } else {
             // TODO
         }
         
         os_log("Client: Write called from M1 salt handshake", log: log, type: .debug)
-        return ( hash: sodium.genericHash.hashSha512(data: m1), data: m1)
+        return ( hash: Data(bytes: sodium.genericHash.hashSha512(data: m1)), data: m1)
     }
     
     /**
@@ -138,8 +138,8 @@ extension SaltChannel: Client {
         }
         
         let realtime = TimeInterval(time)
-        os_log("M2 returning. Time= %{public}s", log: log, type: .debug, realtime)
-        return (realtime, remoteEncPub, hash)
+        os_log("M2 returning. Time=%@", log: log, type: .debug, realtime)
+        return (realtime, remoteEncPub, Data(bytes: hash))
     }
     
     /**
@@ -206,7 +206,7 @@ extension SaltChannel: Client {
         }
         
         let realtime = TimeInterval(time)
-        os_log("M3 returning. Time= %{public}s", log: log, type: .debug, realtime)
+        os_log("M3 returning. Time= %@", log: log, type: .debug, realtime)
         return (realtime, remoteSignPub)
     }
     

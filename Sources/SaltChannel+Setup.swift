@@ -53,7 +53,7 @@ extension SaltChannel: Setup {
 
     public func handshake(success: (() -> Void)?, failure: ((Error) -> Void)?) {
         let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
+        handshake(clientEncSec: Data(bytes: encKeyPair.secretKey), clientEncPub: Data(bytes: encKeyPair.publicKey),
                       success: success, failure: failure)
     }
 
@@ -95,11 +95,11 @@ extension SaltChannel: Setup {
                 throw ChannelError.invalidHandshakeSequence
             }
             // *** Create a session ***
-            guard let key = sodium.box.beforenm(recipientPublicKey: handshakeData.serverEncPub!,
-                                                senderSecretKey: handshakeData.clientEncSec!) else {
+            guard let key = sodium.box.beforenm(recipientPublicKey: handshakeData.serverEncPub!.bytes,
+                                                senderSecretKey: handshakeData.clientEncSec!.bytes) else {
                                                     throw ChannelError.couldNotCalculateKey
             }
-            let session = Session(key: key)
+            let session = Session(key: Data(bytes: key))
             self.session = session
             // *** Receive M3 ***
             let data: Data = try decryptMessage(message: m3Raw, session: session)

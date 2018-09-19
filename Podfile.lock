@@ -2,15 +2,21 @@ PODS:
   - Sodium (0.6)
 
 DEPENDENCIES:
-  - Sodium (~> 0.6)
+  - Sodium (from `https://github.com/jedisct1/swift-sodium.git`, branch `master`)
 
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - Sodium
+EXTERNAL SOURCES:
+  Sodium:
+    :branch: master
+    :git: https://github.com/jedisct1/swift-sodium.git
+
+CHECKOUT OPTIONS:
+  Sodium:
+    :commit: fb1a2643f99c23fe5c15adca80d657901b6bd9a1
+    :git: https://github.com/jedisct1/swift-sodium.git
 
 SPEC CHECKSUMS:
-  Sodium: bf524b0a3d5ad6870dcf343205cca7e659c15ad5
+  Sodium: 3cd000dc8d21be5d448fbb4366a7b1c9392b1ae6
 
-PODFILE CHECKSUM: e32f023cd0f620b07ea97c6d7954624da1dcc778
+PODFILE CHECKSUM: 675252c08aaaf0dcf5d6bde5c65c92c3e4dfbd87
 
 COCOAPODS: 1.5.3

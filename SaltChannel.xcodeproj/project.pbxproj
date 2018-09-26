@@ -123,13 +123,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		9246E29B1A85CBF5BD9714A6 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		BF51B36F20DBA3D000744DBD /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,7 +162,6 @@
 				OBJ_7 /* Sources */,
 				OBJ_12 /* Tests */,
 				0C70D714D0797D822D150686 /* Pods */,
-				9246E29B1A85CBF5BD9714A6 /* Frameworks */,
 				BF3BDA142152706A00BDA7D5 /* SaltChannel-Tests.xctest */,
 				BF3BDA152152712300BDA7D5 /* SaltChannel.framework */,
 			);

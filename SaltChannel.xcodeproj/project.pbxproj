@@ -30,7 +30,9 @@
 		5BD3EAA11F9102A6001139E0 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */; };
 		5BD3EAA31F9103C7001139E0 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3EAA21F9103C7001139E0 /* Array+Extension.swift */; };
 		5BE382D01F8391B700E40069 /* SaltChannel+Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */; };
+		BB6D77759ED30CE3BC228749 /* libPods-SaltChannel-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F4C935354BCA1C846EB353 /* libPods-SaltChannel-Tests.a */; };
 		BF51B37120DBA42F00744DBD /* WaitUntil.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF51B37020DBA42F00744DBD /* WaitUntil.swift */; };
+		ECA66B60F578D2C4F13E312A /* libPods-SaltChannel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9291E10A7B5B37F26098BE59 /* libPods-SaltChannel.a */; };
 		OBJ_30 /* SaltChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_13 /* SaltChannelTests.swift */; };
 		OBJ_31 /* SodiumExtensionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* SodiumExtensionTest.swift */; };
 		OBJ_41 /* Nonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* Nonce.swift */; };
@@ -81,6 +83,8 @@
 		5BE7447F1FBB449C00394013 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		5BE744801FBB44AF00394013 /* SaltChannel.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; fileEncoding = 4; path = SaltChannel.podspec; sourceTree = "<group>"; };
 		5BE744811FBB44BD00394013 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; fileEncoding = 4; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9291E10A7B5B37F26098BE59 /* libPods-SaltChannel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SaltChannel.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		95F4C935354BCA1C846EB353 /* libPods-SaltChannel-Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SaltChannel-Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF3BDA142152706A00BDA7D5 /* SaltChannel-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SaltChannel-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF3BDA152152712300BDA7D5 /* SaltChannel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SaltChannel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF51B37020DBA42F00744DBD /* WaitUntil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WaitUntil.swift; path = Tests/Utils/WaitUntil.swift; sourceTree = SOURCE_ROOT; };
@@ -99,6 +103,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
+				BB6D77759ED30CE3BC228749 /* libPods-SaltChannel-Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,6 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 0;
 			files = (
+				ECA66B60F578D2C4F13E312A /* libPods-SaltChannel.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +135,15 @@
 				BF51B37020DBA42F00744DBD /* WaitUntil.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		C21F5935FF482E1595F5A971 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9291E10A7B5B37F26098BE59 /* libPods-SaltChannel.a */,
+				95F4C935354BCA1C846EB353 /* libPods-SaltChannel-Tests.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		OBJ_12 /* Tests */ = {
@@ -164,6 +179,7 @@
 				0C70D714D0797D822D150686 /* Pods */,
 				BF3BDA142152706A00BDA7D5 /* SaltChannel-Tests.xctest */,
 				BF3BDA152152712300BDA7D5 /* SaltChannel.framework */,
+				C21F5935FF482E1595F5A971 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -196,7 +212,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		"SaltChannel::SaltChannel" /* SaltChannel */ = {
+		SaltChannel::SaltChannel /* SaltChannel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = OBJ_36 /* Build configuration list for PBXNativeTarget "SaltChannel" */;
 			buildPhases = (
@@ -214,7 +230,7 @@
 			productReference = BF3BDA152152712300BDA7D5 /* SaltChannel.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		"SaltChannel::SaltChannel-Tests" /* SaltChannel-Tests */ = {
+		SaltChannel::SaltChannel-Tests /* SaltChannel-Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = OBJ_26 /* Build configuration list for PBXNativeTarget "SaltChannel-Tests" */;
 			buildPhases = (
@@ -258,8 +274,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				"SaltChannel::SaltChannel-Tests" /* SaltChannel-Tests */,
-				"SaltChannel::SaltChannel" /* SaltChannel */,
+				SaltChannel::SaltChannel-Tests /* SaltChannel-Tests */,
+				SaltChannel::SaltChannel /* SaltChannel */,
 			);
 		};
 /* End PBXProject section */
@@ -380,7 +396,7 @@
 /* Begin PBXTargetDependency section */
 		OBJ_34 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = "SaltChannel::SaltChannel" /* SaltChannel */;
+			target = SaltChannel::SaltChannel /* SaltChannel */;
 			targetProxy = 5B5541431F82D0F400730B41 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */

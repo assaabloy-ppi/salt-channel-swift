@@ -27,24 +27,24 @@ extension SaltChannel: Crypto {
         
         let encryptedData = message.subdata(in: 2 ..< message.endIndex)
         
-        guard let decryptedData = sodium.box.open(authenticatedCipherText: encryptedData,
-                                                  beforenm: session.key, nonce: receiveNonce.next()) else {
+        guard let decryptedData = sodium.box.open(authenticatedCipherText: encryptedData.bytes,
+                                                  beforenm: session.key.bytes, nonce: receiveNonce.next().bytes) else {
             throw ChannelError.couldNotDecrypt
         }
         
-        return decryptedData
+        return Data(bytes: decryptedData)
     }
     
     public func encryptMessage(session: Session, message: Data, isLastMessage: Bool = false) -> Data {
         let header = createHeader(from: PacketType.encrypted, last: isLastMessage)
         let encryptedMessage =  header +
-            sodium.box.seal(message: message, beforenm: session.key,
-                            nonce: sendNonce.next())!
+            sodium.box.seal(message: message.bytes, beforenm: session.key.bytes,
+                            nonce: sendNonce.next().bytes)!
         return encryptedMessage
     }
     
     public func validateSignature(sign: Data, signPub: Data, signedData: Data) -> Bool {
-        let message = sodium.sign.open(signedMessage: sign + signedData, publicKey: signPub)
+        let message = sodium.sign.open(signedMessage: (sign + signedData).bytes, publicKey: signPub.bytes)
         if message != nil {
             return true
         } else {
@@ -53,8 +53,8 @@ extension SaltChannel: Crypto {
     }
     
     public func createSignature(message: Data, signSec: Data) -> Data? {
-        let rawSignature = sodium.sign.sign(message: message, secretKey: signSec)!
-        return rawSignature.subdata(in: 0 ..< 64)
+        let rawSignature = sodium.sign.sign(message: message.bytes, secretKey: signSec.bytes)!
+        return Data(bytes: rawSignature.prefix(64))
     }
     
     public func getRemoteSignPub() throws -> Data {

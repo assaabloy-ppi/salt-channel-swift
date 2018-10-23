@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SaltChannel'
-  s.version          = '2.0.1'
+  s.version          = '2.0.3'
   s.summary          = 'A light-weight secure channel protocol based on TweetNaCl.'
 
   s.description      = <<-DESC
@@ -30,6 +30,6 @@ Pod::Spec.new do |s|
   s.source_files = 'Sources/*.{swift}'
   s.public_header_files = "Sources/SaltChannel.h"
 
-  s.dependency 'Sodium', '~> 0.6'
+  s.dependency 'Sodium', '~> 0.7'
   s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
 end

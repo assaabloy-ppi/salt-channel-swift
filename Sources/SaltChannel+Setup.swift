@@ -7,8 +7,7 @@ import Foundation
 import os.log
 
 extension SaltChannel: Setup {
-    
-    
+
     public func negotiate(pubKey: Data?) throws -> [(first: String, second: String)] {
         /*if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -24,7 +23,6 @@ extension SaltChannel: Setup {
         return []
     }
 
-    
     public func handshake_M1(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil) throws {
         if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -54,11 +52,11 @@ extension SaltChannel: Setup {
             throw ChannelError.handshakeAlreadyDone
         }
         // *** Create a session ***
-        guard let key = sodium.box.beforenm(recipientPublicKey: self.serverEncPub!,
-                                            senderSecretKey: self.clientEncSec!) else {
+        guard let key = sodium.box.beforenm(recipientPublicKey: self.serverEncPub!.bytes,
+                                            senderSecretKey: self.clientEncSec!.bytes) else {
                                                 throw ChannelError.couldNotCalculateKey
         }
-        self.session = Session(key: key)
+        self.session = Session(key: Data(bytes: key))
         guard let session = self.session else {
             throw ChannelError.couldNotCalculateKey
         }
@@ -87,12 +85,10 @@ extension SaltChannel: Setup {
         self.handshakeDone = true
 
     }
-    
-    
-    
-    
-   public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-                          holdUntilFirstWrite: Bool = false) throws {
+
+   public func handshake(
+                    clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
+                    holdUntilFirstWrite: Bool = false) throws {
 
       /*   if self.handshakeDone {
             throw ChannelError.handshakeAlreadyDone
@@ -143,7 +139,7 @@ extension SaltChannel: Setup {
 
     public func handshake(holdUntilFirstWrite: Bool = false) throws {
         let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        try handshake(clientEncSec: encKeyPair.secretKey, clientEncPub: encKeyPair.publicKey,
+        try handshake(clientEncSec: Data(bytes: encKeyPair.secretKey), clientEncPub: Data(bytes: encKeyPair.publicKey),
                       holdUntilFirstWrite: holdUntilFirstWrite)
     }
     

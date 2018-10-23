@@ -4,7 +4,7 @@
 //  Created by Håkan Olsson on 2017-06-09.
 
 import Foundation
-import libsodium
+import Clibsodium
 import Sodium
 
 extension GenericHash {
@@ -13,19 +13,15 @@ extension GenericHash {
      - Parameter message: The message from which to compute the fingerprint.
      - Returns: The computed fingerprint.
      */
-    @objc public func hashSha512(data: Data) -> Data {
+    public func hashSha512(data: Data) -> Bytes {
         let state = UnsafeMutablePointer<crypto_hash_sha512_state>.allocate(capacity: 1)
         let initReturn = crypto_hash_sha512_init(state)
         assert(initReturn == 0)
-        let updateReturn = data.withUnsafeBytes { messagePtr in
-            return crypto_hash_sha512_update(state, messagePtr, CUnsignedLongLong(data.count))
-        }
+        let updateReturn = crypto_hash_sha512_update(state, data.bytes, UInt64(data.count))
         assert(updateReturn == 0)
-        var output = Data(count: 64)
+        var output = [UInt8](repeating: 0, count: 64)
     
-        let finalReturn = output.withUnsafeMutableBytes { outputPtr in
-            return crypto_hash_sha512_final(state, outputPtr)
-        }
+        let finalReturn = crypto_hash_sha512_final(state, &output)
         assert(finalReturn == 0)
         return output
     }
@@ -40,32 +36,19 @@ extension Box {
      - Parameter nonce: The encryption nonce.
      - Returns: The authenticated ciphertext
      */
-    public func seal(message: Data, beforenm: Beforenm, nonce: Nonce) -> Data? {
-        if beforenm.count != BeforenmBytes {
+    public func seal(message: Bytes, beforenm: Beforenm, nonce: Nonce) -> Bytes? {
+        guard beforenm.count == BeforenmBytes else { return nil }
+        var authenticatedCipherText = Bytes(repeating: 0, count: message.count + MacBytes)
+
+        guard crypto_box_easy_afternm(
+            &authenticatedCipherText,
+            message,
+            UInt64(message.count),
+            nonce,
+            beforenm) == 0 else {
             return nil
         }
-    
-        var authenticatedCipherText = Data(count: message.count + MacBytes)
-    
-        let result = authenticatedCipherText.withUnsafeMutableBytes { authCipherTextPtr in
-            return message.withUnsafeBytes { messagePtr in
-                return nonce.withUnsafeBytes { noncePtr in
-                    return beforenm.withUnsafeBytes { beforenmPtr in
-                        return crypto_box_easy_afternm(
-                            authCipherTextPtr,
-                            messagePtr,
-                            CUnsignedLongLong(message.count),
-                            noncePtr,
-                            beforenmPtr)
-                    }
-                }
-            }
-        }
-    
-        if result != 0 {
-            return nil
-        }
-    
+
         return authenticatedCipherText
     }
 }

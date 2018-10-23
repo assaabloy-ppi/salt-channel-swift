@@ -17,7 +17,7 @@ public enum HandshakeState {
 
 public protocol SaltChannelDelegate: class {
     func onHandshakeDone()
-    func onHandshakeFail(_ error : Error)
+    func onHandshakeFail(_ error: Error)
 }
 
 /**
@@ -36,7 +36,7 @@ public class SaltChannel: ByteChannel {
     let clientSignSec: Data
     let clientSignPub: Data
     var remoteSignPub: Data?
-    weak var saltchannelDelegate: SaltChannelDelegate?
+    weak var delegate: SaltChannelDelegate?
 
     let sodium = Sodium()
     var session: Session?
@@ -48,7 +48,7 @@ public class SaltChannel: ByteChannel {
     var handshakeDone = false {
         didSet {
             if self.handshakeDone == true {
-                self.saltchannelDelegate?.onHandshakeDone()
+                self.delegate?.onHandshakeDone()
             }
         }
     }
@@ -60,7 +60,6 @@ public class SaltChannel: ByteChannel {
     var clientEncSec: Data?
     var clientEncPub: Data?
     public var handshakeState: HandshakeState
-    
     
     public convenience init (channel: ByteChannel, sec: Data, pub: Data) {
         self.init(channel: channel, sec: sec, pub: pub, timeKeeper: RealTimeKeeper())
@@ -77,13 +76,9 @@ public class SaltChannel: ByteChannel {
         
         self.channel.register(callback: read, errorhandler: error)
         
-        os_log("Created SaltChannel %{public}s", log: log, type: .debug, pub as CVarArg)
+        os_log("Created SaltChannel %@", log: log, type: .debug, pub as CVarArg)
     }
-    
-    public func register(_ delegate: SaltChannelDelegate) {
-     self.saltchannelDelegate = delegate
-    }
-    
+
     // MARK: Channel
     public func write(_ data: [Data]) throws {
         guard let session = self.session else {
@@ -100,6 +95,7 @@ public class SaltChannel: ByteChannel {
         let cipherMessage = encryptMessage(session: session, message: appMessage)
         if let m4 = self.bufferedM4 {
             try self.channel.write([m4, cipherMessage])
+            // TODO:
         } else {
             try self.channel.write([cipherMessage])
         }
@@ -112,15 +108,15 @@ public class SaltChannel: ByteChannel {
     
     // --- Callbacks -------
     
-    func error(_ error: Error) {
-        os_log("Ended up in SaltChannel ErrorHandler: %{public}s", log: log, type: .error, error as CVarArg)
+    private func error(_ error: Error) {
+        os_log("Ended up in SaltChannel ErrorHandler: %@", log: log, type: .error, error as CVarArg)
 
         for errorHandler in errorHandlers {
             errorHandler(error)
         }
     }
     
-    func read(_ data: Data) {
+    private func read(_ data: Data) {
         if !self.handshakeDone {
             do {
                 switch self.handshakeState {
@@ -132,11 +128,9 @@ public class SaltChannel: ByteChannel {
                 default:
                     print("\(self.handshakeState)")
                 }
-            }
-            catch {
+            } catch {
                 print("Something wrong during handshake, step: \(self.handshakeState)")
             }
-            
             
         } else {
             if let session = self.session,

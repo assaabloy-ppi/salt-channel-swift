@@ -40,8 +40,8 @@ extension SaltChannel: Host {
         }
         
         let realtime = TimeInterval(time)
-        os_log("M1 returning. Time= %{public}s", log: log, type: .debug, realtime)
-        return (realtime, remoteEncPub, hash)
+        os_log("M1 returning. Time=%@", log: log, type: .debug, realtime)
+        return (realtime, remoteEncPub, Data(bytes: hash))
     }
     
     func packM2(time: TimeInterval, myEncPub: Data) throws -> Data {

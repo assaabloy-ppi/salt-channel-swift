@@ -397,7 +397,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SaltChannel.xcodeproj/SaltChannel_Tests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks @loader_path/../Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGET_NAME = "SaltChannel-Tests";
@@ -415,7 +415,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = SaltChannel.xcodeproj/SaltChannel_Tests_Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/Frameworks @loader_path/../Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				TARGET_NAME = "SaltChannel-Tests";
 			};

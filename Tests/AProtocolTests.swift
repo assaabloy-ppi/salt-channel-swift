@@ -14,9 +14,9 @@ class AProtocolTests: XCTestCase {
     func testExtractProtocolsFromA2() {
         do {
             
-            let protocols1: [(first: String, second: String)] = try extractProtocols(n: 1, data: salt + blank)
-            let protocols2: [(first: String, second: String)] = try extractProtocols(n: 2, data: salt + echo + salt + blank)
-            let protocols3: [(first: String, second: String)] = try extractProtocols(n: 3, data: salt + echo + salt + salt + salt + blank)
+            let protocols1 = try extractProtocols(n: 1, data: salt + blank)
+            let protocols2 = try extractProtocols(n: 2, data: salt + echo + salt + blank)
+            let protocols3 = try extractProtocols(n: 3, data: salt + echo + salt + salt + salt + blank)
         
             XCTAssertEqual(protocols1.count, 1)
             XCTAssertEqual(protocols2.count, 2)

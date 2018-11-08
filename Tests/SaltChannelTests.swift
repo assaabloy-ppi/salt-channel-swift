@@ -50,7 +50,7 @@ class SaltChannelTests: XCTestCase {
                 }
 
                 let expectation1 = expectation(description: "Negotiation successfull")
-                var unpackedA2 = [(first: String, second: String)]()
+                var unpackedA2 = SaltChannelProtocols()
                 channel.negotiate(pubKey: pubKey, success: { result in
                     unpackedA2 = result
                     expectation1.fulfill()
@@ -65,7 +65,7 @@ class SaltChannelTests: XCTestCase {
                     XCTAssertEqual(unpackedA2[index].second, abox.unpackedA2[index].second)
                 }
             }
-            
+
             /*** Handshake ***/
             if testDataSet.handshake != nil {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil

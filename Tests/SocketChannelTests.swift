@@ -149,7 +149,7 @@ class SocketChannelTests: XCTestCase {
             channel.register(callback: receiver, errorhandler: errorhandler)
 
             let expectation1 = expectation(description: "Negotiation successfull")
-            var protocols = [(first: String, second: String)]()
+            var protocols = SaltChannelProtocols()
 
             channel.negotiate(pubKey: serverSignPub, success: { result in
                 protocols = result

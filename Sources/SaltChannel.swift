@@ -14,7 +14,7 @@ internal struct HandshakeData {
     var clientEncSec: Data?
     var clientEncPub: Data?
 
-    var negotiateCompleted: (([(first: String, second: String)]) -> Void)?
+    var negotiateCompleted: ((SaltChannelProtocols) -> Void)?
     var handshakeCompleted: (() -> Void)?
     var failure: ((Error) -> Void)?
 }
@@ -35,6 +35,7 @@ public class SaltChannel: ByteChannel {
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
     var timeKeeper: TimeKeeper
 
+    let callbackQueue = DispatchQueue(label: "SaltChannel callback queue", attributes: .concurrent)
     var callbacks: [(Data) -> Void] = []
     var errorHandlers: [(Error) -> Void] = []
 
@@ -65,7 +66,7 @@ public class SaltChannel: ByteChannel {
         self.clientSignPub = pub
         self.handshakeState = .notStarted
         
-        self.channel.register(callback: handleRead, errorhandler: handleError)
+        self.channel.register(callback: handleRead, errorhandler: propagateError)
         
         os_log("Created SaltChannel %@", log: log, type: .debug, pub as CVarArg)
     }
@@ -88,20 +89,26 @@ public class SaltChannel: ByteChannel {
     }
     
     public func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
-        self.errorHandlers.append(errorhandler)
-        self.callbacks.append(callback)
+        callbackQueue.async(flags: .barrier) {
+            self.errorHandlers.append(errorhandler)
+            self.callbacks.append(callback)
+        }
     }
     
     // --- Callbacks -------
     
-    private func handleError(_ error: Error) {
+    private func propagateError(_ error: Error) {
         os_log("Ended up in SaltChannel ErrorHandler: %@", log: log, type: .error, error as CVarArg)
 
-        for errorHandler in errorHandlers {
+        var safeErrorHandlers = [(Error) -> Void]()
+        callbackQueue.sync {
+            safeErrorHandlers = self.errorHandlers
+        }
+        for errorHandler in safeErrorHandlers {
             errorHandler(error)
         }
     }
-    
+
     private func handleRead(_ data: Data) {
         do {
             switch self.handshakeState {
@@ -122,14 +129,23 @@ public class SaltChannel: ByteChannel {
                 let raw = try decryptMessage(message: data, session: session)
                 let (_, messages) = try unpackApp(raw)
 
-                for callback in callbacks {
-                    for message in messages {
-                        callback(message)
-                    }
-                }
+                propagateMessages(messages)
             }
         } catch {
-            handleError(error)
+            propagateError(error)
         }
     }
+
+    private func propagateMessages(_ messages: [Data]) {
+        var safeCallbacks = [(Data) -> Void]()
+        callbackQueue.sync {
+            safeCallbacks = self.callbacks
+        }
+        for callback in safeCallbacks {
+            for message in messages {
+                callback(message)
+            }
+        }
+    }
+
 }

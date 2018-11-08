@@ -8,8 +8,7 @@ import os.log
 
 extension SaltChannel: Setup {
 
-    public func negotiate(
-        pubKey: Data?, success: (([(first: String, second: String)]) -> Void)?, failure: ((Error) -> Void)?) {
+    public func negotiate(pubKey: Data?, success: @escaping (SaltChannelProtocols) -> Void, failure: @escaping (Error) -> Void) {
         do {
             guard handshakeState == .notStarted else {
                 throw ChannelError.handshakeAlreadyDone
@@ -23,13 +22,21 @@ extension SaltChannel: Setup {
 
             handshakeState = .expectA2
         } catch {
-            failure?(error)
+            failure(error)
         }
     }
 
-    public func handshake(
-        clientEncSec: Data, clientEncPub: Data, serverSignPub: Data? = nil,
-        success: (() -> Void)?, failure: ((Error) -> Void)?) {
+    public func handshake(success: @escaping () -> Void, failure: @escaping (Error) -> Void) {
+        let encKeyPair = sodium.box.keyPair()!
+        handshake(clientEncSec: Data(bytes: encKeyPair.secretKey),
+                  clientEncPub: Data(bytes: encKeyPair.publicKey),
+                  serverSignPub: nil,
+                  success: success,
+                  failure: failure)
+    }
+
+    public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
+                          success: @escaping () -> Void, failure: @escaping (Error) -> Void) {
 
         do {
             guard handshakeState == .notStarted  else {
@@ -47,16 +54,11 @@ extension SaltChannel: Setup {
             try channel.write([m1])
             handshakeState = .expectM2
         } catch {
-            failure?(error)
+            failure(error)
         }
     }
 
-    public func handshake(success: (() -> Void)?, failure: ((Error) -> Void)?) {
-        let encKeyPair = sodium.box.keyPair()! // ToDo: Use true random from HW
-        handshake(clientEncSec: Data(bytes: encKeyPair.secretKey), clientEncPub: Data(bytes: encKeyPair.publicKey),
-                      success: success, failure: failure)
-    }
-
+    // MARK: internal
     internal func receiveA2(a2Raw: Data) {
         do {
             guard handshakeState == .expectA2 else {
@@ -89,7 +91,7 @@ extension SaltChannel: Setup {
         }
     }
 
-    public func receiveM3sendM4(m3Raw: Data) {
+    internal func receiveM3sendM4(m3Raw: Data) {
         do {
             guard handshakeState == .expectM3 else {
                 throw ChannelError.invalidHandshakeSequence

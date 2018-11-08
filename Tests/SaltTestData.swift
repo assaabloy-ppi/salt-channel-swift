@@ -439,7 +439,7 @@ public struct ABox {
     let a1: [Byte]
     let a2: [Byte]
     let pubKey: [Byte]?
-    let unpackedA2: [(first: String, second: String)]
+    let unpackedA2: SaltChannelProtocols
 }
 
 public struct Handshake {

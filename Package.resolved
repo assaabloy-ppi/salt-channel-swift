@@ -2,21 +2,21 @@
   "object": {
     "pins": [
       {
-        "package": "libsodium",
-        "repositoryURL": "https://github.com/nixberg/Clibsodium",
+        "package": "Clibsodium",
+        "repositoryURL": "https://github.com/tiwoc/Clibsodium.git",
         "state": {
           "branch": null,
-          "revision": "d2e942a7a9e2920fe144fce194381243aa1018a7",
+          "revision": "2ac72772aae26b2da0b15c253d9bb79ba452f66a",
           "version": "1.0.0"
         }
       },
       {
-        "package": "swift-sodium",
-        "repositoryURL": "https://github.com/nixberg/swift-sodium",
+        "package": "Sodium",
+        "repositoryURL": "https://github.com/jedisct1/swift-sodium",
         "state": {
           "branch": null,
-          "revision": "f873fedbde40b829c0014b9038bdd9521a857247",
-          "version": "0.5.0"
+          "revision": "8d2e6302f9589f0e9ad5c5920afa0fc0e943dd8a",
+          "version": "0.7.0"
         }
       }
     ]

@@ -9,6 +9,20 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SaltChannel::SaltChannel"
+               BuildableName = "SaltChannel.framework"
+               BlueprintName = "SaltChannel"
+               ReferencedContainer = "container:SaltChannel.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
@@ -42,9 +56,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "SaltChannel::SaltChannel"
-            BuildableName = "SaltChannel.framework"
-            BlueprintName = "SaltChannel"
+            BlueprintIdentifier = "SaltChannel::SaltChannel-Tests"
+            BuildableName = "SaltChannel-Tests.xctest"
+            BlueprintName = "SaltChannel-Tests"
             ReferencedContainer = "container:SaltChannel.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

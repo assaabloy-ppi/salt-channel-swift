@@ -310,7 +310,7 @@ extension SaltChannel: Client {
      information about the layer above, the server MUST use value
      "----------" for this field.
      */
-    public func unpackA2(data: Data) throws -> [(first: String, second: String)] {
+    public func unpackA2(data: Data) throws -> SaltChannelProtocols {
         guard data.count >= 3 else {
             throw ChannelError.errorInMessage(reason: "Size is to small")
         }
@@ -350,8 +350,8 @@ extension SaltChannel: Client {
     }
 }
 
-func extractProtocols(n: Int, data: Data) throws -> [(first: String, second: String)] {
-    var protocols: [(first: String, second: String)] = []
+func extractProtocols(n: Int, data: Data) throws -> SaltChannelProtocols {
+    var protocols = SaltChannelProtocols()
     let chunk: Int = 20
     let half: Int = chunk/2
     let size = data.count
@@ -366,7 +366,7 @@ func extractProtocols(n: Int, data: Data) throws -> [(first: String, second: Str
         let str1 = String(data: part1, encoding: .utf8)!
         let str2 = String(data: part2, encoding: .utf8)!
 
-        protocols.append((first: str1, second: str2))
+        protocols.append(SaltChannelProtocol(first: str1, second: str2))
     }
     
     return protocols

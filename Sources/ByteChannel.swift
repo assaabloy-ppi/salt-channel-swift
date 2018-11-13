@@ -27,17 +27,11 @@ import Foundation
      })
  ´´´´
  */
-
-public protocol ChannelDelegate: class {
-    func didReceiveMessage(message: Data)
-}
-
 public protocol ByteChannel {
     /// Register a Callback and and Errorhandler
     func register(callback: @escaping (Data) -> Void,
                   errorhandler: @escaping (Error) -> Void)
 
-    //func register(delegate: ChannelDelegate)
     /// Write data to the Channel
     func write(_ data: [Data]) throws
 }

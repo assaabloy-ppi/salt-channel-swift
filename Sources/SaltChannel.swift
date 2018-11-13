@@ -7,17 +7,24 @@ import Foundation
 import Sodium
 import os.log
 
-public enum HandshakeState {
-    case m0
-    case m1
-    case m2
-    case m3
-    case m4
+internal struct HandshakeData {
+    var serverEncPub: Data?
+    var m1Hash: Data?
+    var m2Hash: Data?
+    var clientEncSec: Data?
+    var clientEncPub: Data?
+
+    var negotiateCompleted: ((SaltChannelProtocols) -> Void)?
+    var handshakeCompleted: ((Data) -> Void)?
+    var failure: ((Error) -> Void)?
 }
 
-public protocol SaltChannelDelegate: class {
-    func onHandshakeDone()
-    func onHandshakeFail(_ error: Error)
+public enum HandshakeState {
+    case notStarted
+    case expectM2
+    case expectM3
+    case expectA2
+    case done
 }
 
 /**
@@ -28,15 +35,14 @@ public class SaltChannel: ByteChannel {
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
     var timeKeeper: TimeKeeper
 
+    let callbackQueue = DispatchQueue(label: "SaltChannel callback queue", attributes: .concurrent)
     var callbacks: [(Data) -> Void] = []
     var errorHandlers: [(Error) -> Void] = []
-    var receiveData: [Data] = []
 
     let channel: ByteChannel
     let clientSignSec: Data
     let clientSignPub: Data
     var remoteSignPub: Data?
-    weak var delegate: SaltChannelDelegate?
 
     let sodium = Sodium()
     var session: Session?
@@ -44,23 +50,9 @@ public class SaltChannel: ByteChannel {
     var sendNonce = Nonce(value: 1)
     var receiveNonce = Nonce(value: 2)
     
-    var bufferedM4: Data?
-    var handshakeDone = false {
-        didSet {
-            if self.handshakeDone == true {
-                self.delegate?.onHandshakeDone()
-            }
-        }
-    }
-    
-    //OLA
-    var serverEncPub: Data?
-    var m1Hash: Data?
-    var m2Hash: Data?
-    var clientEncSec: Data?
-    var clientEncPub: Data?
+    var handshakeData = HandshakeData()
     public var handshakeState: HandshakeState
-    
+
     public convenience init (channel: ByteChannel, sec: Data, pub: Data) {
         self.init(channel: channel, sec: sec, pub: pub, timeKeeper: RealTimeKeeper())
     }
@@ -72,9 +64,9 @@ public class SaltChannel: ByteChannel {
         self.channel = channel
         self.clientSignSec = sec
         self.clientSignPub = pub
-        self.handshakeState = .m0
+        self.handshakeState = .notStarted
         
-        self.channel.register(callback: read, errorhandler: error)
+        self.channel.register(callback: handleRead, errorhandler: propagateError)
         
         os_log("Created SaltChannel %@", log: log, type: .debug, pub as CVarArg)
     }
@@ -93,57 +85,67 @@ public class SaltChannel: ByteChannel {
         }
         
         let cipherMessage = encryptMessage(session: session, message: appMessage)
-        if let m4 = self.bufferedM4 {
-            try self.channel.write([m4, cipherMessage])
-            // TODO:
-        } else {
-            try self.channel.write([cipherMessage])
-        }
+        try self.channel.write([cipherMessage])
     }
     
     public func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
-        self.errorHandlers.append(errorhandler)
-        self.callbacks.append(callback)
+        callbackQueue.async(flags: .barrier) {
+            self.errorHandlers.append(errorhandler)
+            self.callbacks.append(callback)
+        }
     }
     
     // --- Callbacks -------
     
-    private func error(_ error: Error) {
+    private func propagateError(_ error: Error) {
         os_log("Ended up in SaltChannel ErrorHandler: %@", log: log, type: .error, error as CVarArg)
 
-        for errorHandler in errorHandlers {
+        var safeErrorHandlers = [(Error) -> Void]()
+        callbackQueue.sync {
+            safeErrorHandlers = self.errorHandlers
+        }
+        for errorHandler in safeErrorHandlers {
             errorHandler(error)
         }
     }
-    
-    private func read(_ data: Data) {
-        if !self.handshakeDone {
-            do {
-                switch self.handshakeState {
-                case .m1:
-                    try self.handshake_M2(m2Raw: data)
-                case .m2:
-                    try self.handshake_M3(m3Raw: data)
-                    try self.handshake_M4()
-                default:
-                    print("\(self.handshakeState)")
+
+    private func handleRead(_ data: Data) {
+        do {
+            switch self.handshakeState {
+
+            case .notStarted:
+                throw ChannelError.setupNotDone(reason: "Handshake not done yet!")
+            case .expectM2:
+                receiveM2(m2Raw: data)
+            case .expectM3:
+                receiveM3sendM4(m3Raw: data)
+            case .expectA2:
+                receiveA2(a2Raw: data)
+            case .done:
+                guard let session = self.session else {
+                    throw ChannelError.setupNotDone(reason: "Expected a Session by now")
                 }
-            } catch {
-                print("Something wrong during handshake, step: \(self.handshakeState)")
+
+                let raw = try decryptMessage(message: data, session: session)
+                let (_, messages) = try unpackApp(raw)
+
+                propagateMessages(messages)
             }
-            
-        } else {
-            if let session = self.session,
-                let raw = try? decryptMessage(message: data, session: session),
-                let (_, messages) = try? unpackApp(raw) {
-                for callback in callbacks {
-                    for message in messages {
-                        callback(message)
-                    }
-                }
-            } else {
-                error(ChannelError.setupNotDone(reason: "Failed in read"))
+        } catch {
+            propagateError(error)
+        }
+    }
+
+    private func propagateMessages(_ messages: [Data]) {
+        var safeCallbacks = [(Data) -> Void]()
+        callbackQueue.sync {
+            safeCallbacks = self.callbacks
+        }
+        for callback in safeCallbacks {
+            for message in messages {
+                callback(message)
             }
         }
     }
+
 }

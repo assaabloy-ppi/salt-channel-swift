@@ -11,10 +11,14 @@ enum Constants {
     static let clientprefix = Data("SC-SIG02".utf8)
 }
 
-protocol Setup {
-    func negotiate(pubKey: Data?) throws -> [(first: String, second: String)]
-    func handshake(holdUntilFirstWrite: Bool) throws
-    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?, holdUntilFirstWrite: Bool) throws
+public typealias SaltChannelProtocol = (first: String, second: String)
+public typealias SaltChannelProtocols = [SaltChannelProtocol]
+
+public protocol Setup {
+    func negotiate(pubKey: Data?, success: @escaping (SaltChannelProtocols) -> Void, failure: @escaping (Error) -> Void)
+    func handshake(serverSignPub: Data?, success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
+    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
+                   success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
 }
 
 typealias Protocol = Client & Host
@@ -30,7 +34,7 @@ protocol Peer {
 
 protocol Client: Peer {
     func packA1(pubKey: Data?) throws -> Data
-    func unpackA2(data: Data) throws -> [(first: String, second: String)]
+    func unpackA2(data: Data) throws -> SaltChannelProtocols
     
     func packM1(time: TimeInterval, myEncPub: Data, serverSignPub: Data?) throws -> (hash: Data, data: Data)
     func unpackM2(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)

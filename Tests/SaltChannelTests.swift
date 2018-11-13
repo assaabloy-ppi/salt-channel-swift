@@ -44,24 +44,42 @@ class SaltChannelTests: XCTestCase {
             
             /*** A1 A2 negotiation ***/
             if let abox = testDataSet.abox {
-                var pubKey: Data? = nil
+                var pubKey: Data?
                 if abox.pubKey != nil {
                     pubKey = Data(abox.pubKey!)
                 }
-                let unpackedA2 = try channel.negotiate(pubKey: pubKey)
+
+                let expectation1 = expectation(description: "Negotiation successfull")
+                var unpackedA2 = SaltChannelProtocols()
+                channel.negotiate(pubKey: pubKey, success: { result in
+                    unpackedA2 = result
+                    expectation1.fulfill()
+                }, failure: { error in
+                    XCTFail("Negotiate failed: \(error)")
+                })
+                waitForExpectations(timeout: 2.0)
+
                 XCTAssertEqual(unpackedA2.count, abox.unpackedA2.count)
                 for index in 0..<unpackedA2.count {
                     XCTAssertEqual(unpackedA2[index].first, abox.unpackedA2[index].first)
                     XCTAssertEqual(unpackedA2[index].second, abox.unpackedA2[index].second)
                 }
             }
-            
+
             /*** Handshake ***/
             if testDataSet.handshake != nil {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil
-                try channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
+
+                let expectation2 = expectation(description: "Handshake successfull")
+                channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub),
-                                      serverSignPub: serverSignPub)
+                                      serverSignPub: serverSignPub, success: { _ in
+                    expectation2.fulfill()
+                }, failure: { error in
+                    XCTFail("Handshake failed: \(error)")
+                })
+                waitForExpectations(timeout: 2.0)
+
                 XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))
             }
         

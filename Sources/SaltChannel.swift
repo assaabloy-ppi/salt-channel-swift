@@ -15,7 +15,7 @@ internal struct HandshakeData {
     var clientEncPub: Data?
 
     var negotiateCompleted: ((SaltChannelProtocols) -> Void)?
-    var handshakeCompleted: (() -> Void)?
+    var handshakeCompleted: ((Data) -> Void)?
     var failure: ((Error) -> Void)?
 }
 

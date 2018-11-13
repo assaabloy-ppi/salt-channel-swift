@@ -73,7 +73,7 @@ class SaltChannelTests: XCTestCase {
                 let expectation2 = expectation(description: "Handshake successfull")
                 channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
                                       clientEncPub: Data(testDataSet.clientKeys.diffiPub),
-                                      serverSignPub: serverSignPub, success: {
+                                      serverSignPub: serverSignPub, success: { _ in
                     expectation2.fulfill()
                 }, failure: { error in
                     XCTFail("Handshake failed: \(error)")

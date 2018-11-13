@@ -16,9 +16,9 @@ public typealias SaltChannelProtocols = [SaltChannelProtocol]
 
 public protocol Setup {
     func negotiate(pubKey: Data?, success: @escaping (SaltChannelProtocols) -> Void, failure: @escaping (Error) -> Void)
-    func handshake(success: @escaping () -> Void, failure: @escaping (Error) -> Void)
+    func handshake(serverSignPub: Data?, success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
     func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
-                   success: @escaping () -> Void, failure: @escaping (Error) -> Void)
+                   success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
 }
 
 typealias Protocol = Client & Host

@@ -164,7 +164,7 @@ class SocketChannelTests: XCTestCase {
             channel.handshake(clientEncSec: clientEncSec!,
                                   clientEncPub: clientEncPub!,
                                   serverSignPub: serverSignPub,
-                                  success: {
+                                  success: { _ in
                 expectation2.fulfill()
             }, failure: { error in
                 XCTFail("Handshake failed: \(error)")

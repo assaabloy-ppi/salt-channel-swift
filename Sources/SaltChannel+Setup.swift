@@ -26,17 +26,17 @@ extension SaltChannel: Setup {
         }
     }
 
-    public func handshake(success: @escaping () -> Void, failure: @escaping (Error) -> Void) {
+    public func handshake(serverSignPub: Data? = nil, success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void) {
         let encKeyPair = sodium.box.keyPair()!
         handshake(clientEncSec: Data(bytes: encKeyPair.secretKey),
                   clientEncPub: Data(bytes: encKeyPair.publicKey),
-                  serverSignPub: nil,
+                  serverSignPub: serverSignPub,
                   success: success,
                   failure: failure)
     }
 
     public func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
-                          success: @escaping () -> Void, failure: @escaping (Error) -> Void) {
+                          success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void) {
 
         do {
             guard handshakeState == .notStarted  else {
@@ -117,7 +117,7 @@ extension SaltChannel: Setup {
             self.handshakeState = .done
             print("🤝 Handshake completed!!")
 
-            handshakeData.handshakeCompleted?()
+            handshakeData.handshakeCompleted?(remoteSignPub)
         } catch {
             handshakeData.failure?(error)
         }

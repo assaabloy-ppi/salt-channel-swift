@@ -10,15 +10,14 @@ OSX_FLAGS     = -sdk macosx
 
 XCODE         = xcodebuild
 XCODE_PROJECT = $(PROJECT).xcodeproj
-XCODE_SCHEME  = $(PROJECT)
+XCODE_WORKSPACE = $(PROJECT).xcworkspace
+XCODE_SCHEME  = $(PROJECT)-Tests
 XCODE_FLAGS   =
-XCODE_CMD     = $(XCODE) -project $(XCODE_PROJECT) $(XCODE_FLAGS)
+XCODE_CMD     = $(XCODE) -workspace $(XCODE_WORKSPACE) $(XCODE_FLAGS)
 
 SYMROOT="./build"
 
-all: lint xcodebuild-ios xcodebuild-osx
-
-all: pod-install lint build test
+all: pod-install lint xcodebuild-ios
 
 test: build
 	$(SWIFT) test $(SWIFT_FLAGS)
@@ -28,9 +27,6 @@ build:
 
 lint:
 	swiftlint
-
-docs:
-	jazzy --theme fullwidth
 
 pod-install:
 	pod install
@@ -63,10 +59,10 @@ list:
 	xcodebuild -workspace $(PROJECT).xcworkspace  -list
 
 xcodebuild-ios:
-	$(XCODE_CMD) -scheme $(XCODE_SCHEME) $(IOS_FLAGS) build-for-testing test  | xcpretty && exit $(PIPESTATUS[0])
+	$(XCODE_CMD) -scheme $(XCODE_SCHEME) $(IOS_FLAGS) | xcpretty && exit $(PIPESTATUS[0])
 
 xcodebuild-osx:
-	$(XCODE_CMD) -scheme $(XCODE_SCHEME) $(OSX_FLAGS) build-for-testing test | xcpretty && exit $(PIPESTATUS[0])
+	$(XCODE_CMD) -scheme $(XCODE_SCHEME) $(OSX_FLAGS) | xcpretty && exit $(PIPESTATUS[0])
 
 dependencies:
 	$(SWIFT_CMD) package show-dependencies

@@ -63,7 +63,7 @@ platform :ios, '10.3'
 
 target 'YourProject' do
   use_frameworks!
-  pod 'SaltChannel', :git => 'https://github.com/assaabloy-ppi/salt-channel-swift.git'
+  pod 'SaltChannel', :git => 'https://github.com/assaabloy-ppi/salt-channel-swift.git', :tag => '2.1.0'
 
   target 'YourProjet-tests' do
     inherit! :search_paths

@@ -10,9 +10,9 @@ install:
 script:
   - swiftlint
   - xcodebuild -version
-  - xcodebuild -project SaltChannel.xcodeproj -scheme SaltChannel-Tests -sdk macosx -configuration Debug -enableCodeCoverage YES test | xcpretty
+  - xcodebuild -workspace SaltChannel.xcworkspace -scheme SaltChannel-Tests -sdk macosx -configuration Debug -enableCodeCoverage YES test | xcpretty
   - bash <(curl -s https://codecov.io/bash) -J SaltChannel -cF osx
-  - xcodebuild -project SaltChannel.xcodeproj -scheme SaltChannel-Tests -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 6" -configuration Debug ONLY_ACTIVE_ARCH=YES -enableCodeCoverage YES test | xcpretty
+  - xcodebuild -workspace SaltChannel.xcworkspace -scheme SaltChannel-Tests -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 6" -configuration Debug ONLY_ACTIVE_ARCH=YES -enableCodeCoverage YES test | xcpretty
   - bash <(curl -s https://codecov.io/bash) -J SaltChannel -cF ios
   
 env:

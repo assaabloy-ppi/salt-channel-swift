@@ -51,6 +51,11 @@
                BlueprintName = "SaltChannel-Tests"
                ReferencedContainer = "container:SaltChannel.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "SocketChannelTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

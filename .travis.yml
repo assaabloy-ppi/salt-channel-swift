@@ -8,6 +8,7 @@ install:
   - pod repo update
 
 script:
+  - pod install
   - swiftlint
   - xcodebuild -version
   - xcodebuild -workspace SaltChannel.xcworkspace -scheme SaltChannel-Tests -sdk macosx -configuration Debug -enableCodeCoverage YES test | xcpretty

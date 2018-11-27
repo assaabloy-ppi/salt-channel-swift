@@ -4,12 +4,14 @@ osx_image: xcode9.4
 xcode_workspace: SaltChannel.xcworkspace
 xcode_scheme: SaltChannel-Tests
 
-install:
-  - pod repo update
-
 script:
-  - make all
-
+  - swiftlint
+  - xcodebuild -version
+  - xcodebuild -project SaltChannel.xcodeproj -scheme SaltChannel-Package -sdk macosx -configuration Debug -enableCodeCoverage YES test | xcpretty
+  - bash <(curl -s https://codecov.io/bash) -J SaltChannel -cF osx
+  - xcodebuild -project SaltChannel.xcodeproj -scheme SaltChannel-Package -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 6" -configuration Debug ONLY_ACTIVE_ARCH=YES -enableCodeCoverage YES test | xcpretty
+  - bash <(curl -s https://codecov.io/bash) -J SaltChannel -cF ios
+  
 env:
   - SWIFT_VERSION=4.1
 

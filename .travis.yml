@@ -8,6 +8,7 @@ install:
   - pod repo update
 
 script:
+  - rm -rf /Users/travis/Library/Developer/Xcode/DerivedData
   - pod install
   - swiftlint
   - xcodebuild -version

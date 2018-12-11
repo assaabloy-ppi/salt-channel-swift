@@ -8,11 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */; };
-		5B36693B1F8F984300BE3983 /* SocketChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B36693A1F8F984300BE3983 /* SocketChannel.swift */; };
 		5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */; };
 		5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */; };
 		5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0551F87D1A300C15D30 /* Protocol.swift */; };
-		5B506FC9200ACF1A0006E8AB /* NetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B506FC8200ACF1A0006E8AB /* NetHandler.swift */; };
 		5B506FD72010F7480006E8AB /* MockRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B506FCA2010C0F60006E8AB /* MockRunner.swift */; };
 		5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541451F82D2EF00730B41 /* ChannelError.swift */; };
 		5B55414A1F82D63A00730B41 /* ByteUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B5541491F82D63A00730B41 /* ByteUtils.swift */; };
@@ -26,7 +24,6 @@
 		5B82011C1F8BB05900EA7D2D /* SaltChannel+Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011B1F8BB05900EA7D2D /* SaltChannel+Header.swift */; };
 		5B82011E1F8BB0F600EA7D2D /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B82011D1F8BB0F600EA7D2D /* Session.swift */; };
 		5B8201241F8D1A9200EA7D2D /* HeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */; };
-		5BD3EA9F1F90FC94001139E0 /* SocketChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */; };
 		5BD3EAA11F9102A6001139E0 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */; };
 		5BD3EAA31F9103C7001139E0 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD3EAA21F9103C7001139E0 /* Array+Extension.swift */; };
 		5BE382D01F8391B700E40069 /* SaltChannel+Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */; };
@@ -53,11 +50,9 @@
 /* Begin PBXFileReference section */
 		2773C5788EF12ADE39406372 /* Pods-SaltChannel.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel/Pods-SaltChannel.debug.xcconfig"; sourceTree = "<group>"; };
 		5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AProtocolTests.swift; sourceTree = "<group>"; };
-		5B36693A1F8F984300BE3983 /* SocketChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannel.swift; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
 		5B49F0551F87D1A300C15D30 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
-		5B506FC8200ACF1A0006E8AB /* NetHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetHandler.swift; sourceTree = "<group>"; };
 		5B506FCA2010C0F60006E8AB /* MockRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockRunner.swift; sourceTree = "<group>"; };
 		5B5541451F82D2EF00730B41 /* ChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelError.swift; sourceTree = "<group>"; };
 		5B5541491F82D63A00730B41 /* ByteUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteUtils.swift; sourceTree = "<group>"; };
@@ -74,7 +69,6 @@
 		5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderTests.swift; sourceTree = "<group>"; };
 		5B8EDFA11FC4C9690013847A /* Release-Notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = "Release-Notes.md"; sourceTree = "<group>"; };
 		5B8EDFA21FC4C9790013847A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketChannelTests.swift; sourceTree = "<group>"; };
 		5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		5BD3EAA21F9103C7001139E0 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		5BE382CF1F8391B700E40069 /* SaltChannel+Crypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SaltChannel+Crypto.swift"; sourceTree = "<group>"; };
@@ -157,7 +151,6 @@
 				OBJ_13 /* SaltChannelTests.swift */,
 				5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */,
 				5B8201191F8BAC1800EA7D2D /* SessionTests.swift */,
-				5BD3EA9E1F90FC94001139E0 /* SocketChannelTests.swift */,
 				OBJ_14 /* SodiumExtensionTest.swift */,
 				BF51B36F20DBA3D000744DBD /* Utils */,
 			);
@@ -191,7 +184,6 @@
 				5B5541491F82D63A00730B41 /* ByteUtils.swift */,
 				5B5541451F82D2EF00730B41 /* ChannelError.swift */,
 				5BD3EAA01F9102A6001139E0 /* Data+Extension.swift */,
-				5B506FC8200ACF1A0006E8AB /* NetHandler.swift */,
 				OBJ_9 /* Nonce.swift */,
 				5B49F0551F87D1A300C15D30 /* Protocol.swift */,
 				5B8105AE1F94FCB800F142DE /* SaltChannel.h */,
@@ -203,7 +195,6 @@
 				5B8105A81F94C74400F142DE /* SaltChannel+Peer.swift */,
 				5B55414D1F82D87000730B41 /* SaltChannel+Setup.swift */,
 				5B82011D1F8BB0F600EA7D2D /* Session.swift */,
-				5B36693A1F8F984300BE3983 /* SocketChannel.swift */,
 				OBJ_11 /* Sodium+Extension.swift */,
 			);
 			path = Sources;
@@ -352,7 +343,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 0;
 			files = (
-				5BD3EA9F1F90FC94001139E0 /* SocketChannelTests.swift in Sources */,
 				5B5820111FB20A0C00B48509 /* ByteIntegerTests.swift in Sources */,
 				5B8201241F8D1A9200EA7D2D /* HeaderTests.swift in Sources */,
 				5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */,
@@ -383,8 +373,6 @@
 				5B5541461F82D2EF00730B41 /* ChannelError.swift in Sources */,
 				5B82011E1F8BB0F600EA7D2D /* Session.swift in Sources */,
 				OBJ_43 /* Sodium+Extension.swift in Sources */,
-				5B36693B1F8F984300BE3983 /* SocketChannel.swift in Sources */,
-				5B506FC9200ACF1A0006E8AB /* NetHandler.swift in Sources */,
 				5B55414E1F82D87000730B41 /* SaltChannel+Setup.swift in Sources */,
 				5B5541501F82DAB000730B41 /* SaltChannel+Client.swift in Sources */,
 				5B49F0561F87D1A300C15D30 /* Protocol.swift in Sources */,

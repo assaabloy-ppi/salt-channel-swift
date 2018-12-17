@@ -11,11 +11,11 @@ Salt Channel version 2 implemented in Swift. To be used for iOS, MacOS and Linux
 Salt Channel
 ------------
 
-Salt Channel is a simple, light-weight secure channel protocol based on TweetNaCl
+Salt Channel is a simple, light-weight secure channel protocol based on [TweetNaCl](http://tweetnacl.cr.yp.to/)
 by Bernstein et al. Salt Channel is "Powered by Curve25519".
 
 Salt Channel is simpler than TLS and works well on small embedded processors.
-It has a lower handshake overhead. See this comparison. Salt Channel always uses
+It has a lower handshake overhead. Salt Channel always uses
 mutual authentication and forward secrecy. The protocol supports secret client IDs.
 
 The development of the code in this repository and the protocol itself has been
@@ -48,8 +48,8 @@ An overview of a typical Salt Channel session is shown below.
         included in the figure. They are included in every message.
 ```
 
-Howto use
----------
+How to use
+----------
 
 SaltChannel is Open Source and managed in Github. Download or clone using this link:
 [github.com/assaabloy-ppi/salt-channel-swift](

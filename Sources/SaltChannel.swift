@@ -8,11 +8,13 @@ import Sodium
 import os.log
 
 internal struct HandshakeData {
-    var serverEncPub: Data?
+    var remoteEncPub: Data?
     var m1Hash: Data?
     var m2Hash: Data?
     var clientEncSec: Data?
     var clientEncPub: Data?
+    var hostEncSec: Data?
+    var hostEncPub: Data?
 
     var negotiateCompleted: ((SaltChannelProtocols) -> Void)?
     var handshakeCompleted: ((Data) -> Void)?
@@ -21,8 +23,11 @@ internal struct HandshakeData {
 
 public enum HandshakeState {
     case notStarted
+    case expectM1
     case expectM2
     case expectM3
+    case expectM4
+    case expectA1
     case expectA2
     case done
 }
@@ -33,6 +38,7 @@ public enum HandshakeState {
 public class SaltChannel: ByteChannel {
     
     let log = OSLog(subsystem: "salt.aa.st", category: "Channel")
+    let isHost: Bool
     var timeKeeper: TimeKeeper
 
     let callbackQueue = DispatchQueue(label: "SaltChannel callback queue", attributes: .concurrent)
@@ -40,15 +46,15 @@ public class SaltChannel: ByteChannel {
     var errorHandlers: [(Error) -> Void] = []
 
     let channel: ByteChannel
-    let clientSignSec: Data
-    let clientSignPub: Data
+    let signSec: Data
+    let signPub: Data
     var remoteSignPub: Data?
 
     let sodium = Sodium()
     var session: Session?
 
-    var sendNonce = Nonce(value: 1)
-    var receiveNonce = Nonce(value: 2)
+    let sendNonce: Nonce
+    let receiveNonce: Nonce
     
     var handshakeData = HandshakeData()
     public var handshakeState: HandshakeState
@@ -57,14 +63,16 @@ public class SaltChannel: ByteChannel {
         self.init(channel: channel, sec: sec, pub: pub, timeKeeper: RealTimeKeeper())
     }
     
-    /// Create a SaltChannel with channel to wrap plus the clients signing
-    /// keypair.
-    public init (channel: ByteChannel, sec: Data, pub: Data, timeKeeper: TimeKeeper) {
+    /// Create a SaltChannel with channel to wrap plus the signing keypair.
+    public init (channel: ByteChannel, sec: Data, pub: Data, timeKeeper: TimeKeeper, isHost: Bool = false) {
+        self.isHost = isHost
         self.timeKeeper = timeKeeper
         self.channel = channel
-        self.clientSignSec = sec
-        self.clientSignPub = pub
+        self.signSec = sec
+        self.signPub = pub
         self.handshakeState = .notStarted
+        self.sendNonce = Nonce(value: isHost ? 2 : 1)
+        self.receiveNonce = Nonce(value: isHost ? 1 : 2)
         
         self.channel.register(callback: handleRead, errorhandler: propagateError)
         
@@ -115,10 +123,16 @@ public class SaltChannel: ByteChannel {
 
             case .notStarted:
                 throw ChannelError.setupNotDone(reason: "Handshake not done yet!")
+            case .expectM1:
+                receiveM1sendM2M3(m1Raw: data)
             case .expectM2:
                 receiveM2(m2Raw: data)
             case .expectM3:
                 receiveM3sendM4(m3Raw: data)
+            case .expectM4:
+                receiveM4(m4Raw: data)
+            case .expectA1:
+                break // TODO: Implement
             case .expectA2:
                 receiveA2(a2Raw: data)
             case .done:

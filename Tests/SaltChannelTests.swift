@@ -9,7 +9,7 @@ import Sodium
 @testable import SaltChannel
 
 class SaltChannelTests: XCTestCase {
-    let sodium = Sodium()
+    //let sodium = Sodium()
     var receivedData: [Data] = []
     
     func waitForData(_ data: Data) {
@@ -71,8 +71,8 @@ class SaltChannelTests: XCTestCase {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil
 
                 let expectation2 = expectation(description: "Handshake successfull")
-                channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
-                                      clientEncPub: Data(testDataSet.clientKeys.diffiPub),
+                channel.handshake(encSec: Data(testDataSet.clientKeys.diffiSec),
+                                      encPub: Data(testDataSet.clientKeys.diffiPub),
                                       serverSignPub: serverSignPub, success: { _ in
                     expectation2.fulfill()
                 }, failure: { error in
@@ -93,7 +93,7 @@ class SaltChannelTests: XCTestCase {
                     }
                 }
             }
-        
+
             // Wait until mock is done
             if WaitUntil.waitUntil(4, mock.isDone == true) {
                 print("Mock is done")
@@ -105,6 +105,56 @@ class SaltChannelTests: XCTestCase {
         }
     }
     
+    func runHostHandshake(testDataSet: TestDataSet, timeKeeper: TimeKeeper) {
+        do {
+            /*** Setup ***/
+            let signSec = Data(testDataSet.hostKeys.signSec)
+            let signPub = Data(testDataSet.hostKeys.signPub)
+            
+            let mock = BasicClientMock(mockdata: testDataSet)
+
+            let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub, timeKeeper: timeKeeper, isHost: true)
+            channel.register(callback: receiver, errorhandler: errorhandler)
+
+            /*** Handshake ***/
+            if testDataSet.handshake != nil {
+
+                let expectation2 = expectation(description: "Handshake successfull")
+                channel.handshake(encSec: Data(testDataSet.hostKeys.diffiSec),
+                                  encPub: Data(testDataSet.hostKeys.diffiPub),
+                                  success: { _ in
+                                    expectation2.fulfill()
+                }, failure: { error in
+                    XCTFail("Handshake failed: \(error)")
+                })
+                mock.start()
+
+                waitForExpectations(timeout: 2.0)
+                
+                XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.clientKeys.signPub))
+            }
+            
+            /*** Data transfer ***/
+            for transfer in testDataSet.transfers {
+                if transfer.direction == .toHost {
+                    for item in transfer.plain {
+                        waitForData(Data(item))
+                    }
+                } else {
+                    try channel.write(transfer.plain.map {Data($0)})
+                }
+            }
+
+            // Wait until mock is done
+            if WaitUntil.waitUntil(4, mock.isDone == true) {
+                print("Mock is done")
+                XCTAssertEqual(mock.isDone, true)
+            }
+        } catch {
+            print(error)
+            XCTFail("Got exception")
+        }
+    }
     /*********************************************************/
     // Negative testes
     func testNegativeA1() {
@@ -118,7 +168,7 @@ class SaltChannelTests: XCTestCase {
     }
 
     /*********************************************************/
-    // Test handshake, a1 and a2
+    // Test client handshake, a1 and a2
     func testSession1ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session1TestData, timeKeeper: NullTimeKeeper())
     }
@@ -137,6 +187,11 @@ class SaltChannelTests: XCTestCase {
     
     func testSessionALongClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().sessionALong, timeKeeper: NullTimeKeeper())
+    }
+
+    // Test host handshake
+    func testSession1HostHandshake() {
+        runHostHandshake(testDataSet: SaltTestData().session1TestData, timeKeeper: NullTimeKeeper())
     }
     
     func testPrettyPrintSession3() {

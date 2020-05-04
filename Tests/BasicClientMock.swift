@@ -13,15 +13,15 @@ class BasicClientMock: ByteChannel {
     var writeData: [Data] = []
     var isDone: Bool = false
     let mockdata: TestDataSet
-    
+
     public init(mockdata: TestDataSet) {
         self.mockdata = mockdata
     }
-    
+
     public func start() {
         DispatchQueue.global().async { self.run() }
     }
-    
+
     func run() {
         /*
         if let aData = mockdata.abox {
@@ -30,7 +30,7 @@ class BasicClientMock: ByteChannel {
             waitForData(aData.a2)
         }
         */
-        
+
         if let handshakeData = mockdata.handshake {
             print("Test handshake")
             send(handshakeData.m1)
@@ -38,7 +38,7 @@ class BasicClientMock: ByteChannel {
             waitForData(handshakeData.m3)
             send(handshakeData.m4)
         }
-        
+
         print("Test \(mockdata.transfers.count) transfers")
         for transfer in mockdata.transfers {
             if transfer.direction == .toHost {
@@ -47,12 +47,12 @@ class BasicClientMock: ByteChannel {
                 waitForData(transfer.cipher)
             }
         }
-        
+
         isDone = true
     }
-    
+
     // ****** Helper functions *******
-    
+
     func waitForData(_ data: [Byte]) {
         if WaitUntil.waitUntil(2, self.writeData.isEmpty == false) {
             XCTAssertEqual(writeData.first, Data(data))
@@ -61,21 +61,21 @@ class BasicClientMock: ByteChannel {
             XCTFail("Did not receive data")
         }
     }
-    
+
     func send(_ data: [Byte]) {
         for callback in callbacks {
             print("Send data")
             callback(Data(data))
         }
     }
-    
+
     // ****** Interface *******
-    
+
     func write(_ data: [Data]) throws {
         print("Write is called in Mock")
         self.writeData.append(contentsOf: data)
     }
-    
+
     func register(callback: @escaping (Data) -> Void, errorhandler: @escaping (Error) -> Void) {
         print("Register is called in Mock")
         self.callbacks.append(callback)

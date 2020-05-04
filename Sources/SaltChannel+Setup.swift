@@ -49,13 +49,13 @@ extension SaltChannel: Setup {
             if isHost {
                 handshakeData.hostEncSec = encSec
                 handshakeData.hostEncPub = encPub
-                
+
                 // *** Wait for M1 ***
                 handshakeState = .expectM1
             } else {
                 handshakeData.clientEncSec = encSec
                 handshakeData.clientEncPub = encPub
-                
+
                 // *** Send M1 ***
                 let (m1Hash, m1) = try packM1(time: timeKeeper.time(), myEncPub: handshakeData.clientEncPub!, serverSignPub: serverSignPub)
                 handshakeData.m1Hash = m1Hash
@@ -94,7 +94,7 @@ extension SaltChannel: Setup {
             let (_, clientEncPub, m1Hash) = try unpackM1(data: m1Raw)
             handshakeData.m1Hash = m1Hash
             handshakeData.remoteEncPub = clientEncPub
-            
+
             // *** Send M2 ***
             let (m2Hash, m2) = try packM2(time: timeKeeper.time(), myEncPub: handshakeData.hostEncPub!)
             handshakeData.m2Hash = m2Hash
@@ -176,11 +176,13 @@ extension SaltChannel: Setup {
             }
             // *** Receive M4 ***
             let data: Data = try decryptMessage(message: m4Raw, session: session!)
-            let (_, remoteSignPub) = try unpackM4(data: data, m1Hash: handshakeData.m1Hash!, m2Hash: handshakeData.m2Hash!)
+            let (_, remoteSignPub) = try unpackM4(data: data,
+                                                  m1Hash: handshakeData.m1Hash!,
+                                                  m2Hash: handshakeData.m2Hash!)
             self.remoteSignPub = remoteSignPub
             handshakeState = .done
             print("🤝 Handshake completed!!")
-            
+
             handshakeData.handshakeCompleted?(remoteSignPub)
         } catch {
             handshakeData.failure?(error)

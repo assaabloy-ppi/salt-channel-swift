@@ -32,38 +32,38 @@ class MPacketTest: XCTestCase {
         XCTAssertEqual(timeKeeper.time(), time)
         XCTAssertEqual(remoteEncPub, hostPubKey)
     }
-    
+
     func testM3Packet() throws {
         let clientPubKey = Data(testData.clientKeys.signPub)
         let hostSecKey = Data(testData.hostKeys.signSec)
         let hostPubKey = Data(testData.hostKeys.signPub)
-        
+
         let (m1Hash, _) = try saltChannel.packM1(time: timeKeeper.time(), myEncPub: clientPubKey)
         let (m2Hash, _) = try saltChannel.packM2(time: timeKeeper.time(), myEncPub: hostPubKey)
-        
+
         let data = try saltChannel.packM3(time: timeKeeper.time(), hostSignSec: hostSecKey, hostSignPub: hostPubKey, m1Hash: m1Hash, m2Hash: m2Hash)
         let (time, remoteSignPub) = try saltChannel.unpackM3(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         XCTAssertEqual(timeKeeper.time(), time)
         XCTAssertEqual(remoteSignPub, hostPubKey)
     }
-    
+
     func testM4Packet() throws {
         let clientSecKey = Data(testData.clientKeys.signSec)
         let clientPubKey = Data(testData.clientKeys.signPub)
         let hostPubKey = Data(testData.hostKeys.signPub)
-        
+
         let (m1Hash, _) = try saltChannel.packM1(time: timeKeeper.time(), myEncPub: clientPubKey)
         let (m2Hash, _) = try saltChannel.packM2(time: timeKeeper.time(), myEncPub: hostPubKey)
-        
+
         let data = try saltChannel.packM4(time: timeKeeper.time(), clientSignSec: clientSecKey, clientSignPub: clientPubKey, m1Hash: m1Hash, m2Hash: m2Hash)
         print("M4: \(data.hex)")
         let (time, remoteSignPub) = try saltChannel.unpackM4(data: data, m1Hash: m1Hash, m2Hash: m2Hash)
         XCTAssertEqual(timeKeeper.time(), time)
         XCTAssertEqual(remoteSignPub, clientPubKey)
     }
-    
+
     func testEncryption() throws {
-        
+
         guard let clientKey = sodium.box.beforenm(recipientPublicKey: testData.clientKeys.diffiPub,
                                             senderSecretKey: testData.clientKeys.diffiSec) else {
                                                 throw ChannelError.couldNotCalculateKey
@@ -75,7 +75,7 @@ class MPacketTest: XCTestCase {
         XCTAssertEqual(clientKey, hostKey)
         let clientSession = Session(key: Data(bytes: clientKey))
         let hostSession = Session(key: Data(bytes: hostKey))
-        
+
         let data = saltChannel.encryptMessage(session: clientSession, message: Data("Encrypt this message".utf8))
         let decryptedMessage = try saltChannel.decryptMessage(message: data, session: hostSession)
         XCTAssertEqual(Data("Encrypt this message".utf8), decryptedMessage)

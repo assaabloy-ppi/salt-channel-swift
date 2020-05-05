@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		58D4A4F32451EDD30099E23B /* MPacketTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D4A4F22451EDD30099E23B /* MPacketTest.swift */; };
+		58D4A4F524530F5F0099E23B /* BasicClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D4A4F424530F5F0099E23B /* BasicClientMock.swift */; };
 		5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */; };
 		5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */; };
 		5B49F0521F87AFC100C15D30 /* BasicHostMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */; };
@@ -49,6 +51,8 @@
 
 /* Begin PBXFileReference section */
 		2773C5788EF12ADE39406372 /* Pods-SaltChannel.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SaltChannel.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SaltChannel/Pods-SaltChannel.debug.xcconfig"; sourceTree = "<group>"; };
+		58D4A4F22451EDD30099E23B /* MPacketTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPacketTest.swift; sourceTree = "<group>"; };
+		58D4A4F424530F5F0099E23B /* BasicClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicClientMock.swift; sourceTree = "<group>"; };
 		5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AProtocolTests.swift; sourceTree = "<group>"; };
 		5B49F04D1F86BA1900C15D30 /* SaltTestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaltTestData.swift; sourceTree = "<group>"; };
 		5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHostMock.swift; sourceTree = "<group>"; };
@@ -144,7 +148,9 @@
 			isa = PBXGroup;
 			children = (
 				5B3669381F8F5BF300BE3983 /* AProtocolTests.swift */,
+				58D4A4F22451EDD30099E23B /* MPacketTest.swift */,
 				5B49F0511F87AFC100C15D30 /* BasicHostMock.swift */,
+				58D4A4F424530F5F0099E23B /* BasicClientMock.swift */,
 				5B5820101FB20A0C00B48509 /* ByteIntegerTests.swift */,
 				5B8201231F8D1A9200EA7D2D /* HeaderTests.swift */,
 				5B506FCA2010C0F60006E8AB /* MockRunner.swift */,
@@ -258,6 +264,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = OBJ_5;
@@ -349,10 +356,12 @@
 				5B3669391F8F5BF300BE3983 /* AProtocolTests.swift in Sources */,
 				5B49F04E1F86BA1900C15D30 /* SaltTestData.swift in Sources */,
 				5B82011A1F8BAC1800EA7D2D /* SessionTests.swift in Sources */,
+				58D4A4F32451EDD30099E23B /* MPacketTest.swift in Sources */,
 				5B506FD72010F7480006E8AB /* MockRunner.swift in Sources */,
 				BF51B37120DBA42F00744DBD /* WaitUntil.swift in Sources */,
 				OBJ_30 /* SaltChannelTests.swift in Sources */,
 				OBJ_31 /* SodiumExtensionTest.swift in Sources */,
+				58D4A4F524530F5F0099E23B /* BasicClientMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

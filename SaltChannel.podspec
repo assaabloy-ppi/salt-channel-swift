@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   Thank you for supporting this work.
   DESC
 
-  s.homepage = 'https://github.com/assaabloy-ppi/salt-channel/blob/master/files/spec/spec-salt-channel-v7.md'
+  s.homepage = 'https://github.com/assaabloy-ppi/salt-channel/blob/master/files/spec/salt-channel-v2-final2.md'
 
   s.license = { :type => 'MIT', :file => 'LICENSE' }
   s.authors = { 'kpernyer'  => 'kenneth.pernyer@assaabloy.com',
@@ -27,9 +27,9 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.13'
 
   s.source = { :git => 'https://github.com/assaabloy-ppi/salt-channel-swift.git', :tag => s.version.to_s }
-  s.source_files = 'Sources/*.{swift}'
+  s.source_files = 'Sources/*.{swift,h}'
   s.public_header_files = "Sources/SaltChannel.h"
 
-  s.dependency 'Sodium', '~> 0.7'
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
+  s.dependency 'Sodium', '~> 0.8'
+  s.swift_version = '4.0'
 end

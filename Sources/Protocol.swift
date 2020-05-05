@@ -16,8 +16,10 @@ public typealias SaltChannelProtocols = [SaltChannelProtocol]
 
 public protocol Setup {
     func negotiate(pubKey: Data?, success: @escaping (SaltChannelProtocols) -> Void, failure: @escaping (Error) -> Void)
+    
+    /// Start handshake
     func handshake(serverSignPub: Data?, success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
-    func handshake(clientEncSec: Data, clientEncPub: Data, serverSignPub: Data?,
+    func handshake(encSec: Data, encPub: Data, serverSignPub: Data?,
                    success: @escaping (Data) -> Void, failure: @escaping (Error) -> Void)
 }
 
@@ -48,7 +50,8 @@ protocol Host: Peer {
     func packA2(time: TimeInterval, message: Data) throws -> Data
     
     func unpackM1(data: Data) throws -> (time: TimeInterval, remoteEncPub: Data, hash: Data)
-    func packM2(time: TimeInterval, myEncPub: Data) throws -> Data
-    func packM3(time: TimeInterval, myEncPub: Data) throws -> Data
-    func unpackM4(data: Data) throws -> (time: TimeInterval, message: Data)
+    func packM2(time: TimeInterval, myEncPub: Data) throws -> (hash: Data, data: Data)
+    func packM3(time: TimeInterval, hostSignSec: Data, hostSignPub: Data,
+                m1Hash: Data, m2Hash: Data) throws -> Data
+    func unpackM4(data: Data, m1Hash: Data, m2Hash: Data) throws -> (time: TimeInterval, remoteSignPub: Data)
 }

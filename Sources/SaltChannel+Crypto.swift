@@ -12,7 +12,7 @@ protocol Crypto {
 
 extension SaltChannel: Crypto {
     public func decryptMessage(message: Data, session: Session) throws -> Data {
-        os_log("Client: read called from receiveAndDecryptMessage salt handshake", log: log, type: .debug)
+        os_log("Crypto: read called from receiveAndDecryptMessage salt handshake", log: log, type: .debug)
         let header = message[..<2]
         let (type, _, lastMessageFlag) = readHeader(from: header)
         guard type == PacketType.encrypted else {
@@ -22,13 +22,15 @@ extension SaltChannel: Crypto {
         // TODO: check semantics for lastMsg
         if lastMessageFlag {
             session.lastMessageReceived = true
-            os_log("Client: last message flag set. what now?", log: log)
+            os_log("Crypto: last message flag set. what now?", log: log)
         }
         
         let encryptedData = message.subdata(in: 2 ..< message.endIndex)
         
+        let nonce = receiveNonce.next()
+        print("Decrypt nonce: \(nonce.hex)")
         guard let decryptedData = sodium.box.open(authenticatedCipherText: encryptedData.bytes,
-                                                  beforenm: session.key.bytes, nonce: receiveNonce.next().bytes) else {
+                                                  beforenm: session.key.bytes, nonce: nonce.bytes) else {
             throw ChannelError.couldNotDecrypt
         }
         
@@ -37,9 +39,11 @@ extension SaltChannel: Crypto {
     
     public func encryptMessage(session: Session, message: Data, isLastMessage: Bool = false) -> Data {
         let header = createHeader(from: PacketType.encrypted, last: isLastMessage)
+        let nonce = sendNonce.next()
+        print("Decrypt nonce: \(nonce.hex)")
         let encryptedMessage =  header +
             sodium.box.seal(message: message.bytes, beforenm: session.key.bytes,
-                            nonce: sendNonce.next().bytes)!
+                            nonce: nonce.bytes)!
         return encryptedMessage
     }
     

@@ -9,9 +9,9 @@ import Sodium
 @testable import SaltChannel
 
 class SaltChannelTests: XCTestCase {
-    let sodium = Sodium()
+    //let sodium = Sodium()
     var receivedData: [Data] = []
-    
+
     func waitForData(_ data: Data) {
         if WaitUntil.waitUntil(2, self.receivedData.isEmpty == false) {
             XCTAssertEqual(receivedData.first, data)
@@ -20,28 +20,28 @@ class SaltChannelTests: XCTestCase {
             XCTFail("Did not receive data")
         }
     }
-    
+
     func receiver(data: Data) {
         receivedData.append(data)
     }
-    
+
     func errorhandler(error: Error) {
         print(error)
         XCTFail("Got error: " + error.localizedDescription)
     }
-    
+
     func runClientHandshake(testDataSet: TestDataSet, timeKeeper: TimeKeeper, serverPub: Bool = false) {
         do {
             /*** Setup ***/
             let signSec = Data(testDataSet.clientKeys.signSec)
             let signPub = Data(testDataSet.clientKeys.signPub)
-        
+
             let mock = BasicHostMock(mockdata: testDataSet)
             mock.start()
-        
+
             let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub, timeKeeper: timeKeeper)
             channel.register(callback: receiver, errorhandler: errorhandler)
-            
+
             /*** A1 A2 negotiation ***/
             if let abox = testDataSet.abox {
                 var pubKey: Data?
@@ -71,8 +71,8 @@ class SaltChannelTests: XCTestCase {
                 let serverSignPub = serverPub ? Data(testDataSet.hostKeys.signPub): nil
 
                 let expectation2 = expectation(description: "Handshake successfull")
-                channel.handshake(clientEncSec: Data(testDataSet.clientKeys.diffiSec),
-                                      clientEncPub: Data(testDataSet.clientKeys.diffiPub),
+                channel.handshake(encSec: Data(testDataSet.clientKeys.diffiSec),
+                                      encPub: Data(testDataSet.clientKeys.diffiPub),
                                       serverSignPub: serverSignPub, success: { _ in
                     expectation2.fulfill()
                 }, failure: { error in
@@ -82,7 +82,7 @@ class SaltChannelTests: XCTestCase {
 
                 XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.hostKeys.signPub))
             }
-        
+
             /*** Data transfer ***/
             for transfer in testDataSet.transfers {
                 if transfer.direction == .toHost {
@@ -93,7 +93,7 @@ class SaltChannelTests: XCTestCase {
                     }
                 }
             }
-        
+
             // Wait until mock is done
             if WaitUntil.waitUntil(4, mock.isDone == true) {
                 print("Mock is done")
@@ -104,7 +104,57 @@ class SaltChannelTests: XCTestCase {
             XCTFail("Got exception")
         }
     }
-    
+
+    func runHostHandshake(testDataSet: TestDataSet, timeKeeper: TimeKeeper) {
+        do {
+            /*** Setup ***/
+            let signSec = Data(testDataSet.hostKeys.signSec)
+            let signPub = Data(testDataSet.hostKeys.signPub)
+
+            let mock = BasicClientMock(mockdata: testDataSet)
+
+            let channel = SaltChannel(channel: mock, sec: signSec, pub: signPub, timeKeeper: timeKeeper, isHost: true)
+            channel.register(callback: receiver, errorhandler: errorhandler)
+
+            /*** Handshake ***/
+            if testDataSet.handshake != nil {
+
+                let expectation2 = expectation(description: "Handshake successfull")
+                channel.handshake(encSec: Data(testDataSet.hostKeys.diffiSec),
+                                  encPub: Data(testDataSet.hostKeys.diffiPub),
+                                  success: { _ in
+                                    expectation2.fulfill()
+                }, failure: { error in
+                    XCTFail("Handshake failed: \(error)")
+                })
+                mock.start()
+
+                waitForExpectations(timeout: 2.0)
+
+                XCTAssertEqual(try channel.getRemoteSignPub(), Data(testDataSet.clientKeys.signPub))
+            }
+
+            /*** Data transfer ***/
+            for transfer in testDataSet.transfers {
+                if transfer.direction == .toHost {
+                    for item in transfer.plain {
+                        waitForData(Data(item))
+                    }
+                } else {
+                    try channel.write(transfer.plain.map {Data($0)})
+                }
+            }
+
+            // Wait until mock is done
+            if WaitUntil.waitUntil(4, mock.isDone == true) {
+                print("Mock is done")
+                XCTAssertEqual(mock.isDone, true)
+            }
+        } catch {
+            print(error)
+            XCTFail("Got exception")
+        }
+    }
     /*********************************************************/
     // Negative testes
     func testNegativeA1() {
@@ -118,27 +168,32 @@ class SaltChannelTests: XCTestCase {
     }
 
     /*********************************************************/
-    // Test handshake, a1 and a2
+    // Test client handshake, a1 and a2
     func testSession1ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session1TestData, timeKeeper: NullTimeKeeper())
     }
-    
+
     func testSession2ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session2TestData, timeKeeper: NullTimeKeeper())
     }
-    
+
     func testSession3ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session3TestData, timeKeeper: CounterTimeKeeper(timeArray: [1, 2, 3, 4]))
     }
-    
+
     func testSession4ClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().session4TestData, timeKeeper: NullTimeKeeper(), serverPub: true)
     }
-    
+
     func testSessionALongClientHandshake() {
         runClientHandshake(testDataSet: SaltTestData().sessionALong, timeKeeper: NullTimeKeeper())
     }
-    
+
+    // Test host handshake
+    func testSession1HostHandshake() {
+        runHostHandshake(testDataSet: SaltTestData().session1TestData, timeKeeper: NullTimeKeeper())
+    }
+
     func testPrettyPrintSession3() {
         let m1 = "534376320100010000008520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a"
         let m2 = "020001000000de9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f"
@@ -148,7 +203,7 @@ class SaltChannelTests: XCTestCase {
         let c2 = "060045bfb5a275a3d9e175bfb1acf36cc10a5585b4d0ad354d9b5c56f755"
         let c3 = "060051f0396cdadf6e74adb417b715bf3e93cc27e6aef94d2852fd4229970630df2c34bb76ec4c"
         let c4 = "06808ab0c2c5e3a660e3767d28d4bc0fda2d23fd515aaef131889c0a4b4b3ce8ccefcd95c2c5b9"
-        
+
         [Byte](hex: m1)!.prettyPrint(8)
         [Byte](hex: m2)!.prettyPrint(8)
         [Byte](hex: m3)!.prettyPrint(8)
@@ -158,7 +213,7 @@ class SaltChannelTests: XCTestCase {
         [Byte](hex: c3)!.prettyPrint(8)
         [Byte](hex: c4)!.prettyPrint(8)
     }
-    
+
     /*
     74 -->   WRITE
      534376320101000000008520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a07e28d4ee32bfdc4b07d41c92193c0c25ee6b3094c6296f373413b373d36168b

@@ -74,7 +74,11 @@ public class SaltChannel: ByteChannel {
         self.sendNonce = Nonce(value: isHost ? 2 : 1)
         self.receiveNonce = Nonce(value: isHost ? 1 : 2)
         
-        self.channel.register(callback: handleRead, errorhandler: propagateError)
+        self.channel.register(callback: { [weak self] in
+            self?.handleRead($0)
+        }, errorhandler: { [weak self] in
+            self?.propagateError($0)
+        })
         
         os_log("Created SaltChannel %@", log: log, type: .debug, pub as CVarArg)
     }
